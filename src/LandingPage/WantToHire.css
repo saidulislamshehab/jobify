@@ -101,7 +101,7 @@
 .wth-badges {
   display: flex;
   gap: 24px;
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   color: #666;
   margin-bottom: 18px;
 }
@@ -198,7 +198,13 @@
   min-height: 200px; /* Bigger min height */
   justify-content: center; /* Center content vertically */
   align-items: flex-start; /* Align content to left */
+  transition: background-color 0.2s ease, color 0.3s ease;
 }
+.wth-card:hover {
+    background-color: #423cb72b;
+      box-shadow: 0 4px 24px rgba(80, 80, 120, 0.188);
+
+  }
 .wth-card-img {
   width: 60px;
   height: 60px;
@@ -216,13 +222,13 @@
   color: #888;
 }
 .wth-card-content h2 {
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   color: #4f46e5;
   margin: 6px 0 10px 0;
   letter-spacing: 1px;
 }
 .wth-card-content p {
-  font-size: 1rem;
+  font-size: 1.05rem;
   color: #444;
 }
 
@@ -315,22 +321,22 @@
 }
 .wth-build-cards {
   display: flex;
-  gap: 32px;
+  gap: 26px;
   justify-content: center;
   align-items: stretch;
 }
 .wth-build-card {
   background: #fff;
   border-radius: 32px;
-  box-shadow: 0 2px 16px rgba(80,80,120,0.04);
-  padding: 36px 32px;
+  box-shadow: 0 2px 16px rgba(80, 80, 120, 0.145);
+  padding: 32px 36px;
   flex: 1 1 0;
-  min-width: 320px;
-  max-width: 480px;
+  min-width: 340px;
+  max-width: 540px;
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 24px;
+  gap: 20px;
   border: 1.5px solid #f0f0f0;
 }
 .wth-build-card--blue {
@@ -375,6 +381,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 8px 24px;
   margin-bottom: 24px;
+  align-items: center;
 }
 .wth-build-list--blue .wth-icon {
   color: #2563eb;
@@ -516,11 +523,6 @@
   margin-right: 10px;
   font-size: 1.1em;
 }
-.wth-skills-btn-row {
-  display: flex;
-  justify-content: center;
-  margin-top: 16px;
-}
 .wth-skills-btn {
   border: 2px solid #7c3aed;
   border-radius: 24px;
@@ -531,6 +533,7 @@
   color: #7c3aed;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
+  display: inline-flex;
 }
 .wth-skills-btn:hover {
   background: #7c3aed;

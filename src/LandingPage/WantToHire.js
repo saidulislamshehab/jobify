@@ -8,32 +8,41 @@ const WantToHire = () => {
   const location = useLocation();
   const isActive = (path) => location.pathname === path;
 
+  const [showFreelancerOptions, setShowFreelancerOptions] = React.useState(false);
+
+  const handleFreelancerBtnClick = () => {
+    setShowFreelancerOptions((prev) => !prev);
+  };
+
   return (
     <div className="want-to-hire-container">
       <Navbar logoColor="#fbbc05" />
 
-
-
       <main className="wth-main">
         <div className="wth-main-content">
           <div className="wth-badges">
-            <span>✔ Free consultation</span>
-            <span>✔ Satisfaction Guaranteed</span>
-            <span>✔ Protected Payments</span>
+            <span>🤓 Free consultation</span>
+            <span>😁 Satisfaction Guaranteed</span>
+            <span>🔐 Protected Payments</span>
           </div>
-          <h1>  <span className="wth-highlight">Connect Collaborate Succeed</span> <br/>All through one powerful hiring platform</h1>
-          <p className="wth-subheadline">Build your dream team without the timezone drama.<br/>
-          We bring talent that talks your talk and works your hours</p>
+          <h1>
+            <span className="wth-highlight">Connect Collaborate Succeed</span> <br />
+            All through one powerful hiring platform
+          </h1>
+          <p className="wth-subheadline">
+            Build your dream team without the timezone drama.<br />
+            We bring talent that talks your talk and works your hours
+          </p>
           <div className="wth-cta">
             <span className="wth-hire-btn">I want to hire</span>
             <Link to="/work" className="wth-work-link wth-link-btn">Do you want to work? →</Link>
           </div>
         </div>
-        
+
         <div className="wth-people-circles">
           <div className="wth-circle"><img src="https://randomuser.me/api/portraits/men/32.jpg" alt="person" /></div>
           <div className="wth-circle"><img src="https://randomuser.me/api/portraits/women/49.jpg" alt="person" /></div>
-          <div className="wth-circle"><img src="https://randomuser.me/api/portraits/men/65.jpg" alt="person" /></div>
+          <div className="wth-circle"><img src="https://randomuser.me/api/portraits/men/68.jpg" alt="person" /></div>
           <div className="wth-circle"><img src="https://randomuser.me/api/portraits/women/68.jpg" alt="person" /></div>
           <div className="wth-circle"><img src="https://randomuser.me/api/portraits/women/12.jpg" alt="person" /></div>
           <div className="wth-circle"><img src="https://randomuser.me/api/portraits/men/23.jpg" alt="person" /></div>
@@ -58,10 +67,8 @@ const WantToHire = () => {
         </div>
       </main>
 
-
-
       <section className="wth-industry-leader">
-        <h3 className="wth-industry-title">THE INDUSTRY LEADER IN LATIN AMERICA</h3>
+        <h3 className="wth-industry-title">THE INDUSTRY LEADERS IN BANGLADESH</h3>
         <div className="wth-industry-grid">
           <div className="wth-industry-card wth-industry-card--blue">
             <h4>OVER TEN YEARS ON THE MARKET</h4>
@@ -92,9 +99,9 @@ const WantToHire = () => {
               <div className="wth-build-card-desc">Hire certified talent in less than a week</div>
               <div className="wth-build-list wth-build-list--blue">
                 <div><span className="wth-icon">&#60;&#47;&#62;</span> Front End Developer</div>
-                <div><span className="wth-icon">&#128187;</span> Back End Developer</div>
                 <div><span className="wth-icon">&#128421;</span> Full Stack Developer</div>
-                <div><span className="wth-icon">&#128241;</span> Mobile Developer</div>
+                <div><span className="wth-icon">&#128187;</span> Back End Developer</div>
+                <div><span className="wth-icon">&#128241;</span> Mobile software Developer</div>
                 <div><span className="wth-icon">&#129302;</span> QA Automation</div>
                 <div><span className="wth-icon">&#128202;</span> Data Engineer</div>
                 <div><span className="wth-icon">&#128200;</span> Data Scientist</div>
@@ -114,9 +121,9 @@ const WantToHire = () => {
               <div className="wth-build-card-title">NEED A FREELANCER?</div>
               <div className="wth-build-card-desc">In what field of expertise?</div>
               <div className="wth-build-list wth-build-list--purple">
-                <div><span className="wth-icon">&#128187;</span> IT & Programming</div>
-                <div><span className="wth-icon">&#127912;</span> Design & Multimedia</div>
                 <div><span className="wth-icon">&#9997;&#65039;</span> Writing & Translation</div>
+                <div><span className="wth-icon">&#127912;</span> Design & Multimedia</div>
+                <div><span className="wth-icon">&#128187;</span> IT & Programming</div>
                 <div><span className="wth-icon">&#128221;</span> Sales & Marketing</div>
                 <div><span className="wth-icon">&#9881;&#65039;</span> Admin Support</div>
                 <div><span className="wth-icon">&#128196;</span> Legal</div>
@@ -174,9 +181,78 @@ const WantToHire = () => {
             </ul>
           </div>
         </div>
-        <div className="wth-skills-btn-row">
-          <span className="wth-skills-btn">View all skills</span>
-        </div>
+        <span
+                className="wth-skills-btn"
+                onClick={handleFreelancerBtnClick}
+              >
+                See More
+              </span>
+              {showFreelancerOptions && (
+                <div className="freelancer-options-popup" style={{
+                  background: '#fff',
+                  border: '1px solid #eee',
+                  borderRadius: '8px',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                  marginTop: '12px',
+                  padding: '20px',
+                  zIndex: 10,
+                  position: 'relative'
+                }}>
+                  <h4>Freelancers by Sector</h4>
+                  <div style={{ display: 'flex', gap: '32px', flexWrap: 'wrap' }}>
+                    <div>
+                      <strong>Design & Multimedia</strong>
+                      <ul>
+                        <li>Logo Designer</li>
+                        <li>UI/UX Designer</li>
+                        <li>Illustrator</li>
+                        <li>Video Editor</li>
+                        <li>Animator</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <strong>Writing & Translation</strong>
+                      <ul>
+                        <li>Content Writer</li>
+                        <li>Copywriter</li>
+                        <li>Technical Writer</li>
+                        <li>Translator</li>
+                        <li>Proofreader</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <strong>IT & Programming</strong>
+                      <ul>
+                        <li>Web Developer</li>
+                        <li>Mobile App Developer</li>
+                        <li>WordPress Expert</li>
+                        <li>QA Tester</li>
+                        <li>DevOps Engineer</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <strong>Sales & Marketing</strong>
+                      <ul>
+                        <li>SEO Specialist</li>
+                        <li>Social Media Manager</li>
+                        <li>Email Marketer</li>
+                        <li>Ad Campaign Manager</li>
+                        <li>Market Researcher</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <strong>Admin Support</strong>
+                      <ul>
+                        <li>Virtual Assistant</li>
+                        <li>Data Entry</li>
+                        <li>Customer Support</li>
+                        <li>Project Coordinator</li>
+                        <li>Scheduler</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
       </section>
       <section className="wth-help-section">
         <h3 className="wth-help-title">NEED HELP?</h3>
