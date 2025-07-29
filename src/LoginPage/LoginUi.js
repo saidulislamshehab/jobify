@@ -93,7 +93,7 @@ const LoginUi = () => {
         </div>
         
         {/* Right Panel - Branding */}
-        <div className="login-brand-panel" style={{ backgroundImage: `url(${backgroundImage})` }}>
+        <div className="login-brand-panel" style={{ backgroundImage: url(${backgroundImage}) }}>
           <div className="brand-content">
             <div className="brand-welcome">
               <h2 className="brand-title">Welcome back Fella!</h2>
