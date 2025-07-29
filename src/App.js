@@ -12,6 +12,7 @@ function App() {
       <Routes>
         <Route path="/" element={<WantToHire />} />
         <Route path="/work" element={<WantToWork />} />
+        <Route path="/contact" element={<ContactPage />} />
       </Routes>
     </BrowserRouter>
   );
