@@ -101,7 +101,6 @@ const LoginUi = () => {
             </div>
           </div>
         </div>
-        
       </div>
     </div>
   );
