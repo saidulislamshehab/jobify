@@ -1,7 +1,7 @@
 /* WantToWork Page Styles */
 .want-to-work-container {
   font-family: 'Segoe UI', Arial, sans-serif;
-  background: #ffffff;
+  background: #fafbfc;
   min-height: 100vh;
   color: #222;
   padding-top: 84px;
@@ -112,22 +112,16 @@
 .w2w-badges {
   display: flex;
   gap: 24px;
-  font-size: 0.9rem;
-  color: #6b7280;
-  margin-bottom: 24px;
-}
-
-.w2w-badges span {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  font-size: 1.05rem;
+  color: #666;
+  margin-bottom: 18px;
 }
 
 .w2w-main-content h1 {
-  font-size: 3rem;
-  font-weight: 700;
-  margin-bottom: 20px;
-  line-height: 1.1;
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  line-height: 1.2;
   color: #111827;
 }
 
@@ -136,9 +130,9 @@
 }
 
 .w2w-subheadline {
-  font-size: 1.25rem;
-  color: #6b7280;
-  margin-bottom: 32px;
+  font-size: 1.15rem;
+  color: #444;
+  margin-bottom: 28px;
   line-height: 1.5;
 }
 
@@ -146,16 +140,16 @@
   display: flex;
   align-items: center;
   gap: 24px;
-  margin-bottom: 60px;
+  margin-bottom: 40px;
 }
 
 .w2w-work-btn {
   background: #8b5cf6;
   color: #ffffff;
   border: none;
-  border-radius: 8px;
-  padding: 14px 32px;
-  font-size: 1.1rem;
+  border-radius: 20px;
+  padding: 12px 32px;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s;
@@ -166,10 +160,10 @@
 }
 
 .w2w-hire-link {
-  color: #2563eb;
+  color: #8b5cf6;
   text-decoration: none;
   font-weight: 500;
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 /* People Circles */
@@ -189,8 +183,8 @@
   height: 80px;
   border-radius: 50%;
   overflow: hidden;
-  border: 4px solid #ffffff;
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+  border: 3px solid #eee;
+  box-shadow: 0 2px 8px rgba(80,80,120,0.07);
 }
 
 .w2w-circle:nth-child(1) { top: 0; left: 60px; }
@@ -210,25 +204,31 @@
 /* Cards */
 .w2w-cards {
   display: flex;
-  gap: 40px; /* Slightly more gap for bigger cards */
-  margin-top: 60px; /* Match WantToHire */
-  align-items: stretch; /* Stretch cards to same height */
+  gap: 40px;
+  margin-top: 60px;
+  align-items: stretch;
 }
 
 .w2w-card {
   background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  padding: 48px 36px; /* Bigger padding */
+  border-radius: 24px;
+  box-shadow: 0 2px 16px rgba(80,80,120,0.07);
+  padding: 48px 36px;
   flex: 1 1 0;
   display: flex;
   flex-direction: column;
   gap: 24px;
-  min-width: 320px; /* Bigger min width */
-  max-width: 520px; /* Bigger max width */
-  min-height: 200px; /* Bigger min height */
-  justify-content: center; /* Center content vertically */
-  align-items: flex-start; /* Align content to left */
+  min-width: 320px;
+  max-width: 520px;
+  min-height: 200px;
+  justify-content: center;
+  align-items: flex-start;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.w2w-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 24px rgba(80,80,120,0.12);
 }
 
 .w2w-card-img {
@@ -275,56 +275,7 @@
   margin: 0;
 }
 
-/* Responsive Design */
-@media (max-width: 900px) {
-  .w2w-main {
-    padding: 32px 16px 0 16px;
-  }
-  
-  .w2w-main-content h1 {
-    font-size: 2.5rem;
-  }
-  
-  .w2w-cards {
-    flex-direction: column;
-    gap: 24px;
-  }
-  
-  .w2w-people-circles {
-    display: none;
-  }
-  
-  .w2w-card {
-    max-width: 100%;
-    min-width: 0;
-  }
-  
-  .wth-header-inner {
-    padding: 0 16px;
-  }
-  
-  .wth-nav {
-    gap: 20px;
-  }
-}
-
-@media (max-width: 600px) {
-  .w2w-badges {
-    flex-direction: column;
-    gap: 12px;
-  }
-  
-  .w2w-cta {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-  }
-  
-  .w2w-main-content h1 {
-    font-size: 2rem;
-  }
-} 
-
+/* Industry Leader Section */
 .w2w-industry-leader {
   max-width: 1200px;
   margin: 64px auto 0 auto;
@@ -409,26 +360,7 @@
   display: block;
 }
 
-@media (max-width: 900px) {
-  .w2w-industry-leader {
-    padding: 0 8px 48px 8px;
-  }
-  .w2w-industry-grid {
-    gap: 16px;
-  }
-}
-
-@media (max-width: 700px) {
-  .w2w-industry-grid {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
-  }
-  .w2w-industry-card, .w2w-industry-img {
-    min-height: 140px;
-    border-radius: 20px;
-  }
-} 
-
+/* Career Section */
 .w2w-career-section {
   max-width: 1200px;
   margin: 64px auto 0 auto;
@@ -587,40 +519,114 @@
   text-decoration: underline;
 }
 
-@media (max-width: 1100px) {
-  .w2w-career-cards {
-    flex-direction: column;
-    gap: 32px;
-    align-items: center;
-  }
-  .w2w-career-card {
-    max-width: 600px;
-    min-width: 0;
-    width: 100%;
-  }
+/* Skills Section */
+.w2w-skills-section {
+  max-width: 1200px;
+  margin: 64px auto 0 auto;
+  padding: 0 24px 64px 24px;
 }
-@media (max-width: 700px) {
-  .w2w-career-section {
-    padding: 0 8px;
-  }
-  .w2w-career-title {
-    font-size: 1.3rem;
-  }
-  .w2w-career-card {
-    padding: 24px 10px 20px 10px;
-    border-radius: 18px;
-  }
-  .w2w-career-avatar, .w2w-career-avatar-bg {
-    width: 40px;
-    height: 40px;
-    left: 24px;
-  }
-  .w2w-career-list {
-    grid-template-columns: 1fr;
-    gap: 8px 0;
-  }
-} 
 
+.w2w-skills-title {
+  text-align: center;
+  font-size: 1rem;
+  letter-spacing: 0.12em;
+  color: #22223b;
+  font-weight: 500;
+  margin-bottom: 36px;
+}
+
+.w2w-skills-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+.w2w-skills-col {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(80,80,120,0.06);
+}
+
+.w2w-skills-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  margin-bottom: 16px;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.w2w-skills-label--blue {
+  background: #f3f7ff;
+  color: #2563eb;
+}
+
+.w2w-skills-label--purple {
+  background: #f6f3ff;
+  color: #8b5cf6;
+}
+
+.w2w-skills-label--green {
+  background: #f0fdf4;
+  color: #059669;
+}
+
+.w2w-skills-label-icon {
+  font-size: 1.1rem;
+}
+
+.w2w-skills-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.w2w-skills-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.w2w-skills-list--blue .w2w-icon {
+  color: #2563eb;
+}
+
+.w2w-skills-list--purple .w2w-icon {
+  color: #8b5cf6;
+}
+
+.w2w-skills-list--green .w2w-icon {
+  color: #059669;
+}
+
+.w2w-skills-btn {
+  display: block;
+  text-align: center;
+  background: #8b5cf6;
+  color: #fff;
+  padding: 12px 32px;
+  border-radius: 24px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin: 0 auto;
+  max-width: 200px;
+}
+
+.w2w-skills-btn:hover {
+  background: #7c3aed;
+}
+
+/* Help Section */
 .w2w-help-section {
   max-width: 1200px;
   margin: 64px auto 0 auto;
@@ -697,7 +703,62 @@
   color: #8b5cf6;
   text-decoration: underline;
 }
-@media (max-width: 1100px) {
+
+/* Responsive Design */
+@media (max-width: 900px) {
+  .w2w-main {
+    padding: 32px 16px 0 16px;
+  }
+  
+  .w2w-main-content h1 {
+    font-size: 2.5rem;
+  }
+  
+  .w2w-cards {
+    flex-direction: column;
+    gap: 24px;
+  }
+  
+  .w2w-people-circles {
+    display: none;
+  }
+  
+  .w2w-card {
+    max-width: 100%;
+    min-width: 0;
+  }
+  
+  .wth-header-inner {
+    padding: 0 16px;
+  }
+  
+  .wth-nav {
+    gap: 20px;
+  }
+
+  .w2w-industry-leader {
+    padding: 0 8px 48px 8px;
+  }
+  .w2w-industry-grid {
+    gap: 16px;
+  }
+
+  .w2w-career-cards {
+    flex-direction: column;
+    gap: 32px;
+    align-items: center;
+  }
+  .w2w-career-card {
+    max-width: 600px;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .w2w-skills-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
   .w2w-help-cards {
     flex-direction: column;
     gap: 24px;
@@ -709,7 +770,41 @@
     width: 100%;
   }
 }
+
 @media (max-width: 700px) {
+  .w2w-industry-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+  .w2w-industry-card, .w2w-industry-img {
+    min-height: 140px;
+    border-radius: 20px;
+  }
+
+  .w2w-career-section {
+    padding: 0 8px;
+  }
+  .w2w-career-title {
+    font-size: 1.3rem;
+  }
+  .w2w-career-card {
+    padding: 24px 10px 20px 10px;
+    border-radius: 18px;
+  }
+  .w2w-career-avatar, .w2w-career-avatar-bg {
+    width: 40px;
+    height: 40px;
+    left: 24px;
+  }
+  .w2w-career-list {
+    grid-template-columns: 1fr;
+    gap: 8px 0;
+  }
+
+  .w2w-skills-section {
+    padding: 0 8px 48px 8px;
+  }
+
   .w2w-help-section {
     padding: 0 8px 48px 8px;
   }
@@ -719,5 +814,22 @@
   .w2w-help-card {
     padding: 18px 8px 16px 8px;
     border-radius: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .w2w-badges {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .w2w-cta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .w2w-main-content h1 {
+    font-size: 2rem;
   }
 } 
