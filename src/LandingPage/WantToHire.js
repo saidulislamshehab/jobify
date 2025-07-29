@@ -49,7 +49,7 @@ const WantToHire = () => {
         </div>
         <div className="wth-cards">
           <div className="wth-card">
-            <div className="wth-card-img"><img src="https://randomuser.me/api/portraits/men/11.jpg" alt="developer" /></div>
+            <div className="wth-card-img"><img src="https://randomuser.me/api/portraits/men/19.jpg" alt="developer" /></div>
             <div className="wth-card-content">
               <span>I want to hire</span>
               <h2>DEVELOPERS</h2>

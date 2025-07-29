@@ -38,17 +38,17 @@ const WantToWork = () => {
           </div>
         </div>
         <div className="w2w-people-circles">
-          <div className="w2w-circle"><img src="https://randomuser.me/api/portraits/women/44.jpg" alt="person" /></div>
-          <div className="w2w-circle"><img src="https://randomuser.me/api/portraits/men/65.jpg" alt="person" /></div>
+          <div className="w2w-circle"><img src="https://randomuser.me/api/portraits/women/45.jpg" alt="person" /></div>
+          <div className="w2w-circle"><img src="https://randomuser.me/api/portraits/men/62.jpg" alt="person" /></div>
           <div className="w2w-circle"><img src="https://randomuser.me/api/portraits/women/68.jpg" alt="person" /></div>
           <div className="w2w-circle"><img src="https://randomuser.me/api/portraits/men/23.jpg" alt="person" /></div>
           <div className="w2w-circle"><img src="https://randomuser.me/api/portraits/women/12.jpg" alt="person" /></div>
-          <div className="w2w-circle"><img src="https://randomuser.me/api/portraits/men/32.jpg" alt="person" /></div>
-          <div className="w2w-circle"><img src="https://randomuser.me/api/portraits/men/11.jpg" alt="person" /></div>
+          <div className="w2w-circle"><img src="https://randomuser.me/api/portraits/men/67.jpg" alt="person" /></div>
+          <div className="w2w-circle"><img src="https://randomuser.me/api/portraits/men/85.jpg" alt="person" /></div>
         </div>
         <div className="w2w-cards">
           <div className="w2w-card">
-            <div className="w2w-card-img"><img src="https://randomuser.me/api/portraits/men/75.jpg" alt="developer" /></div>
+            <div className="w2w-card-img"><img src="https://randomuser.me/api/portraits/men/32.jpg" alt="developer" /></div>
             <div className="w2w-card-content">
               <span>I want to work</span>
               <h2>DEVELOPERS</h2>

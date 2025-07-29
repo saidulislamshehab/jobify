@@ -29,7 +29,7 @@ const SignupUi = () => {
           <div className="cards-container">
             <div className="signup-card">
               <div className="card-image">
-                <img src="https://randomuser.me/api/portraits/men/11.jpg" alt="Developer" />
+                <img src="https://randomuser.me/api/portraits/men/71.jpg" alt="Developer" />
                 <div className="image-decoration blue-lines"></div>
               </div>
               <div className="card-content">
