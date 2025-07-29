@@ -9,10 +9,20 @@ import backgroundImage from './image1.jpg';
 const LoginUi = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
   const handleSignupClick = () => {
     navigate('/signup');
+  };
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    // Add your login logic here
+    console.log('Login attempt:', { email, password, rememberMe });
+    // For now, just navigate to home page
+    navigate('/');
   };
 
   return (
@@ -25,7 +35,7 @@ const LoginUi = () => {
               <h1 className="login-title">Sign in to Jobify!</h1>
             </div>
             
-            <form className="login-form">
+            <form className="login-form" onSubmit={(e) => e.preventDefault()}>
               <div className="form-group">
                 <div className="input-wrapper">
                   <input
@@ -33,6 +43,7 @@ const LoginUi = () => {
                     id="email"
                     placeholder="Email"
                     className="form-input"
+                    required
                   />
                   <span className="input-icon">✉️</span>
                 </div>
@@ -45,6 +56,7 @@ const LoginUi = () => {
                     id="password"
                     placeholder="Password"
                     className="form-input"
+                    required
                   />
                   <button
                     type="button"
@@ -93,7 +105,7 @@ const LoginUi = () => {
         </div>
         
         {/* Right Panel - Branding */}
-        <div className="login-brand-panel" style={{ backgroundImage: url(${backgroundImage}) }}>
+        <div className="login-brand-panel" style={{ backgroundImage: `url(${backgroundImage})` }}>
           <div className="brand-content">
             <div className="brand-welcome">
               <h2 className="brand-title">Welcome back Fella!</h2>
