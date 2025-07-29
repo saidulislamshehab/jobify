@@ -25,12 +25,13 @@ const WantToWork = () => {
             <span>🔒 Protected Payments</span>
           </div>
           <h1>
-            <span className="w2w-highlight">Find Your Dream Job</span><br />
-            and accelerate your career growth
+            <span className="w2w-highlight">Build the Future</span><br />
+            You Deserve <br />
+            Explore jobs that inspire success
           </h1>
           <p className="w2w-subheadline">
-            Connect with top companies worldwide.<br />
-            Work remotely, set your own schedule, and earn competitive rates
+          Work with the best, from wherever you are<br />
+          Enjoy flexible schedules, remote freedom, and rates that match your skills.
           </p>
           <div className="w2w-cta">
             <Link to="/signup" className="w2w-work-btn">I want to work</Link>
@@ -66,7 +67,7 @@ const WantToWork = () => {
         </div>
       </main>
       <section className="w2w-industry-leader">
-        <h3 className="w2w-industry-title">THE INDUSTRY LEADER IN LATIN AMERICA</h3>
+        <h3 className="w2w-industry-title">THE INDUSTRY LEADER IN BANGLADESH</h3>
         <div className="w2w-industry-grid">
           <div className="w2w-industry-card w2w-industry-card-blue">
             <h4>OVER TEN YEARS ON THE MARKET</h4>
