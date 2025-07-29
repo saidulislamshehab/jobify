@@ -21,8 +21,8 @@ const WantToHire = () => {
       <main className="wth-main">
         <div className="wth-main-content">
           <div className="wth-badges">
-            <span>🤓 Free consultation</span>
-            <span>😁 Satisfaction Guaranteed</span>
+            <span>📞 Free consultation</span>
+            <span>✓ Satisfaction Guaranteed</span>
             <span>🔐 Protected Payments</span>
           </div>
           <h1>
@@ -34,7 +34,7 @@ const WantToHire = () => {
             We bring talent that talks your talk and works your hours
           </p>
           <div className="wth-cta">
-            <span className="wth-hire-btn">I want to hire</span>
+            <Link to="/signup" className="wth-hire-btn">I want to hire</Link>
             <Link to="/work" className="wth-work-link wth-link-btn">Do you want to work? →</Link>
           </div>
         </div>
@@ -108,7 +108,7 @@ const WantToHire = () => {
                 <div><span className="wth-icon">&#128187;</span> DevOps</div>
               </div>
               <div className="wth-build-actions">
-                <span className="wth-build-btn wth-build-btn--blue">Hire a Developer</span>
+                <Link to="/signup" className="wth-build-btn wth-build-btn--blue">Hire a Developer</Link>
                 <span className="wth-build-link wth-link-btn">Learn more <span>&#8594;</span></span>
               </div>
             </div>
@@ -131,7 +131,7 @@ const WantToHire = () => {
                 <div><span className="wth-icon">&#128736;&#65039;</span> Engineering & Manufacturing</div>
               </div>
               <div className="wth-build-actions">
-                <span className="wth-build-btn wth-build-btn--purple">Hire a Freelancer</span>
+                <Link to="/signup" className="wth-build-btn wth-build-btn--purple">Hire a Freelancer</Link>
                 <span className="wth-build-link wth-link-btn">Learn more <span>&#8594;</span></span>
               </div>
             </div>

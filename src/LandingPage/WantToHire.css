@@ -135,6 +135,8 @@
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s;
+  text-decoration: none;
+  display: inline-block;
 }
 .wth-hire-btn:hover {
   background: #4f46e5;
@@ -167,7 +169,7 @@
 }
 .wth-circle:nth-child(1) { top: 0; left: 60px; }
 .wth-circle:nth-child(2) { top: 40px; right: 40px; }
-.wth-circle:nth-child(3) { top: 120px; left: 180px; }
+.wth-circle:nth-child(3) { top: 100px; left: 180px; }
 .wth-circle:nth-child(4) { top: 200px; right: 100px; }
 .wth-circle:nth-child(5) { top: 260px; left: 40px; }
 .wth-circle:nth-child(6) { top: 180px; right: 200px; }
@@ -407,6 +409,8 @@
   background: #fff;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
+  text-decoration: none;
+  display: inline-block;
 }
 .wth-build-btn--blue {
   border-color: #2563eb;

@@ -33,7 +33,7 @@ const WantToWork = () => {
             Work remotely, set your own schedule, and earn competitive rates
           </p>
           <div className="w2w-cta">
-            <span className="w2w-work-btn">I want to work</span>
+            <Link to="/signup" className="w2w-work-btn">I want to work</Link>
             <Link to="/" className="w2w-hire-link wth-link-btn">Do you want to hire? →</Link>
           </div>
         </div>
@@ -109,7 +109,7 @@ const WantToWork = () => {
                 <div><span className="w2w-career-icon">⚙️</span> DevOps</div>
               </div>
               <div className="w2w-career-actions">
-                <button className="w2w-career-btn w2w-career-btn-blue">Start Working as a Developer</button>
+                <Link to="/signup" className="w2w-career-btn w2w-career-btn-blue">Start Working as a Developer</Link>
                 <a href="#" className="w2w-career-link">Learn more <span>&rarr;</span></a>
               </div>
             </div>
@@ -133,7 +133,7 @@ const WantToWork = () => {
                 <div><span className="w2w-career-icon">🏭</span> Engineering & Manufacturing</div>
               </div>
               <div className="w2w-career-actions">
-                <button className="w2w-career-btn w2w-career-btn-purple">Sign up as a Freelancer</button>
+                <Link to="/signup" className="w2w-career-btn w2w-career-btn-purple">Sign up as a Freelancer</Link>
                 <a href="#" className="w2w-career-link">Learn more <span>&rarr;</span></a>
               </div>
             </div>

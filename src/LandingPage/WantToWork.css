@@ -153,6 +153,8 @@
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s;
+  text-decoration: none;
+  display: inline-block;
 }
 
 .w2w-work-btn:hover {
@@ -189,11 +191,11 @@
 
 .w2w-circle:nth-child(1) { top: 0; left: 60px; }
 .w2w-circle:nth-child(2) { top: 40px; right: 40px; }
-.w2w-circle:nth-child(3) { top: 120px; left: 180px; }
-.w2w-circle:nth-child(4) { top: 200px; right: 100px; }
+.w2w-circle:nth-child(3) { top: 5px; left: 180px; }
+.w2w-circle:nth-child(4) { top: 120px; right: 150px; }
 .w2w-circle:nth-child(5) { top: 260px; left: 40px; }
-.w2w-circle:nth-child(6) { top: 180px; right: 200px; }
-.w2w-circle:nth-child(7) { top: 80px; right: 180px; }
+.w2w-circle:nth-child(6) { top: 150px; right: 250px; }
+.w2w-circle:nth-child(7) { top: 250px; right: 150px; }
 
 .w2w-circle img {
   width: 100%;
@@ -485,6 +487,8 @@
   background: #fff;
   cursor: pointer;
   transition: background 0.2s, color 0.2s, border 0.2s;
+  text-decoration: none;
+  display: inline-block;
 }
 .w2w-career-btn-blue {
   color: #2563eb;
