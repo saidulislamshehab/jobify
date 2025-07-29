@@ -1,0 +1,109 @@
+import React, { useState } from 'react';
+import './LoginUi.css';
+import facebookIcon from './facebook.png';
+import googleIcon from './Google.png';
+import appleIcon from './apple.png';
+import backgroundImage from './image1.jpg';
+
+const LoginUi = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+
+  return (
+    <div className="login-container">
+      <div className="login-card">
+        {/* Left Panel - Login Form */}
+        <div className="login-form-panel">
+          <div className="login-form-content">
+            <div className="welcome-header">
+              <h1 className="login-title">Sign in to Jobify!</h1>
+            </div>
+            
+            <form className="login-form">
+              <div className="form-group">
+                <div className="input-wrapper">
+                  <input
+                    type="email"
+                    id="email"
+                    placeholder="Email"
+                    className="form-input"
+                  />
+                  <span className="input-icon">✉️</span>
+                </div>
+              </div>
+              
+              <div className="form-group">
+                <div className="input-wrapper">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    placeholder="Password"
+                    className="form-input"
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? "👁️" : "👁️‍🗨️"}
+                  </button>
+                </div>
+              </div>
+              
+              <div className="form-options">
+                <label className="checkbox-wrapper">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                  />
+                  <span className="checkmark"></span>
+                  Remember for 30 days
+                </label>
+                <a href="#" className="forgot-password">Forgot password?</a>
+              </div>
+              
+              <button type="submit" className="login-button">
+                Login
+              </button>
+            </form>
+            
+            <div className="divider-before"></div>
+            <div className="divider-text">or sign in with</div>
+            <div className="divider-after"></div>
+            
+            <div className="social-login">
+              <button className="social-button apple">
+                <img src={appleIcon} alt="Apple" className="social-icon-img" />
+              </button>
+              <button className="social-button google">
+                <img src={googleIcon} alt="Google" className="social-icon-img" />
+              </button>
+              <button className="social-button facebook">
+                <img src={facebookIcon} alt="Facebook" className="social-icon-img" />
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        {/* Right Panel - Branding */}
+        <div className="login-brand-panel" style={{ backgroundImage: `url(${backgroundImage})` }}>
+          <div className="brand-content">
+            <div className="brand-welcome">
+              <h2 className="brand-title">Welcome back Fella!</h2>
+              <p className="brand-subtitle">Enter your personal details and start your journey with us.
+              Join our platform, unlock new opportunities, and grow your career with confidence.</p>
+            </div>
+            
+            <div className="brand-signup">
+              <p className="signup-text">Still haven't created a Jobify account?</p>
+              <button className="signup-button">Sign Up</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default LoginUi;
