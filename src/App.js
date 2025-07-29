@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import WantToHire from './LandingPage/WantToHire';
 import WantToWork from './LandingPage/WantToWork';
 import LoginUi from './LoginPage/LoginUi';
+import ContactPage from './LandingPage/contact_page';
 import './LandingPage/WantToHire.css';
 
 function App() {
@@ -11,7 +12,6 @@ function App() {
       <Routes>
         <Route path="/" element={<WantToHire />} />
         <Route path="/work" element={<WantToWork />} />
-        <Route path="/login" element={<LoginUi />} />
       </Routes>
     </BrowserRouter>
   );
