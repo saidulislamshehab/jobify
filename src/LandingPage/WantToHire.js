@@ -278,7 +278,10 @@ const WantToHire = () => {
             <div className="wth-help-card-title">SUPPORT</div>
             <div className="wth-help-card-desc">Clear your doubts and get assistance.</div>
             <span className="wth-help-link">Help Desk</span>
-            <span className="wth-help-link">Contact us</span>
+            <Link to="/contact" className="wth-help-link">
+              Contact us
+            </Link>
+
           </div>
         </div>
       </section>

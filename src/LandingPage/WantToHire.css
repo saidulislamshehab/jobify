@@ -548,17 +548,23 @@
 }
 .wth-help-title {
   text-align: center;
-  font-size: 1.05rem;
+  font-size: 1.45em;
   letter-spacing: 2px;
   color: #222;
   margin-bottom: 36px;
   font-weight: 500;
+  text-decoration: underline;
 }
 .wth-help-cards {
   display: flex;
   gap: 32px;
   justify-content: center;
   align-items: stretch;
+  transition: background-color 0.2s ease, box-shadow 0.3s ease;
+}
+.wth-help-card:hover {
+    background-color: #5e5b8e2b;
+      box-shadow: 0 4px 24px rgba(80, 80, 120, 0.188);
 }
 .wth-help-card {
   background: #fff;
