@@ -12,7 +12,7 @@ const Navbar = ({ logoColor = '#8b5cf6' }) => {
   };
 
   const handleSignupClick = () => {
-    navigate('/login');
+    navigate('/signup');
   };
 
   return (
