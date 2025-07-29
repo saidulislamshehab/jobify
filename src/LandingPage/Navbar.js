@@ -15,7 +15,7 @@ const Navbar = ({ logoColor = '#8b5cf6' }) => {
           </a>
         </div>
         <nav className="wth-nav">
-          <Link
+          <Link   //Used to navigate to the home page
             to="/"
             className={isActive('/') ? 'wth-nav-link active' : 'wth-nav-link'}
             style={{ position: 'relative' }}
