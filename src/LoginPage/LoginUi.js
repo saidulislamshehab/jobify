@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './LoginUi.css';
 import facebookIcon from './facebook.png';
 import googleIcon from './Google.png';
@@ -8,6 +9,11 @@ import backgroundImage from './image1.jpg';
 const LoginUi = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSignupClick = () => {
+    navigate('/signup');
+  };
 
   return (
     <div className="login-container">
@@ -97,7 +103,7 @@ const LoginUi = () => {
             
             <div className="brand-signup">
               <p className="signup-text">Still haven't created a Jobify account?</p>
-              <button className="signup-button">Sign Up</button>
+              <button className="signup-button" onClick={handleSignupClick}>Sign Up</button>
             </div>
           </div>
         </div>

@@ -1,0 +1,266 @@
+/* Signup Page Styles */
+.signup-container {
+  min-height: 100vh;
+  background: #f8f9fa;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.signup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background: #fff;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.signup-logo {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.logo-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2563eb;
+  letter-spacing: -0.5px;
+}
+
+.logo-dot {
+  font-size: 1rem;
+  color: #f59e0b;
+}
+
+.language-selector {
+  display: flex;
+  align-items: center;
+}
+
+.lang-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid #8b5cf6;
+  border-radius: 8px;
+  background: #fff;
+  color: #8b5cf6;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.lang-button:hover {
+  background: #f3f4f6;
+}
+
+.chevron {
+  font-size: 0.8rem;
+}
+
+/* Main Content */
+.signup-main {
+  flex: 1;
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.go-back {
+  display: inline-flex;
+  align-items: center;
+  color: #8b5cf6;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 30px;
+  transition: color 0.2s;
+}
+
+.go-back:hover {
+  color: #7c3aed;
+}
+
+.signup-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  text-align: center;
+  margin: 0 0 60px 0;
+  line-height: 1.2;
+}
+
+/* Section Titles */
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 30px 0;
+}
+
+.hire-section {
+  margin-bottom: 60px;
+}
+
+.work-section {
+  margin-bottom: 60px;
+}
+
+/* Cards Container */
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+/* Signup Cards */
+.signup-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.signup-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.card-image {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.card-image img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.image-decoration {
+  position: absolute;
+  bottom: -10px;
+  right: -10px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  z-index: -1;
+}
+
+.blue-lines {
+  background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+  opacity: 0.1;
+}
+
+.purple-dots {
+  background: linear-gradient(45deg, #8b5cf6, #7c3aed);
+  opacity: 0.1;
+}
+
+.card-content {
+  text-align: left;
+}
+
+.card-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  letter-spacing: 0.5px;
+}
+
+.card-title.blue {
+  color: #2563eb;
+}
+
+.card-title.purple {
+  color: #8b5cf6;
+}
+
+.card-description {
+  font-size: 1rem;
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Footer */
+.signup-footer {
+  text-align: center;
+  padding: 30px;
+  background: #fff;
+  border-top: 1px solid #e9ecef;
+}
+
+.footer-text {
+  font-size: 1rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.signin-link {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.signin-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .signup-header {
+    padding: 15px 20px;
+  }
+  
+  .signup-main {
+    padding: 20px;
+  }
+  
+  .signup-title {
+    font-size: 2rem;
+    margin-bottom: 40px;
+  }
+  
+  .cards-container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .signup-card {
+    padding: 25px;
+  }
+  
+  .section-title {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .signup-title {
+    font-size: 1.8rem;
+  }
+  
+  .signup-card {
+    padding: 20px;
+  }
+  
+  .card-image img {
+    width: 60px;
+    height: 60px;
+  }
+} 

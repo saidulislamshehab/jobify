@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import WantToHire from './LandingPage/WantToHire';
 import WantToWork from './LandingPage/WantToWork';
 import LoginUi from './LoginPage/LoginUi';
+import SignupUi from './SignupPage/SignupUi';
 import ContactPage from './LandingPage/contact_page';
 import './LandingPage/WantToHire.css';
 
@@ -13,6 +14,7 @@ function App() {
         <Route path="/" element={<WantToHire />} />
         <Route path="/work" element={<WantToWork />} />
         <Route path="/login" element={<LoginUi />} />
+        <Route path="/signup" element={<SignupUi />} />
         <Route path="/contact" element={<ContactPage />} />
       </Routes>
     </BrowserRouter>
