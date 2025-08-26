@@ -1,0 +1,492 @@
+/* Client Signup Landing Page Styles */
+.client-signup-container {
+  min-height: 100vh;
+  background: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #1a202c;
+}
+
+/* Header Styles */
+.client-header {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: bold;
+  color: #2563eb;
+  letter-spacing: 1px;
+}
+
+.logo-accent {
+  background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.login-btn {
+  background: none;
+  border: none;
+  color: #374151;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.login-btn:hover {
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
+
+.signup-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 12px 24px;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.signup-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+/* Main Content Styles */
+.client-main-content {
+  padding: 80px 24px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+.content-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+/* Left Side - Hiring Section */
+.hiring-section {
+  animation: fadeInLeft 1s ease-out;
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.main-headline {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 24px;
+  color: #1a202c;
+}
+
+.highlight {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.main-description {
+  font-size: 1.25rem;
+  color: #4a5568;
+  line-height: 1.6;
+  margin-bottom: 40px;
+  max-width: 500px;
+}
+
+.get-matched-btn {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: white;
+  border: none;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 16px 32px;
+  border-radius: 12px;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
+}
+
+.get-matched-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(37, 99, 235, 0.3);
+}
+
+/* Right Side - Benefits Infographic */
+.benefits-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeInRight 1s ease-out 0.3s both;
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.benefits-infographic {
+  position: relative;
+  width: 400px;
+  height: 400px;
+}
+
+.infographic-circle {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin: 0 auto;
+}
+
+.circle-outline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 3px solid #1e40af;
+  border-radius: 50%;
+  opacity: 0.3;
+}
+
+.circle-segments {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.segment {
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  transform-origin: 100% 100%;
+}
+
+.segment.yellow { background: #fbbf24; transform: rotate(0deg); }
+.segment.green { background: #10b981; transform: rotate(60deg); }
+.segment.blue { background: #3b82f6; transform: rotate(120deg); }
+.segment.magenta { background: #ec4899; transform: rotate(180deg); }
+.segment.orange { background: #f97316; transform: rotate(240deg); }
+.segment.pink { background: #f472b6; transform: rotate(300deg); }
+
+/* Benefit Labels */
+.benefit-label {
+  position: absolute;
+  text-align: center;
+  max-width: 150px;
+}
+
+.benefit-label.top {
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.benefit-label.bottom-left {
+  bottom: -80px;
+  left: 20px;
+}
+
+.benefit-label.bottom-right {
+  bottom: -80px;
+  right: 20px;
+}
+
+.benefit-label h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 8px 0;
+}
+
+.benefit-label p {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Features Section */
+.features-section {
+  padding: 80px 24px;
+  background: #ffffff;
+}
+
+.features-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 40px;
+}
+
+.feature-card {
+  text-align: center;
+  padding: 40px 24px;
+  border-radius: 16px;
+  background: #f8fafc;
+  transition: all 0.3s;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  background: #ffffff;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.feature-icon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.feature-card h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 16px 0;
+}
+
+.feature-card p {
+  font-size: 1rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* CTA Section */
+.cta-section {
+  padding: 80px 24px;
+  background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%);
+  color: white;
+  text-align: center;
+}
+
+.cta-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.cta-content h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 16px 0;
+}
+
+.cta-content p {
+  font-size: 1.25rem;
+  opacity: 0.9;
+  margin: 0 0 40px 0;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.primary-cta-btn {
+  background: #ffffff;
+  color: #1e40af;
+  border: none;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 16px 32px;
+  border-radius: 12px;
+  transition: all 0.3s;
+}
+
+.primary-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(255, 255, 255, 0.3);
+}
+
+.secondary-cta-btn {
+  background: transparent;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 16px 32px;
+  border-radius: 12px;
+  transition: all 0.3s;
+}
+
+.secondary-cta-btn:hover {
+  background: #ffffff;
+  color: #1e40af;
+  transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .content-wrapper {
+    gap: 60px;
+  }
+  
+  .main-headline {
+    font-size: 3rem;
+  }
+  
+  .benefits-infographic {
+    width: 350px;
+    height: 350px;
+  }
+  
+  .infographic-circle {
+    width: 250px;
+    height: 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  .content-wrapper {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    text-align: center;
+  }
+  
+  .main-headline {
+    font-size: 2.5rem;
+  }
+  
+  .main-description {
+    margin: 0 auto 40px auto;
+  }
+  
+  .benefits-infographic {
+    width: 300px;
+    height: 300px;
+  }
+  
+  .infographic-circle {
+    width: 200px;
+    height: 200px;
+  }
+  
+  .benefit-label {
+    max-width: 120px;
+  }
+  
+  .benefit-label.top {
+    top: -60px;
+  }
+  
+  .benefit-label.bottom-left,
+  .benefit-label.bottom-right {
+    bottom: -60px;
+  }
+  
+  .features-wrapper {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .cta-content h2 {
+    font-size: 2rem;
+  }
+  
+  .cta-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .client-header {
+    padding: 0 16px;
+  }
+  
+  .client-main-content {
+    padding: 60px 16px;
+  }
+  
+  .main-headline {
+    font-size: 2rem;
+  }
+  
+  .main-description {
+    font-size: 1.1rem;
+  }
+  
+  .get-matched-btn {
+    font-size: 16px;
+    padding: 14px 28px;
+  }
+  
+  .benefits-infographic {
+    width: 250px;
+    height: 250px;
+  }
+  
+  .infographic-circle {
+    width: 180px;
+    height: 180px;
+  }
+  
+  .features-section,
+  .cta-section {
+    padding: 60px 16px;
+  }
+  
+  .cta-content h2 {
+    font-size: 1.8rem;
+  }
+  
+  .cta-content p {
+    font-size: 1.1rem;
+  }
+}
+
+

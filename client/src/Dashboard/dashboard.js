@@ -1,8 +1,70 @@
-import React from 'react';
-import './ProfilePage.css';
+import React, { useState, useEffect } from 'react';
+import './dashboard.css';
 import Footer from '../LandingPage/footer';
 
-const ProfilePage = () => {
+const Dashboard = () => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Get user data from localStorage or sessionStorage
+    const getUserData = () => {
+      try {
+        const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
+        if (userData) {
+          const parsedUser = JSON.parse(userData);
+          console.log('User data loaded:', parsedUser);
+          setUser(parsedUser);
+        } else {
+          // If no user data, redirect to login
+          console.log('No user data found, redirecting to login');
+          window.location.href = '/login';
+        }
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+        window.location.href = '/login';
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getUserData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="profile-page">
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          height: '100vh',
+          fontSize: '18px',
+          color: '#6b7280'
+        }}>
+          Loading...
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="profile-page">
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          height: '100vh',
+          fontSize: '18px',
+          color: '#6b7280'
+        }}>
+          Please log in to view your dashboard
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="profile-page">
       {/* Header Navigation */}
@@ -19,6 +81,17 @@ const ProfilePage = () => {
             <button className="action-btn notification-btn">🔔</button>
             <button className="action-btn message-btn">💬</button>
             <button className="action-btn profile-btn">😊</button>
+            <button 
+              className="action-btn logout-btn" 
+              onClick={() => {
+                localStorage.removeItem('user');
+                sessionStorage.removeItem('user');
+                window.location.href = '/login';
+              }}
+              title="Logout"
+            >
+              🚪
+            </button>
           </div>
         </div>
       </header>
@@ -31,7 +104,16 @@ const ProfilePage = () => {
             <div className="profile-avatar">
               <span className="avatar-icon"></span>
             </div>
-            <h3 className="profile-name">SAIDUL ISLAM SHEHAB</h3>
+            <h3 className="profile-name">{user.name || 'User'}</h3>
+            {user.email && (
+              <p className="profile-email">{user.email}</p>
+            )}
+            {user.jobTitle && (
+              <p className="profile-job-title">{user.jobTitle}</p>
+            )}
+            {user.city && user.country && (
+              <p className="profile-location">📍 {user.city}, {user.country}</p>
+            )}
             <div className="rating">
               <span className="star">⭐</span>
               <span className="star">⭐</span>
@@ -80,7 +162,10 @@ const ProfilePage = () => {
 
         {/* Main Content */}
         <main className="profile-main">
-          <h1 className="main-title">SAIDUL ISLAM SHEHAB</h1>
+          <div className="welcome-section">
+            <h1 className="main-title">Welcome back, {user.name || 'User'}! 👋</h1>
+            <p className="welcome-subtitle">Here's what's happening with your profile today.</p>
+          </div>
           
           {/* Profile Update Notification */}
           <div className="notification-card">
@@ -135,6 +220,6 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
+export default Dashboard;
 
 
