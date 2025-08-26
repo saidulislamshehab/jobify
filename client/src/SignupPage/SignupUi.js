@@ -58,31 +58,35 @@ const SignupUi = () => {
         <section className="work-section">
           <h2 className="section-title">I want to work</h2>
           <div className="cards-container">
-            <div className="signup-card">
-              <div className="card-image">
-                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Developer" />
-                <div className="image-decoration blue-lines"></div>
+            <Link to="/add-jobseeker" className="signup-card-link">
+              <div className="signup-card">
+                <div className="card-image">
+                  <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Developer" />
+                  <div className="image-decoration blue-lines"></div>
+                </div>
+                <div className="card-content">
+                  <h3 className="card-title blue">DEVELOPER</h3>
+                  <p className="card-description">
+                    Work as a developer for a specified time period in USA and Latin American companies.
+                  </p>
+                </div>
               </div>
-              <div className="card-content">
-                <h3 className="card-title blue">DEVELOPER</h3>
-                <p className="card-description">
-                  Work as a developer for a specified time period in USA and Latin American companies.
-                </p>
-              </div>
-            </div>
+            </Link>
             
-            <div className="signup-card">
-              <div className="card-image">
-                <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Freelancer" />
-                <div className="image-decoration purple-dots"></div>
+            <Link to="/add-jobseeker" className="signup-card-link">
+              <div className="signup-card">
+                <div className="card-image">
+                  <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Freelancer" />
+                  <div className="image-decoration purple-dots"></div>
+                </div>
+                <div className="card-content">
+                  <h3 className="card-title purple">FREELANCER</h3>
+                  <p className="card-description">
+                    Work as a freelancer for goals or hours in projects of various categories.
+                  </p>
+                </div>
               </div>
-              <div className="card-content">
-                <h3 className="card-title purple">FREELANCER</h3>
-                <p className="card-description">
-                  Work as a freelancer for goals or hours in projects of various categories.
-                </p>
-              </div>
-            </div>
+            </Link>
           </div>
         </section>
       </main>
@@ -90,6 +94,9 @@ const SignupUi = () => {
       <footer className="signup-footer">
         <p className="footer-text">
           Have an account? <Link to="/login" className="signin-link">Sign in</Link>
+        </p>
+        <p className="footer-text">
+          <Link to="/list-jobseekers" className="view-jobseekers-link">View Job Seekers Directory</Link>
         </p>
       </footer>
     </div>

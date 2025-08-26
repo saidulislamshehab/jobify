@@ -1,0 +1,140 @@
+import React from 'react';
+import './ProfilePage.css';
+import Footer from '../LandingPage/footer';
+
+const ProfilePage = () => {
+  return (
+    <div className="profile-page">
+      {/* Header Navigation */}
+      <header className="profile-header">
+        <div className="header-content">
+          <div className="logo">J<span className="logo-accent">O</span>BIFY</div>
+          <nav className="header-nav">
+            <a href="#" className="nav-link">Find work</a>
+            <a href="#" className="nav-link">My projects</a>
+            <a href="#" className="nav-link">My finances</a>
+          </nav>
+          <div className="header-actions">
+            <button className="action-btn search-btn">🔍</button>
+            <button className="action-btn notification-btn">🔔</button>
+            <button className="action-btn message-btn">💬</button>
+            <button className="action-btn profile-btn">😊</button>
+          </div>
+        </div>
+      </header>
+
+      <div className="profile-content">
+        {/* Left Sidebar */}
+        <aside className="profile-sidebar">
+          {/* Profile Card */}
+          <div className="profile-card">
+            <div className="profile-avatar">
+              <span className="avatar-icon">😊</span>
+            </div>
+            <h3 className="profile-name">SAIDUL ISLAM SHEHAB</h3>
+            <div className="rating">
+              <span className="star">⭐</span>
+              <span className="star">⭐</span>
+              <span className="star">⭐</span>
+              <span className="star">⭐</span>
+              <span className="star">⭐</span>
+            </div>
+            <button className="find-work-btn">Find work</button>
+            <div className="profile-stats">
+              <div className="stat-item">
+                <span className="stat-label">USD 0.00</span>
+                <span className="stat-desc">Available balance</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">0</span>
+                <span className="stat-desc">Ongoing projects</span>
+                <span className="info-icon">ℹ️</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Available Balance Card */}
+          <div className="balance-card">
+            <h4 className="card-title">Your available balance</h4>
+            <div className="balance-warning">
+              <span className="warning-icon">⚠️</span>
+              <span className="warning-text">Set up your options for getting paid</span>
+              <span className="dropdown-icon">▼</span>
+            </div>
+          </div>
+
+          {/* Current Level Card */}
+          <div className="level-card">
+            <h4 className="card-title">Your current level is <span className="level-badge iron">IRON</span></h4>
+            <div className="level-progress">
+              <div className="level-badge active">I</div>
+              <div className="level-badge">B</div>
+              <div className="level-badge">S</div>
+              <div className="level-badge">G</div>
+              <div className="level-badge">P</div>
+              <div className="level-badge">🏆</div>
+            </div>
+            <span className="dropdown-icon">▼</span>
+          </div>
+        </aside>
+
+        {/* Main Content */}
+        <main className="profile-main">
+          <h1 className="main-title">SAIDUL ISLAM SHEHAB</h1>
+          
+          {/* Profile Update Notification */}
+          <div className="notification-card">
+            <div className="notification-header">
+              <span className="notification-icon">🕐</span>
+              <h3 className="notification-title">Update on your profile</h3>
+            </div>
+            <p className="notification-text">
+              We regret to inform you that we couldn't approve your profile. You didn't do anything wrong. 
+              We receive a high volume of applications every day, which compels us to be very selective.
+            </p>
+          </div>
+
+          {/* Profile Moderation Offer */}
+          <div className="moderation-card">
+            <h3 className="moderation-title">Do you want us to reconsider moderating your profile?</h3>
+            <div className="moderation-content">
+              <div className="moderation-info">
+                <span className="moderation-price">USD 11.90</span>
+                <p className="moderation-text">
+                  Complete your profile and opt for our 'Quick Moderation' service. We will carefully review 
+                  your profile in the next 24 hours. If we fail to approve it, we guarantee a refund of your money.
+                </p>
+                <button className="moderation-btn">I want Priority Moderation!</button>
+              </div>
+            </div>
+          </div>
+
+          {/* Current Projects Empty State */}
+          <div className="projects-card">
+            <div className="projects-illustration">
+              <div className="chart-placeholder">
+                <div className="chart-bar"></div>
+                <div className="chart-bar"></div>
+                <div className="chart-bar"></div>
+                <div className="chart-line"></div>
+              </div>
+            </div>
+            <h3 className="projects-title">You'll see all your current projects here</h3>
+            <p className="projects-subtitle">You're just a few steps away from starting your freelancing journey!</p>
+            <button className="find-projects-btn">Find projects</button>
+          </div>
+        </main>
+      </div>
+
+      {/* Help Button */}
+      <button className="help-btn">❓ Help</button>
+
+      {/* Footer */}
+      <Footer />
+    </div>
+  );
+};
+
+export default ProfilePage;
+
+

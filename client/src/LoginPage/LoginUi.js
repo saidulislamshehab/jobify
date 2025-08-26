@@ -21,8 +21,8 @@ const LoginUi = () => {
     e.preventDefault();
     // Add your login logic here
     console.log('Login attempt:', { email, password, rememberMe });
-    // For now, just navigate to home page
-    navigate('/');
+    // Navigate to profile page after successful login
+    navigate('/profile');
   };
 
   return (
@@ -35,7 +35,7 @@ const LoginUi = () => {
               <h1 className="login-title">Sign in to Jobify!</h1>
             </div>
             
-            <form className="login-form" onSubmit={(e) => e.preventDefault()}>
+            <form className="login-form" onSubmit={handleLogin}>
               <div className="form-group">
                 <div className="input-wrapper">
                   <input
