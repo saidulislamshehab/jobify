@@ -7,6 +7,24 @@
   background: #fff;
   padding: 20px;
   font-family: 'Segoe UI', Arial, sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="%23e5e5e5" opacity="0.3"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
+  animation: float 20s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(180deg); }
 }
 
 .login-card {
@@ -18,6 +36,18 @@
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  animation: fadeInUp 1s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Left Panel - Login Form */
@@ -29,6 +59,18 @@
   align-items: center;
   justify-content: center;
   border-radius: 20px 0 0 20px;
+  animation: fadeInRight 1s ease-out 0.3s both;
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .login-form-content {
@@ -41,6 +83,18 @@
 
 .welcome-header {
   margin: 80px 0 40px 0;
+  animation: slideInUp 0.6s ease-out 0.4s both;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .login-title {
@@ -59,6 +113,7 @@
   line-height: 1.5;
   font-weight: 400;
 }
+
 /* 
 .login-form {
   margin-bottom: 30px;
@@ -66,7 +121,11 @@
 
 .form-group {
   margin-bottom: 20px;
+  animation: slideInUp 0.6s ease-out both;
 }
+
+.form-group:nth-child(1) { animation-delay: 0.6s; }
+.form-group:nth-child(2) { animation-delay: 0.7s; }
 
 .input-wrapper {
   position: relative;
@@ -119,6 +178,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
+  animation: slideInUp 0.6s ease-out 0.8s both;
 }
 
 .checkbox-wrapper {
@@ -159,6 +219,7 @@
   cursor: pointer;
   transition: background 0.3s;
   margin-bottom: 30px;
+  animation: slideInUp 0.6s ease-out 0.9s both;
 }
 
 .login-button:hover {
@@ -169,6 +230,7 @@
   height: 1px;
   background: #e5e5e5;
   margin: 20px 0 10px 0;
+  animation: slideInUp 0.6s ease-out 1s both;
 }
 
 .divider-text {
@@ -190,6 +252,7 @@
   justify-content: center;
   gap: 16px;
   margin-bottom: 30px;
+  animation: slideInUp 0.6s ease-out 1.1s both;
 }
 
 .social-button {
@@ -274,6 +337,33 @@
   padding: 60px 50px;
   display: flex;
   align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-brand-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  opacity: 0.3;
+  animation: grain 8s linear infinite;
+}
+
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-5%, -5%); }
+  20% { transform: translate(-10%, 5%); }
+  30% { transform: translate(5%, -10%); }
+  40% { transform: translate(-5%, 15%); }
+  50% { transform: translate(-10%, 5%); }
+  60% { transform: translate(15%, 0%); }
+  70% { transform: translate(0%, 10%); }
+  80% { transform: translate(3%, 15%); }
+  90% { transform: translate(-10%, 10%); }
 }
 
 .brand-content {
@@ -282,6 +372,7 @@
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
+  animation: fadeInUp 1s ease-out 0.6s both;
 }
 
 .brand-welcome {
