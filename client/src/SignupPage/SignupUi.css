@@ -221,6 +221,29 @@
   text-decoration: underline;
 }
 
+.signup-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.signup-card-link:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+.view-jobseekers-link {
+  color: #8b5cf6;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.view-jobseekers-link:hover {
+  color: #7c3aed;
+  text-decoration: underline;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .signup-header {
