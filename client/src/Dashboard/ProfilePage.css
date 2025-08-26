@@ -121,6 +121,13 @@
   line-height: 1.3;
 }
 
+.profile-email {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin: 0 0 16px 0;
+  font-weight: 400;
+}
+
 .rating {
   display: flex;
   justify-content: center;

@@ -29,7 +29,7 @@ const ProfilePage = () => {
           {/* Profile Card */}
           <div className="profile-card">
             <div className="profile-avatar">
-              <span className="avatar-icon">😊</span>
+              <span className="avatar-icon"></span>
             </div>
             <h3 className="profile-name">SAIDUL ISLAM SHEHAB</h3>
             <div className="rating">

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './LoginUi.css';
 import facebookIcon from './facebook.png';
 import googleIcon from './Google.png';
@@ -11,18 +12,42 @@ const LoginUi = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleSignupClick = () => {
     navigate('/signup');
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Add your login logic here
-    console.log('Login attempt:', { email, password, rememberMe });
-    // Navigate to profile page after successful login
-    navigate('/profile');
+    setLoading(true);
+    setError('');
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/jobseekers/login', {
+        email,
+        password
+      });
+
+      console.log('Login successful:', response.data);
+      
+      // Store user data in localStorage (you might want to use a more secure method)
+      if (rememberMe) {
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+      } else {
+        sessionStorage.setItem('user', JSON.stringify(response.data.user));
+      }
+
+      // Navigate to profile page after successful login
+      navigate('/profile');
+    } catch (error) {
+      console.error('Login error:', error);
+      setError(error.response?.data?.message || 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -35,6 +60,19 @@ const LoginUi = () => {
               <h1 className="login-title">Sign in to Jobify!</h1>
             </div>
             
+            {error && (
+              <div className="error-message" style={{
+                backgroundColor: '#e74c3c',
+                color: 'white',
+                padding: '12px 16px',
+                borderRadius: '8px',
+                marginBottom: '20px',
+                fontSize: '14px'
+              }}>
+                {error}
+              </div>
+            )}
+            
             <form className="login-form" onSubmit={handleLogin}>
               <div className="form-group">
                 <div className="input-wrapper">
@@ -43,6 +81,8 @@ const LoginUi = () => {
                     id="email"
                     placeholder="Email"
                     className="form-input"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                   <span className="input-icon">✉️</span>
@@ -56,6 +96,8 @@ const LoginUi = () => {
                     id="password"
                     placeholder="Password"
                     className="form-input"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     required
                   />
                   <button
@@ -81,8 +123,8 @@ const LoginUi = () => {
                 <a href="#" className="forgot-password">Forgot password?</a>
               </div>
               
-              <button type="submit" className="login-button">
-                Login
+              <button type="submit" className="login-button" disabled={loading}>
+                {loading ? 'Signing in...' : 'Login'}
               </button>
             </form>
             

@@ -5,8 +5,8 @@ import WantToWork from './LandingPage/WantToWork';
 import LoginUi from './LoginPage/LoginUi';
 import SignupUi from './SignupPage/SignupUi';
 import ContactPage from './LandingPage/contact_page';
-import ProfilePage from './ProfilePage/ProfilePage';
-import AddJobSeeker from './Components/AddJobSeeker';
+import ProfilePage from './Dashboard/ProfilePage';
+import AddJobSeeker from './SignupPage/AddJobSeeker';
 import ListJobSeeker from './Components/ListJobSeeker';
 import './LandingPage/WantToHire.css';
 
