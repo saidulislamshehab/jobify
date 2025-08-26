@@ -9,10 +9,10 @@ const SignupUi = () => {
     // Navigate to appropriate signup form based on selection
     switch(option) {
       case 'hire-developers':
-        navigate('/add-jobseeker', { state: { type: 'developer', role: 'hire' } });
+        navigate('/clientsignup', { state: { type: 'developer', role: 'hire' } });
         break;
       case 'hire-freelancers':
-        navigate('/add-jobseeker', { state: { type: 'freelancer', role: 'hire' } });
+        navigate('/clientsignup', { state: { type: 'freelancer', role: 'hire' } });
         break;
       case 'work-developer':
         navigate('/add-jobseeker', { state: { type: 'developer', role: 'work' } });
