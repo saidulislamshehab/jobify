@@ -7,7 +7,7 @@ const MyProjects = () => {
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState([]);
   const [filteredProjects, setFilteredProjects] = useState([]);
-  const [selectedStatus, setSelectedStatus] = useState('Evaluating bids');
+  const [selectedStatus, setSelectedStatus] = useState('All');
   const [selectedMessageFilter, setSelectedMessageFilter] = useState('All');
   const [hasDeliverables, setHasDeliverables] = useState(false);
   const [projectsLoading, setProjectsLoading] = useState(false);
@@ -87,12 +87,14 @@ const MyProjects = () => {
     if (selectedStatus !== 'All') {
       filtered = filtered.filter(project => {
         switch (selectedStatus) {
+          case 'Draft':
+            return project.status === 'draft';
           case 'Evaluating bids':
             return project.status === 'published';
           case 'In progress':
-            return project.status === 'in-progress';
+            return project.status === 'in-progress' || project.status === 'active';
           case 'Completed':
-            return project.status === 'completed';
+            return project.status === 'completed' || project.status === 'finished';
           default:
             return true;
         }
@@ -193,12 +195,16 @@ const MyProjects = () => {
     switch (status) {
       case 'published':
         return 'evaluating';
+      case 'draft':
+        return 'draft';
       case 'in-progress':
+      case 'active':
         return 'in-progress';
       case 'completed':
+      case 'finished':
         return 'completed';
       default:
-        return 'evaluating';
+        return 'draft';
     }
   };
 
@@ -206,17 +212,51 @@ const MyProjects = () => {
     switch (status) {
       case 'published':
         return 'Evaluating bids';
+      case 'draft':
+        return 'Draft';
       case 'in-progress':
+      case 'active':
         return 'In progress';
       case 'completed':
+      case 'finished':
         return 'Completed';
       default:
-        return 'Evaluating bids';
+        return status || 'Draft';
     }
   };
 
   const getPaymentTypeText = (paymentOption) => {
     return paymentOption === 'hourly' ? 'Hourly' : 'Fixed price';
+  };
+
+  const handleEditProject = (projectId) => {
+    // Navigate to edit project page or open edit modal
+    console.log('Edit project:', projectId);
+    // For now, just show an alert
+    alert(`Edit project functionality for project ${projectId} will be implemented soon!`);
+  };
+
+  const handleDeleteProject = async (projectId) => {
+    if (window.confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+      try {
+        const response = await fetch(`http://localhost:5000/api/projects/delete/${projectId}`, {
+          method: 'DELETE',
+        });
+
+        if (response.ok) {
+          // Remove the project from the local state
+          setProjects(projects.filter(project => project._id !== projectId));
+          setFilteredProjects(filteredProjects.filter(project => project._id !== projectId));
+          alert('Project deleted successfully!');
+        } else {
+          const errorData = await response.json();
+          alert('Failed to delete project: ' + (errorData.message || 'Unknown error'));
+        }
+      } catch (error) {
+        console.error('Error deleting project:', error);
+        alert('Network error: ' + error.message);
+      }
+    }
   };
 
   if (loading) {
@@ -284,8 +324,9 @@ const MyProjects = () => {
                   onChange={(e) => handleStatusChange(e.target.value)}
                   className="status-select"
                 >
-                  <option value="Evaluating bids">Evaluating bids</option>
                   <option value="All">All</option>
+                  <option value="Draft">Draft</option>
+                  <option value="Evaluating bids">Evaluating bids</option>
                   <option value="In progress">In progress</option>
                   <option value="Completed">Completed</option>
                 </select>
@@ -381,7 +422,7 @@ const MyProjects = () => {
                     <div className="project-details">
                       <div className="project-meta">
                         <span className="meta-item">
-                          <span className="meta-text">7 messages (0 new)</span>
+                          <span className="meta-text">13 messages (<span className="new-message">1 new</span>)</span>
                         </span>
                         <span className="meta-item">
                           <span className="meta-label">Type:</span>
@@ -395,7 +436,8 @@ const MyProjects = () => {
                       
                       <div className="project-actions">
                         <a href="#" className="view-freelancers-link">
-                          View all interested freelancers
+                          View all interested<br />
+                          freelancers
                         </a>
                       </div>
                     </div>

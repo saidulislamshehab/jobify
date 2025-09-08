@@ -1,12 +1,12 @@
-/* Profile Page Styles */
-.profile-page {
+/* Dashboard Page Styles */
+.dashboard-page {
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background-color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 /* Header Styles */
-.profile-header {
+.dashboard-header {
   background: white;
   border-bottom: 1px solid #e5e7eb;
   padding: 0 24px;
@@ -72,7 +72,7 @@
 }
 
 /* Main Content Layout */
-.profile-content {
+.dashboard-content {
   max-width: 1200px;
   margin: 0 auto;
   padding: 24px;
@@ -83,7 +83,7 @@
 }
 
 /* Sidebar Styles */
-.profile-sidebar {
+.dashboard-sidebar {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -91,22 +91,26 @@
 
 /* Profile Card */
 .profile-card {
-  background: white;
+  background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
   border-radius: 12px;
   padding: 24px;
   text-align: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+  color: white;
 }
 
 .profile-avatar {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: #f3f4f6;
+  background: rgba(255, 255, 255, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 16px;
+  color: white;
+  font-size: 32px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .avatar-icon {
@@ -116,14 +120,14 @@
 .profile-name {
   font-size: 16px;
   font-weight: 600;
-  color: #111827;
+  color: white;
   margin: 0 0 12px 0;
   line-height: 1.3;
 }
 
 .profile-email {
   font-size: 0.9rem;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.8);
   margin: 0 0 16px 0;
   font-weight: 400;
 }
@@ -141,8 +145,8 @@
 }
 
 .find-work-btn {
-  background: #8b5cf6;
-  color: white;
+  background: white;
+  color: #8b5cf6;
   border: none;
   padding: 12px 24px;
   border-radius: 8px;
@@ -150,11 +154,12 @@
   cursor: pointer;
   width: 100%;
   margin-bottom: 16px;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
 }
 
 .find-work-btn:hover {
-  background: #7c3aed;
+  background: #f3f4f6;
+  transform: translateY(-1px);
 }
 
 .profile-stats {
@@ -172,11 +177,11 @@
 
 .stat-label {
   font-weight: 600;
-  color: #111827;
+  color: white;
 }
 
 .stat-desc {
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .info-icon {
@@ -261,14 +266,14 @@
   color: white;
 }
 
-.level-progress {
+.level-badges {
   display: flex;
   gap: 8px;
   margin: 12px 0;
 }
 
 /* Main Content Styles */
-.profile-main {
+.dashboard-main {
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -316,35 +321,31 @@
 
 /* Moderation Card */
 .moderation-card {
-  background: white;
+  background: linear-gradient(135deg, #f3f0ff 0%, #e9d5ff 100%);
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+}
+
+.moderation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
 }
 
 .moderation-title {
   font-size: 18px;
   font-weight: 600;
   color: #111827;
-  margin: 0 0 16px 0;
-}
-
-.moderation-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.moderation-info {
-  flex: 1;
+  margin: 0;
 }
 
 .moderation-price {
   font-size: 24px;
   font-weight: 700;
   color: #111827;
-  display: block;
-  margin-bottom: 12px;
+  margin: 0;
 }
 
 .moderation-text {
@@ -366,6 +367,16 @@
 
 .moderation-btn:hover {
   background: #7c3aed;
+}
+
+.help-link {
+  color: #8b5cf6;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.help-link:hover {
+  color: #7c3aed;
 }
 
 /* Projects Card */
@@ -666,14 +677,14 @@
 
 /* Responsive Design */
 @media (max-width: 1024px) {
-  .profile-content {
+  .dashboard-content {
     grid-template-columns: 280px 1fr;
     gap: 24px;
   }
 }
 
 @media (max-width: 768px) {
-  .profile-content {
+  .dashboard-content {
     grid-template-columns: 1fr;
     gap: 20px;
   }
@@ -690,7 +701,7 @@
     font-size: 24px;
   }
   
-  .moderation-content {
+  .moderation-header {
     flex-direction: column;
     gap: 16px;
   }
@@ -706,7 +717,7 @@
 }
 
 @media (max-width: 480px) {
-  .profile-content {
+  .dashboard-content {
     padding: 16px;
   }
   
