@@ -1,5 +1,6 @@
 import express from "express";
 import { createJobSeeker, loginJobSeeker, getJobSeeker, getJobSeekerById, updateJobSeeker, deleteJobSeeker } from "../controller/Job_Seeker_Controller.js";
+import { createClientProject, getClientProjects, getClientProjectById, updateClientProject, deleteClientProject, publishClientProject } from "../controller/ClientProject_Controller.js";
 
 const router = express.Router();
 
@@ -16,11 +17,35 @@ router.get("/test", async (req, res) => {
     }
 });
 
+// Test endpoint to verify projects API
+router.get("/projects/test", async (req, res) => {
+    try {
+        const ClientProject = (await import("../models/ClientProject.js")).default;
+        const count = await ClientProject.countDocuments();
+        res.json({ 
+            message: "Projects API is working!",
+            totalProjects: count,
+            timestamp: new Date().toISOString()
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Job Seeker routes
 router.post("/create", createJobSeeker);
 router.post("/login", loginJobSeeker);
 router.get("/get", getJobSeeker);
 router.get("/:id", getJobSeekerById);
 router.put("/update/:id", updateJobSeeker);
 router.delete("/delete/:id", deleteJobSeeker);
+
+// Client Project routes
+router.post("/projects/create", createClientProject);
+router.get("/projects", getClientProjects);
+router.get("/projects/:id", getClientProjectById);
+router.put("/projects/update/:id", updateClientProject);
+router.delete("/projects/delete/:id", deleteClientProject);
+router.put("/projects/publish/:id", publishClientProject);
 
 export default router;
