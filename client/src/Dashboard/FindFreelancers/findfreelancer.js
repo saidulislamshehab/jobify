@@ -8,6 +8,21 @@ const FindFreelancers = () => {
   const [loading, setLoading] = useState(true);
   const [freelancers, setFreelancers] = useState([]);
   const [search, setSearch] = useState('');
+  const [filters, setFilters] = useState({
+    heroView: false,
+    activity: 'All activities',
+    skills: '',
+    professionalType: 'All',
+    region: 'All regions',
+    country: 'All countries',
+    language: 'English',
+    languageLevel: 'All levels',
+    rating: '5',
+    projectsCompleted: 'All',
+    hourlyRateMin: '7',
+    hourlyRateMax: '40',
+    verified: 'All'
+  });
 
   useEffect(() => {
     const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
@@ -39,69 +54,394 @@ const FindFreelancers = () => {
     );
   });
 
-  return (
-    <div className="dashboard-page">
-      <DashboardNav user={user} />
-      <div className="list-jobseeker-container">
-        <div className="list-header">
-          <h1>Find freelancers</h1>
-          <p>Browse and hire the best talent</p>
-        </div>
+  // Mock data for demonstration
+  const mockFreelancers = [
+    {
+      _id: '1',
+      name: 'Victor',
+      title: 'RANK #1 WORKANA',
+      rating: 5,
+      location: 'Brazil',
+      hourlyRate: 104.90,
+      projectsCompleted: 150,
+      hoursWorked: 2500,
+      bio: 'Experienced developer with 5+ years in web development',
+      skills: ['Python (3 to 5 years)', 'Web Scraping (3 to 5 years)', 'Graphic Design (3 to 5 years)'],
+      isHero: true
+    },
+    {
+      _id: '2',
+      name: 'Matheus K.',
+      title: 'Front-end Developer',
+      rating: 5,
+      location: 'Brazil',
+      hourlyRate: 18.44,
+      projectsCompleted: 45,
+      hoursWorked: 890,
+      bio: 'Passionate frontend developer specializing in React and Vue.js',
+      skills: ['React (2 to 3 years)', 'Vue.js (1 to 2 years)', 'JavaScript (3 to 5 years)'],
+      isHero: true
+    },
+    {
+      _id: '3',
+      name: 'Diego B.',
+      title: 'Full Stack Developer',
+      rating: 5,
+      location: 'Brazil',
+      hourlyRate: 27.65,
+      projectsCompleted: 78,
+      hoursWorked: 1200,
+      bio: 'Full-stack developer with expertise in both frontend and backend technologies',
+      skills: ['Node.js (3 to 5 years)', 'React (2 to 3 years)', 'MongoDB (2 to 3 years)'],
+      isHero: true
+    },
+    {
+      _id: '4',
+      name: 'Mari S.',
+      title: 'Visual designer',
+      rating: 5,
+      location: 'Brazil',
+      hourlyRate: 46.09,
+      projectsCompleted: 32,
+      hoursWorked: 650,
+      bio: 'Creative visual designer with a focus on user experience and branding',
+      skills: ['UI/UX Design (3 to 5 years)', 'Adobe Creative Suite (3 to 5 years)', 'Figma (2 to 3 years)'],
+      isHero: true
+    }
+  ];
 
-        <div className="controls-section">
-          <div className="search-filters">
-            <div className="search-box">
+  const displayFreelancers = filtered.length > 0 ? filtered : mockFreelancers;
+
+  return (
+    <div className="ff-page">
+      <DashboardNav user={user} />
+      
+      <div className="ff-container">
+        {/* Left Sidebar - Filters */}
+        <aside className="ff-sidebar">
+          <div className="ff-filter-section">
+            <div className="ff-filter-item">
+              <label className="ff-toggle">
+                <input 
+                  type="checkbox" 
+                  checked={filters.heroView}
+                  onChange={(e) => setFilters({...filters, heroView: e.target.checked})}
+                />
+                <span className="ff-toggle-slider"></span>
+                <span className="ff-toggle-label">View freelancers HERO</span>
+              </label>
+            </div>
+
+            <div className="ff-filter-item">
+              <label className="ff-label">Freelancer activity</label>
+              <select 
+                className="ff-select"
+                value={filters.activity}
+                onChange={(e) => setFilters({...filters, activity: e.target.value})}
+              >
+                <option>All activities</option>
+                <option>Web Development</option>
+                <option>Mobile Development</option>
+                <option>Design</option>
+                <option>Writing</option>
+              </select>
+            </div>
+
+            <div className="ff-filter-item">
+              <label className="ff-label">Skills</label>
               <input
                 type="text"
-                placeholder="Search by name, email, or skills..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="search-input"
+                className="ff-input"
+                placeholder="Enter the skills you need"
+                value={filters.skills}
+                onChange={(e) => setFilters({...filters, skills: e.target.value})}
               />
             </div>
-          </div>
-        </div>
 
-        {loading ? (
-          <div className="no-results">Loading freelancers...</div>
-        ) : (
-          <div className="jobseekers-grid">
-            {filtered.length === 0 ? (
-              <div className="no-results">No freelancers found</div>
-            ) : (
-              filtered.map((f) => (
-                <div key={f._id} className="jobseeker-card">
-                  <div className="card-header">
-                    <div className="avatar">{(f.name || 'U').charAt(0).toUpperCase()}</div>
-                    <div className="basic-info">
-                      <h3>{f.name}</h3>
-                      <p className="email">{f.email}</p>
-                      {f.jobTitle && <p className="job-title">{f.jobTitle}</p>}
+            <div className="ff-filter-item">
+              <label className="ff-label">Type of professional</label>
+              <div className="ff-radio-group">
+                <label className="ff-radio">
+                  <input 
+                    type="radio" 
+                    name="professionalType" 
+                    value="All"
+                    checked={filters.professionalType === 'All'}
+                    onChange={(e) => setFilters({...filters, professionalType: e.target.value})}
+                  />
+                  <span>All</span>
+                </label>
+                <label className="ff-radio">
+                  <input 
+                    type="radio" 
+                    name="professionalType" 
+                    value="Agencies"
+                    checked={filters.professionalType === 'Agencies'}
+                    onChange={(e) => setFilters({...filters, professionalType: e.target.value})}
+                  />
+                  <span>Agencies</span>
+                </label>
+                <label className="ff-radio">
+                  <input 
+                    type="radio" 
+                    name="professionalType" 
+                    value="Freelancers"
+                    checked={filters.professionalType === 'Freelancers'}
+                    onChange={(e) => setFilters({...filters, professionalType: e.target.value})}
+                  />
+                  <span>Freelancers</span>
+                </label>
+              </div>
+            </div>
+
+            <div className="ff-filter-item">
+              <label className="ff-label">Freelancer location</label>
+              <div className="ff-row">
+                <select 
+                  className="ff-select"
+                  value={filters.region}
+                  onChange={(e) => setFilters({...filters, region: e.target.value})}
+                >
+                  <option>All regions</option>
+                  <option>North America</option>
+                  <option>South America</option>
+                  <option>Europe</option>
+                  <option>Asia</option>
+                </select>
+                <select 
+                  className="ff-select"
+                  value={filters.country}
+                  onChange={(e) => setFilters({...filters, country: e.target.value})}
+                >
+                  <option>All countries</option>
+                  <option>United States</option>
+                  <option>Brazil</option>
+                  <option>United Kingdom</option>
+                  <option>Canada</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="ff-filter-item">
+              <label className="ff-label">Languages</label>
+              <div className="ff-row">
+                <select 
+                  className="ff-select"
+                  value={filters.language}
+                  onChange={(e) => setFilters({...filters, language: e.target.value})}
+                >
+                  <option>English</option>
+                  <option>Spanish</option>
+                  <option>Portuguese</option>
+                  <option>French</option>
+                </select>
+                <select 
+                  className="ff-select"
+                  value={filters.languageLevel}
+                  onChange={(e) => setFilters({...filters, languageLevel: e.target.value})}
+                >
+                  <option>All levels</option>
+                  <option>Native</option>
+                  <option>Fluent</option>
+                  <option>Intermediate</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="ff-filter-item">
+              <label className="ff-label">Rating</label>
+              <div className="ff-radio-group">
+                <label className="ff-radio">
+                  <input 
+                    type="radio" 
+                    name="rating" 
+                    value="5"
+                    checked={filters.rating === '5'}
+                    onChange={(e) => setFilters({...filters, rating: e.target.value})}
+                  />
+                  <span>5 ★★★★★</span>
+                </label>
+                <label className="ff-radio">
+                  <input 
+                    type="radio" 
+                    name="rating" 
+                    value="4"
+                    checked={filters.rating === '4'}
+                    onChange={(e) => setFilters({...filters, rating: e.target.value})}
+                  />
+                  <span>4+ ★★★★★</span>
+                </label>
+                <label className="ff-radio">
+                  <input 
+                    type="radio" 
+                    name="rating" 
+                    value="3"
+                    checked={filters.rating === '3'}
+                    onChange={(e) => setFilters({...filters, rating: e.target.value})}
+                  />
+                  <span>3+ ★★★★★</span>
+                </label>
+              </div>
+            </div>
+
+            <div className="ff-filter-item">
+              <label className="ff-label">Projects completed</label>
+              <div className="ff-radio-group">
+                <label className="ff-radio">
+                  <input 
+                    type="radio" 
+                    name="projectsCompleted" 
+                    value="All"
+                    checked={filters.projectsCompleted === 'All'}
+                    onChange={(e) => setFilters({...filters, projectsCompleted: e.target.value})}
+                  />
+                  <span>All</span>
+                </label>
+                <label className="ff-radio">
+                  <input 
+                    type="radio" 
+                    name="projectsCompleted" 
+                    value="1-10"
+                    checked={filters.projectsCompleted === '1-10'}
+                    onChange={(e) => setFilters({...filters, projectsCompleted: e.target.value})}
+                  />
+                  <span>1-10</span>
+                </label>
+                <label className="ff-radio">
+                  <input 
+                    type="radio" 
+                    name="projectsCompleted" 
+                    value="+10"
+                    checked={filters.projectsCompleted === '+10'}
+                    onChange={(e) => setFilters({...filters, projectsCompleted: e.target.value})}
+                  />
+                  <span>+10</span>
+                </label>
+              </div>
+            </div>
+
+            <div className="ff-filter-item">
+              <label className="ff-label">Hourly rate</label>
+              <div className="ff-rate-range">
+                <div className="ff-rate-input">
+                  <span className="ff-currency">USD</span>
+                  <input
+                    type="number"
+                    className="ff-rate-field"
+                    value={filters.hourlyRateMin}
+                    onChange={(e) => setFilters({...filters, hourlyRateMin: e.target.value})}
+                  />
+                </div>
+                <span className="ff-rate-separator">-</span>
+                <div className="ff-rate-input">
+                  <span className="ff-currency">USD</span>
+                  <input
+                    type="number"
+                    className="ff-rate-field"
+                    value={filters.hourlyRateMax}
+                    onChange={(e) => setFilters({...filters, hourlyRateMax: e.target.value})}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="ff-filter-item">
+              <label className="ff-label">Verified freelancers</label>
+              <div className="ff-radio-group">
+                <label className="ff-radio">
+                  <input 
+                    type="radio" 
+                    name="verified" 
+                    value="All"
+                    checked={filters.verified === 'All'}
+                    onChange={(e) => setFilters({...filters, verified: e.target.value})}
+                  />
+                  <span>All</span>
+                </label>
+                <label className="ff-radio">
+                  <input 
+                    type="radio" 
+                    name="verified" 
+                    value="Verified only"
+                    checked={filters.verified === 'Verified only'}
+                    onChange={(e) => setFilters({...filters, verified: e.target.value})}
+                  />
+                  <span>Verified only</span>
+                </label>
+              </div>
+            </div>
+
+            <button className="ff-save-search">Save search</button>
+          </div>
+        </aside>
+
+        {/* Main Content - Freelancer Cards */}
+        <main className="ff-main">
+          <div className="ff-search-bar">
+            <input
+              type="text"
+              className="ff-search-input"
+              placeholder="Search freelancers..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <div className="ff-search-tags">
+              <span className="ff-tag">English</span>
+            </div>
+          </div>
+
+          {loading ? (
+            <div className="ff-loading">Loading freelancers...</div>
+          ) : (
+            <div className="ff-freelancers">
+              {displayFreelancers.map((f) => (
+                <div key={f._id} className="ff-freelancer-card">
+                  <div className="ff-card-header">
+                    <div className="ff-avatar">
+                      {(f.name || 'U').charAt(0).toUpperCase()}
+                    </div>
+                    <div className="ff-card-info">
+                      <div className="ff-name-row">
+                        <h3 className="ff-name">{f.name}</h3>
+                        {f.isHero && <span className="ff-hero-badge">HERO</span>}
+                      </div>
+                      <p className="ff-title">{f.title}</p>
+                      <div className="ff-rating">
+                        {'★'.repeat(f.rating || 5)}
+                      </div>
+                      <p className="ff-location">{f.location}</p>
+                    </div>
+                    <button className="ff-hire-btn">Hire</button>
+                  </div>
+                  
+                  <div className="ff-card-stats">
+                    <div className="ff-stat">
+                      <span className="ff-stat-label">Completed projects</span>
+                      <span className="ff-stat-value">{f.projectsCompleted}</span>
+                    </div>
+                    <div className="ff-stat">
+                      <span className="ff-stat-label">Hours worked in hourly projects</span>
+                      <span className="ff-stat-value">{f.hoursWorked}</span>
                     </div>
                   </div>
-                  <div className="card-content">
-                    {f.skills && (
-                      <div className="info-row">
-                        <span className="label">Skills:</span>
-                        <span className="value skills-text">{Array.isArray(f.skills) ? f.skills.join(', ') : f.skills}</span>
-                      </div>
-                    )}
-                    {f.freelancerAboutMe && (
-                      <div className="info-row">
-                        <span className="label">About:</span>
-                        <span className="value">{f.freelancerAboutMe}</span>
-                      </div>
-                    )}
+
+                  <p className="ff-bio">{f.bio}</p>
+
+                  <div className="ff-skills">
+                    {f.skills && f.skills.map((skill, index) => (
+                      <span key={index} className="ff-skill-tag">{skill}</span>
+                    ))}
                   </div>
-                  <div className="card-actions">
-                    <a href="/profile" className="btn-view">View Profile</a>
-                  </div>
+
+                  <a href="/profile" className="ff-view-more">View more</a>
                 </div>
-              ))
-            )}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </main>
       </div>
+
+      <button className="ff-help-btn">❓ Help</button>
       <Footer />
     </div>
   );
