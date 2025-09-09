@@ -1,5 +1,5 @@
 import express from "express";
-import { createJobSeeker, loginJobSeeker, getJobSeeker, getJobSeekerById, updateJobSeeker, deleteJobSeeker } from "../controller/Job_Seeker_Controller.js";
+import { createJobSeeker, loginJobSeeker, getJobSeeker, getJobSeekerById, updateJobSeeker, deleteJobSeeker, updateSkills, updateAboutMe } from "../controller/Job_Seeker_Controller.js";
 import { createClientProject, getClientProjects, getClientProjectById, updateClientProject, deleteClientProject, publishClientProject } from "../controller/ClientProject_Controller.js";
 
 const router = express.Router();
@@ -38,6 +38,8 @@ router.post("/login", loginJobSeeker);
 router.get("/get", getJobSeeker);
 router.get("/:id", getJobSeekerById);
 router.put("/update/:id", updateJobSeeker);
+router.put("/update-skills/:id", updateSkills);
+router.put("/update-about-me/:id", updateAboutMe);
 router.delete("/delete/:id", deleteJobSeeker);
 
 // Client Project routes

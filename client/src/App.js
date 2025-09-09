@@ -7,7 +7,6 @@ import SignupUi from './SignupPage/SignupUi';
 import ContactPage from './LandingPage/contact_page';
 import Dashboard from './Dashboard/dashboard';
 import AddJobSeeker from './SignupPage/AddJobSeeker';
-import ListJobSeeker from './Components/ListJobSeeker';
 import ClientSignup from './SignupPage/clientsignup';
 import FreelancerProfile from './Dashboard/freelancerProfile/freelancerProfile';
 import ClientProfile from './Dashboard/clientProfile/clientProfile';
@@ -15,6 +14,7 @@ import AddProject from './Dashboard/clientProfile/addProject';
 import ProjectDescription from './Dashboard/clientProfile/projectDescription';
 import ProjectReview from './Dashboard/clientProfile/projectReview';
 import MyProjects from './Dashboard/clientProfile/myProjects';
+import FindFreelancers from './Dashboard/FindFreelancers';
 import './LandingPage/WantToHire.css';
 
 function App() {
@@ -28,7 +28,6 @@ function App() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/add-jobseeker" element={<AddJobSeeker />} />
-        <Route path="/list-jobseekers" element={<ListJobSeeker />} />
         <Route path="/clientsignup" element={<ClientSignup />} />
         <Route path="/profile" element={<FreelancerProfile />} />
         <Route path="/client-profile" element={<ClientProfile />} />
@@ -36,6 +35,7 @@ function App() {
         <Route path="/project-description" element={<ProjectDescription />} />
         <Route path="/project-review" element={<ProjectReview />} />
         <Route path="/my-projects" element={<MyProjects />} />
+        <Route path="/find-freelancers" element={<FindFreelancers />} />
       </Routes>
     </BrowserRouter>
   );

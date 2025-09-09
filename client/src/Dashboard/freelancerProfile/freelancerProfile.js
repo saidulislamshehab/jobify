@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import './freelancerProfile.css';
 import Footer from '../../LandingPage/footer';
+import DashboardNav from '../DashboardNav';
 
 const FreelancerProfile = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('freelancer');
+  const [isEditingSkills, setIsEditingSkills] = useState(false);
+  const [skills, setSkills] = useState([]);
+  const [newSkill, setNewSkill] = useState('');
+  const [newSkillExperience, setNewSkillExperience] = useState('1 year');
+  const [saving, setSaving] = useState(false);
   const [profileCompleteness, setProfileCompleteness] = useState(68);
+  const [isEditingAboutMe, setIsEditingAboutMe] = useState(false);
+  const [aboutMeText, setAboutMeText] = useState('');
+  const [savingAboutMe, setSavingAboutMe] = useState(false);
 
   useEffect(() => {
     // Get user data from localStorage or sessionStorage
@@ -17,6 +26,21 @@ const FreelancerProfile = () => {
           const parsedUser = JSON.parse(userData);
           console.log('User data loaded:', parsedUser);
           setUser(parsedUser);
+          // Initialize skills from user data
+          if (parsedUser.skills && Array.isArray(parsedUser.skills)) {
+            setSkills(parsedUser.skills.map(skill => ({
+              name: skill,
+              experience: '1 year',
+              certifications: '-',
+              projects: '-'
+            })));
+          }
+          // Initialize about me text
+          if (parsedUser.freelancerAboutMe) {
+            setAboutMeText(parsedUser.freelancerAboutMe);
+          } else if (parsedUser.clientAboutMe) {
+            setAboutMeText(parsedUser.clientAboutMe);
+          }
         } else {
           console.log('No user data found, redirecting to login');
           window.location.href = '/login';
@@ -31,6 +55,123 @@ const FreelancerProfile = () => {
 
     getUserData();
   }, []);
+
+  const handleEditSkills = () => {
+    setIsEditingSkills(true);
+  };
+
+  const handleCancelSkills = () => {
+    setIsEditingSkills(false);
+    setNewSkill('');
+    setNewSkillExperience('1 year');
+  };
+
+  const handleAddSkill = () => {
+    if (newSkill.trim() && skills.length < 3) {
+      const skillToAdd = {
+        name: newSkill.trim(),
+        experience: newSkillExperience,
+        certifications: '-',
+        projects: '-'
+      };
+      setSkills([...skills, skillToAdd]);
+      setNewSkill('');
+      setNewSkillExperience('1 year');
+    }
+  };
+
+  const handleRemoveSkill = (index) => {
+    setSkills(skills.filter((_, i) => i !== index));
+  };
+
+  const handleUpdateSkillExperience = (index, experience) => {
+    const updatedSkills = [...skills];
+    updatedSkills[index].experience = experience;
+    setSkills(updatedSkills);
+  };
+
+  const handleSaveSkills = async () => {
+    setSaving(true);
+    try {
+      const skillNames = skills.map(skill => skill.name);
+      const response = await fetch(`http://localhost:5000/api/update-skills/${user.id || user._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ skills: skillNames })
+      });
+
+      if (response.ok) {
+        // Update local user data
+        const updatedUser = { ...user, skills: skillNames };
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        setUser(updatedUser);
+        setIsEditingSkills(false);
+        alert('Skills updated successfully!');
+      } else {
+        const errorData = await response.json();
+        alert('Failed to update skills: ' + (errorData.message || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Error updating skills:', error);
+      alert('Network error: ' + error.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleEditAboutMe = () => {
+    setIsEditingAboutMe(true);
+  };
+
+  const handleCancelAboutMe = () => {
+    setIsEditingAboutMe(false);
+    // Reset to original text
+    if (user.freelancerAboutMe) {
+      setAboutMeText(user.freelancerAboutMe);
+    } else if (user.clientAboutMe) {
+      setAboutMeText(user.clientAboutMe);
+    } else {
+      setAboutMeText('');
+    }
+  };
+
+  const handleSaveAboutMe = async () => {
+    setSavingAboutMe(true);
+    try {
+      const fieldToUpdate = activeTab === 'freelancer' ? 'freelancerAboutMe' : 'clientAboutMe';
+      const response = await fetch(`http://localhost:5000/api/update-about-me/${user.id || user._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          [fieldToUpdate]: aboutMeText.trim()
+        })
+      });
+
+      if (response.ok) {
+        // Update local user data
+        const updatedUser = { 
+          ...user, 
+          [fieldToUpdate]: aboutMeText.trim()
+        };
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        setUser(updatedUser);
+        setIsEditingAboutMe(false);
+        alert('About me updated successfully!');
+      } else {
+        const errorData = await response.json();
+        alert('Failed to update about me: ' + (errorData.message || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Error updating about me:', error);
+      alert('Network error: ' + error.message);
+    } finally {
+      setSavingAboutMe(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -68,85 +209,8 @@ const FreelancerProfile = () => {
 
   return (
     <div className="profile-page">
-      {/* Header Navigation */}
-      <header className="profile-header">
-        <div className="header-content">
-          <div className="logo">J<span className="logo-accent">O</span>BIFY</div>
-          <nav className="header-nav">
-            <a href="#" className="nav-link">Find work</a>
-            <a href="/my-projects" className="nav-link">My projects</a>
-            <a href="#" className="nav-link">My finances</a>
-          </nav>
-          <div className="header-actions">
-            <button className="action-btn search-btn">🔍</button>
-            <button className="action-btn notification-btn">🔔</button>
-            <button className="action-btn message-btn">💬</button>
-            <div className="profile-dropdown-container">
-              <button className="action-btn profile-btn">😊</button>
-              <div className="profile-dropdown">
-                <div className="dropdown-header">
-                  <div className="user-name">{user.name || 'SAIDUL ISLAM SHEHAB'}</div>
-                  <div className="modality-section">
-                    <div className="modality-label">Modality</div>
-                    <div className="modality-options">
-                      <div className="modality-option active">
-                        <span className="modality-text">Freelancer</span>
-                        <span className="modality-check">✓</span>
-                      </div>
-                      <div className="modality-option">
-                        <span className="modality-text">Talent full time</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="dropdown-section">
-                  <div className="dropdown-links">
-                    <a href="#" className="dropdown-link">My account</a>
-                    <a href="#" className="dropdown-link">My profile</a>
-                    <a href="#" className="dropdown-link">Membership</a>
-                    <a href="#" className="dropdown-link">Certify my skills</a>
-                  </div>
-                </div>
-
-                <div className="dropdown-section">
-                  <div className="dropdown-section-title">Hire</div>
-                  <div className="dropdown-links">
-                    <a href="#" className="dropdown-link">Find freelancers</a>
-                    <a href="/add-project" className="dropdown-button">Post a project</a>
-                  </div>
-                </div>
-
-                <div className="dropdown-section">
-                  <div className="dropdown-section-title">Help</div>
-                  <div className="dropdown-links">
-                    <a href="#" className="dropdown-link">Help Center ↗</a>
-                    <a href="#" className="dropdown-link">News ↗</a>
-                    <a href="#" className="dropdown-link">How it works</a>
-                    <a href="#" className="dropdown-link">Get support</a>
-                  </div>
-                </div>
-
-                <div className="dropdown-footer">
-                  <div className="language-section">
-                    <span className="language-label">Language</span>
-                    <div className="language-options">
-                      <span className="language-option active">en</span>
-                      <span className="language-option">es</span>
-                      <span className="language-option">pt</span>
-                    </div>
-                  </div>
-                  <a href="#" className="logout-link" onClick={() => {
-                    localStorage.removeItem('user');
-                    sessionStorage.removeItem('user');
-                    window.location.href = '/login';
-                  }}>Log out</a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Shared Dashboard Navigation */}
+      <DashboardNav user={user} />
 
       <div className="profile-content">
         {/* Main Content */}
@@ -316,8 +380,129 @@ const FreelancerProfile = () => {
               <div className="skills-section">
                 <div className="skills-header">
                   <h3>Skills (Maximum: 3)</h3>
-                  <button className="edit-button">Edit</button>
+                  <div className="skills-actions">
+                    {isEditingSkills ? (
+                      <>
+                        <button className="cancel-button" onClick={handleCancelSkills}>
+                          Cancel
+                        </button>
+                        <button 
+                          className="save-button" 
+                          onClick={handleSaveSkills}
+                          disabled={saving}
+                        >
+                          {saving ? 'Saving...' : 'Save'}
+                        </button>
+                      </>
+                    ) : (
+                      <button className="edit-button" onClick={handleEditSkills}>
+                        Edit
+                      </button>
+                    )}
+                  </div>
                 </div>
+
+                {isEditingSkills ? (
+                  <div className="skills-edit-container">
+                    {/* Skills Table */}
+                    <div className="skills-table">
+                      <div className="skills-table-header">
+                        <div className="table-column">Skills</div>
+                        <div className="table-column">Certifications</div>
+                        <div className="table-column">Projects worked</div>
+                        <div className="table-column">Experience years</div>
+                        <div className="table-column">Actions</div>
+                      </div>
+                      
+                      {skills.map((skill, index) => (
+                        <div key={index} className="skills-table-row">
+                          <div className="table-column skill-name">{skill.name}</div>
+                          <div className="table-column">{skill.certifications}</div>
+                          <div className="table-column">{skill.projects}</div>
+                          <div className="table-column">
+                            <select
+                              value={skill.experience}
+                              onChange={(e) => handleUpdateSkillExperience(index, e.target.value)}
+                              className="experience-dropdown"
+                            >
+                              <option value="1 year">1 year</option>
+                              <option value="2 years">2 years</option>
+                              <option value="3 years">3 years</option>
+                              <option value="4 years">4 years</option>
+                              <option value="5+ years">5+ years</option>
+                            </select>
+                          </div>
+                          <div className="table-column">
+                            <button 
+                              className="delete-skill-btn"
+                              onClick={() => handleRemoveSkill(index)}
+                            >
+                              🗑️
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Add New Skill Section */}
+                    <div className="add-skill-section">
+                      <div className="skill-limit-message">
+                        <span>You can only choose 3 elements</span>
+                        <span className="search-icon">🔍</span>
+                      </div>
+                      
+                      <div className="add-skill-inputs">
+                        <div className="skill-input-group">
+                          <label>Experience</label>
+                          <select
+                            value={newSkillExperience}
+                            onChange={(e) => setNewSkillExperience(e.target.value)}
+                            className="experience-select"
+                          >
+                            <option value="1 year">1 year</option>
+                            <option value="2 years">2 years</option>
+                            <option value="3 years">3 years</option>
+                            <option value="4 years">4 years</option>
+                            <option value="5+ years">5+ years</option>
+                          </select>
+                        </div>
+                        
+                        <div className="skill-input-group">
+                          <input
+                            type="text"
+                            placeholder="Enter skill name"
+                            value={newSkill}
+                            onChange={(e) => setNewSkill(e.target.value)}
+                            className="skill-name-input"
+                            disabled={skills.length >= 3}
+                          />
+                          <button
+                            className={`add-skill-btn ${skills.length >= 3 ? 'disabled' : ''}`}
+                            onClick={handleAddSkill}
+                            disabled={skills.length >= 3 || !newSkill.trim()}
+                          >
+                            Add
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="skills-display">
+                    {skills.length > 0 ? (
+                      <div className="skills-list">
+                        {skills.map((skill, index) => (
+                          <div key={index} className="skill-item">
+                            <span className="skill-name">{skill.name}</span>
+                            <span className="skill-experience">{skill.experience}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="no-skills">No skills added yet. Click Edit to add skills.</p>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Featured Projects Section */}
@@ -341,22 +526,64 @@ const FreelancerProfile = () => {
               <div className="about-section">
                 <div className="section-header">
                   <h3>About me</h3>
-                  <button className="edit-icon">✏️</button>
+                  <div className="about-me-actions">
+                    {isEditingAboutMe ? (
+                      <>
+                        <button className="cancel-button" onClick={handleCancelAboutMe}>
+                          Cancel
+                        </button>
+                        <button 
+                          className="save-button" 
+                          onClick={handleSaveAboutMe}
+                          disabled={savingAboutMe}
+                        >
+                          {savingAboutMe ? 'Saving...' : 'Save'}
+                        </button>
+                      </>
+                    ) : (
+                      <button className="edit-icon" onClick={handleEditAboutMe}>
+                        ✏️
+                      </button>
+                    )}
+                  </div>
                 </div>
+
+                {isEditingAboutMe ? (
+                  <div className="about-me-edit-container">
+                    <textarea
+                      value={aboutMeText}
+                      onChange={(e) => setAboutMeText(e.target.value)}
+                      className="about-me-textarea"
+                      placeholder="Tell us about yourself as a freelancer..."
+                      rows={6}
+                    />
+                    <div className="character-count">
+                      {aboutMeText.length}/1000 characters
+                    </div>
+                  </div>
+                ) : (
+                  <div className="about-me-content">
+                    {aboutMeText ? (
+                      <p className="about-me-text">{aboutMeText}</p>
+                    ) : (
+                      <p className="no-about-me">No about me information yet. Click the edit button to add your story.</p>
+                    )}
+                  </div>
+                )}
               </div>
 
-              {/* Work History Section */}
+              {/* Experience Section */}
               <div className="work-history-section">
                 <div className="section-header">
-                  <h3>Work history</h3>
+                  <h3>Experience</h3>
                   <button className="edit-icon">✏️</button>
                 </div>
               </div>
 
-              {/* Certifications Section */}
+              {/* Education Section */}
               <div className="certifications-section">
                 <div className="section-header">
-                  <h3>Certifications (0)</h3>
+                  <h3>Education</h3>
                   <button className="edit-icon">✏️</button>
                 </div>
               </div>
@@ -378,8 +605,50 @@ const FreelancerProfile = () => {
               <div className="about-section">
                 <div className="section-header">
                   <h3>About me</h3>
-                  <button className="edit-icon">✏️</button>
+                  <div className="about-me-actions">
+                    {isEditingAboutMe ? (
+                      <>
+                        <button className="cancel-button" onClick={handleCancelAboutMe}>
+                          Cancel
+                        </button>
+                        <button 
+                          className="save-button" 
+                          onClick={handleSaveAboutMe}
+                          disabled={savingAboutMe}
+                        >
+                          {savingAboutMe ? 'Saving...' : 'Save'}
+                        </button>
+                      </>
+                    ) : (
+                      <button className="edit-icon" onClick={handleEditAboutMe}>
+                        ✏️
+                      </button>
+                    )}
+                  </div>
                 </div>
+
+                {isEditingAboutMe ? (
+                  <div className="about-me-edit-container">
+                    <textarea
+                      value={aboutMeText}
+                      onChange={(e) => setAboutMeText(e.target.value)}
+                      className="about-me-textarea"
+                      placeholder="Tell us about yourself as a client..."
+                      rows={6}
+                    />
+                    <div className="character-count">
+                      {aboutMeText.length}/1000 characters
+                    </div>
+                  </div>
+                ) : (
+                  <div className="about-me-content">
+                    {aboutMeText ? (
+                      <p className="about-me-text">{aboutMeText}</p>
+                    ) : (
+                      <p className="no-about-me">No about me information yet. Click the edit button to add your story.</p>
+                    )}
+                  </div>
+                )}
               </div>
             </>
           )}
