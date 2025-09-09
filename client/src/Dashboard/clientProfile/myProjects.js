@@ -261,7 +261,7 @@ const MyProjects = () => {
   };
 
   const getPaymentTypeText = (paymentOption) => {
-    return paymentOption === 'hourly' ? 'Hourly' : 'Fixed price';
+    return paymentOption === 'hourly' ? 'Hourly' : 'Per project';
   };
 
   const handleEditProject = (projectId) => {
@@ -396,6 +396,20 @@ const MyProjects = () => {
 
       {/* Main Content */}
       <div className="projects-content">
+        {/* Header with Post Project Button */}
+        <div className="projects-header">
+          <div className="header-content">
+            <div className="header-left">
+              <h1 className="page-title">My Projects</h1>
+            </div>
+            <div className="header-right">
+              <a href="/add-project" className="post-project-btn">
+                + Post a Project
+              </a>
+            </div>
+          </div>
+        </div>
+        
         <div className="projects-container">
           {/* Filters Sidebar */}
           <aside className="filters-sidebar">
@@ -479,7 +493,7 @@ const MyProjects = () => {
                   <div key={project._id} className="project-card">
                     <div className="project-header">
                       <h3 className="project-title">
-                        {project.title || "Experienced Web Developer for Pharmacy Licensing Integration Platform"}
+                        {project.title || "Untitled Project"}
                       </h3>
                       <div className="project-status">
                         <span className={`status-tag ${getStatusColor(project.status)}`}>
@@ -488,6 +502,7 @@ const MyProjects = () => {
                         <button 
                           className="project-menu"
                           onClick={() => handleProjectMenu(project)}
+                          title="Project options"
                         >
                           <span>⋮</span>
                         </button>
@@ -495,49 +510,29 @@ const MyProjects = () => {
                     </div>
                     
                     <div className="project-details">
-                      <div className="project-description">
-                        <p>{project.description?.substring(0, 150)}{project.description?.length > 150 ? '...' : ''}</p>
-                      </div>
-                      
-                      <div className="project-meta">
-                        <span className="meta-item">
+                      <div className="project-info">
+                        <div className="project-meta-line">
+                          <span className="meta-label">{getBidCount(project._id)} messages</span>
+                          <span className="meta-value">({projectStats[project._id]?.pending || 0} new)</span>
                           <span className="meta-label">Type:</span>
                           <span className="meta-value">{getPaymentTypeText(project.paymentOption)}</span>
-                        </span>
-                        <span className="meta-item">
-                          <span className="meta-label">Budget:</span>
-                          <span className="meta-value">
-                            {project.paymentOption === 'hourly' 
-                              ? `${formatCurrency(project.budget)}/hr` 
-                              : formatCurrency(project.budget)
-                            }
-                          </span>
-                        </span>
-                        <span className="meta-item">
-                          <span className="meta-label">Created:</span>
-                          <span className="meta-value">{formatTimeAgo(project.createdAt)}</span>
-                        </span>
-                        {getBidCount(project._id) > 0 && (
-                          <span className="meta-item">
-                            <span className="meta-label">Bids:</span>
-                            <span className="meta-value">{getBidCount(project._id)}</span>
-                          </span>
-                        )}
-                      </div>
-
-                      {project.skills && project.skills.length > 0 && (
-                        <div className="project-skills">
-                          <span className="skills-label">Tags:</span>
-                          <div className="skills-container">
-                            {project.skills.slice(0, 5).map((skill, index) => (
-                              <span key={index} className="skill-tag">{skill}</span>
-                            ))}
-                            {project.skills.length > 5 && (
-                              <span className="skill-more">+{project.skills.length - 5} more</span>
-                            )}
-                          </div>
+                          {project.budget && (
+                            <>
+                              <span className="meta-label">Budget:</span>
+                              <span className="meta-value">
+                                {project.paymentOption === 'hourly' 
+                                  ? `${formatCurrency(project.budget)}/hr` 
+                                  : formatCurrency(project.budget)
+                                }
+                              </span>
+                            </>
+                          )}
                         </div>
-                      )}
+                        <div className="project-meta-line">
+                          <span className="meta-label">Published:</span>
+                          <span className="meta-value">{formatTimeAgo(project.createdAt)}</span>
+                        </div>
+                      </div>
                       
                       <div className="project-actions">
                         {project.status === 'draft' && (
@@ -550,23 +545,13 @@ const MyProjects = () => {
                         )}
                         
                         {(project.status === 'published' || project.status === 'in-progress' || project.status === 'completed') && (
-                          <button 
-                            className="view-bids-btn"
+                          <span 
+                            className="meta-link"
                             onClick={() => handleViewBids(project._id)}
+                            style={{ cursor: 'pointer' }}
                           >
-                            View Bids ({getBidCount(project._id)})
-                          </button>
-                        )}
-                        
-                        {projectStats[project._id] && (
-                          <div className="project-stats-mini">
-                            {projectStats[project._id].pending > 0 && (
-                              <span className="stat-pending">{projectStats[project._id].pending} pending</span>
-                            )}
-                            {projectStats[project._id].accepted > 0 && (
-                              <span className="stat-accepted">{projectStats[project._id].accepted} accepted</span>
-                            )}
-                          </div>
+                            View all interested freelancers
+                          </span>
                         )}
                       </div>
                     </div>

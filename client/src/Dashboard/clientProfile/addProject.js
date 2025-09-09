@@ -32,8 +32,8 @@ const AddProject = () => {
   }, []);
 
   const handleGetStarted = () => {
-    // Navigate to project description page
-    window.location.href = '/project-description';
+    // Navigate directly to project review page
+    window.location.href = '/project-review';
   };
 
   const handleBrowseProjects = () => {
@@ -89,15 +89,14 @@ const AddProject = () => {
               Hi, <span className="user-name-highlight">{user.name || 'SAIDUL ISLAM'}!</span>
             </h1>
             <p className="greeting-subtitle">
-              You're two steps away<br />
+              You're one step away<br />
               from publishing your project.
             </p>
           </div>
 
           <div className="description-section">
             <p className="description-text">
-              Write a short description and our AI will guide you to build a clear,
-              tailored project brief.
+              Create your project details and publish it to start receiving bids from freelancers.
             </p>
           </div>
 

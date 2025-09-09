@@ -84,8 +84,8 @@ const ProjectReview = () => {
   };
 
   const handleBack = () => {
-    // Navigate back to project description page
-    window.location.href = '/project-description';
+    // Navigate back to add project page
+    window.location.href = '/add-project';
   };
 
   const handlePublish = async () => {
@@ -119,7 +119,8 @@ const ProjectReview = () => {
         budget: budget.trim(),
         skills: selectedSkills,
         clientId: user?.id || user?._id || 'unknown',
-        clientEmail: user?.email || 'unknown@example.com'
+        clientEmail: user?.email || 'unknown@example.com',
+        clientCountry: user?.country || 'United States'
       };
 
       console.log('User data:', user);
@@ -200,16 +201,9 @@ const ProjectReview = () => {
       {/* Progress Indicator */}
       <div className="progress-section">
         <div className="progress-container">
-          <div className="progress-step completed">
-            <div className="step-number">
-              <span className="checkmark">✓</span>
-            </div>
-            <div className="step-text">Describe your project</div>
-          </div>
-          <div className="progress-line active"></div>
           <div className="progress-step active">
-            <div className="step-number">02</div>
-            <div className="step-text">Preview</div>
+            <div className="step-number">01</div>
+            <div className="step-text">Create your project</div>
           </div>
         </div>
       </div>

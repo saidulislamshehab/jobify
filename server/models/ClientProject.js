@@ -34,6 +34,12 @@ const clientProjectSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    clientCountry: {
+        type: String,
+        required: true,
+        trim: true,
+        default: 'United States'
+    },
     status: {
         type: String,
         enum: ['draft', 'published', 'in-progress', 'completed', 'cancelled'],

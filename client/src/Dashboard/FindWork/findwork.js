@@ -12,6 +12,7 @@ const FindWork = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [isBidModalOpen, setIsBidModalOpen] = useState(false);
   const [userBids, setUserBids] = useState([]);
+  const [error, setError] = useState(null);
   const [filters, setFilters] = useState({
     category: 'All categories',
     skills: '',
@@ -25,6 +26,48 @@ const FindWork = () => {
   });
   const [activeSubNav, setActiveSubNav] = useState('find-projects');
 
+  // Helper functions for data formatting
+  const formatTimeAgo = (dateString) => {
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffInMs = now - date;
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInDays = Math.floor(diffInHours / 24);
+    
+    if (diffInHours < 1) {
+      return 'Just now';
+    } else if (diffInHours < 24) {
+      return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+    } else if (diffInDays < 7) {
+      return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+    } else {
+      return date.toLocaleDateString();
+    }
+  };
+
+  const formatBudget = (budget, paymentOption) => {
+    if (paymentOption === 'hourly') {
+      return `USD ${budget} / hour`;
+    } else {
+      return `USD ${budget}`;
+    }
+  };
+
+  const getInitials = (email) => {
+    if (!email) return 'U';
+    const parts = email.split('@')[0].split('.');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return email[0].toUpperCase();
+  };
+
+  const truncateDescription = (description, maxLength = 200) => {
+    if (!description) return '';
+    if (description.length <= maxLength) return description;
+    return description.substring(0, maxLength) + '... View more';
+  };
+
   useEffect(() => {
     const data = localStorage.getItem('user') || sessionStorage.getItem('user');
     if (data) {
@@ -36,13 +79,66 @@ const FindWork = () => {
     const fetchProjects = async () => {
       try {
         const res = await fetch('http://localhost:5000/api/projects?status=published');
+        
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        
         const data = await res.json();
         const currentUserId = user?.id || user?._id;
         const all = Array.isArray(data) ? data : [];
         const filtered = currentUserId ? all.filter(p => String(p.clientId) !== String(currentUserId)) : all;
-        setProjects(filtered);
-      } catch (_) {
+        
+        // Fetch bid counts for each project
+        const projectsWithBids = await Promise.all(
+          filtered.map(async (project) => {
+            try {
+              const bidRes = await fetch(`http://localhost:5000/api/bids/stats/${project._id}`);
+              const bidData = await bidRes.json();
+              return {
+                ...project,
+                bids: bidData.totalBids || 0,
+                published: formatTimeAgo(project.createdAt || project.updatedAt),
+                budget: formatBudget(project.budget || '0', project.paymentOption),
+                contractType: project.paymentOption === 'hourly' ? 'Hourly' : 'Fixed price',
+                language: 'English', // Default language
+                category: 'IT & Programming', // Default category - you can add this to the model later
+                verified: true, // Default verification status
+                client: {
+                  initials: getInitials(project.clientEmail || 'unknown@example.com'),
+                  lastReply: formatTimeAgo(project.updatedAt || project.createdAt),
+                  location: project.clientCountry || 'United States',
+                  rating: 5 // Default rating
+                }
+              };
+            } catch (error) {
+              console.error('Error fetching bid stats for project:', project._id, error);
+              return {
+                ...project,
+                bids: 0,
+                published: formatTimeAgo(project.createdAt || project.updatedAt),
+                budget: formatBudget(project.budget || '0', project.paymentOption),
+                contractType: project.paymentOption === 'hourly' ? 'Hourly' : 'Fixed price',
+                language: 'English',
+                category: 'IT & Programming',
+                verified: true,
+                client: {
+                  initials: getInitials(project.clientEmail || 'unknown@example.com'),
+                  lastReply: formatTimeAgo(project.updatedAt || project.createdAt),
+                  location: project.clientCountry || 'United States',
+                  rating: 5
+                }
+              };
+            }
+          })
+        );
+        
+        setProjects(projectsWithBids);
+        setError(null);
+      } catch (error) {
+        console.error('Error fetching projects:', error);
         setProjects([]);
+        setError('Failed to load projects. Please make sure the server is running.');
       } finally {
         setLoading(false);
       }
@@ -67,68 +163,8 @@ const FindWork = () => {
     fetchUserBids();
   }, [user]);
 
-  // Mock job data for demonstration
-  const mockJobs = [
-    {
-      _id: '1',
-      title: 'Develop an Innovative and Disruptive Website for a Sound Healing Sc...',
-      budget: 'USD 250 - 500',
-      published: '3 hours ago',
-      bids: 4,
-      description: 'We are seeking a skilled web developer or team to create a new website for our sound healing school. The goal is to develop an innovative and disruptive online presence that reflects the unique nature of sound healing and stands out in the educational sector. The website should be modern, highly functional, and provide an exceptional user experienc... View more',
-      skills: ['HTML', 'CSS', 'JavaScript', 'PHP', 'MySQL', 'WordPress', 'Responsive Web Design', 'React.js'],
-      client: { initials: 'M.L.', lastReply: '15 minutes ago', location: 'Sri Lanka', rating: 5 },
-      verified: true,
-      category: 'IT & Programming',
-      contractType: 'Fixed price',
-      language: 'English'
-    },
-    {
-      _id: '2',
-      title: 'Flash usdt sender',
-      budget: 'USD 250 - 500',
-      published: '4 hours ago',
-      bids: 5,
-      deliveryTerm: '2025/01/30',
-      description: 'I\'m interested in flash USDT sender software USDT must be transferable tradeble and convertible USDT must remain in target wallet 180 days Category: IT & Programming Subcategory: Web development What is the scope of the project?: Create a new custom site ... View more',
-      skills: ['JavaScript', 'MySQL', 'PHP', 'API', 'CSS', 'HTML', 'Python', 'WordPress', 'Responsive Web Design'],
-      client: { initials: 'H.M.', lastReply: '2 hours ago', location: 'Uzbekistan', rating: 5 },
-      verified: true,
-      category: 'IT & Programming',
-      contractType: 'Fixed price',
-      language: 'English'
-    },
-    {
-      _id: '3',
-      title: 'Junior Digital & AI Generalist (Part-time, Remote)',
-      budget: 'USD 250 - 500',
-      published: '19 hours ago',
-      bids: 13,
-      description: 'We are launching an international startup building the future of living, starting in the US (Texas). I\'m looking for a hands-on, creative, AI-curious junior who can also write and communicate in English. This is a generalist role - not just social media. You\'ll be involved in different areas of the startup and work directly with th... View more',
-      skills: ['Facebook', 'Internet Marketing', 'Marketing', 'Copywriting', 'Marketing Strategy'],
-      client: { initials: 'F.C.', lastReply: '36 minutes ago', location: 'United States', rating: 5 },
-      verified: true,
-      category: 'Sales & Marketing',
-      contractType: 'Fixed price',
-      language: 'English'
-    },
-    {
-      _id: '4',
-      title: 'Virtual Assistant (Fluent English, U.S. Business Experience) - Bris...',
-      budget: 'Less than USD 15 / hour',
-      published: 'Yesterday',
-      bids: 14,
-      description: 'Brisa Summer Kitchen is a premium outdoor kitchen brand based in the United States. We are expanding supplier partnerships and e-commerce operations and need a proactive, detail-oriented Virtual Assistant to support daily operations. You will also provide light, temporary support for our other brand, Adore Sports, until a U.S.-Based PA is hired in... View more',
-      skills: ['Virtual Assistant', 'Admin Assistant', 'Email Handling', 'Telephone Handling', 'Data Entry'],
-      client: { initials: 'K.M.', lastReply: '2 hours ago', location: 'United States', rating: 5 },
-      verified: true,
-      category: 'Admin Support',
-      contractType: 'Hourly',
-      language: 'English'
-    }
-  ];
-
-  const allJobs = [...projects, ...mockJobs];
+  // Use only real projects from database
+  const allJobs = projects;
 
   const visibleProjects = allJobs.filter((p) => {
     // Search filter
@@ -210,41 +246,6 @@ const FindWork = () => {
     <div className="fw-page">
       <DashboardNav user={user} />
 
-      {/* Sub Navigation */}
-      <div className="fw-sub-nav">
-        <div className="fw-sub-nav-container">
-          <nav className="fw-sub-nav-links">
-            <a 
-              href="#" 
-              className={`fw-sub-nav-link ${activeSubNav === 'find-projects' ? 'active' : ''}`}
-              onClick={(e) => { e.preventDefault(); setActiveSubNav('find-projects'); }}
-            >
-              Find projects
-            </a>
-            <a 
-              href="#" 
-              className={`fw-sub-nav-link ${activeSubNav === 'projects-with-skills' ? 'active' : ''}`}
-              onClick={(e) => { e.preventDefault(); setActiveSubNav('projects-with-skills'); }}
-            >
-              Projects with my skills
-            </a>
-            <a 
-              href="#" 
-              className={`fw-sub-nav-link ${activeSubNav === 'membership' ? 'active' : ''}`}
-              onClick={(e) => { e.preventDefault(); setActiveSubNav('membership'); }}
-            >
-              Membership
-            </a>
-            <a 
-              href="#" 
-              className={`fw-sub-nav-link ${activeSubNav === 'favorite-clients' ? 'active' : ''}`}
-              onClick={(e) => { e.preventDefault(); setActiveSubNav('favorite-clients'); }}
-            >
-              My favorite clients
-            </a>
-          </nav>
-        </div>
-      </div>
       
       <div className="fw-container">
         {/* Left Sidebar - Filters */}
@@ -540,255 +541,101 @@ const FindWork = () => {
             </div>
           </aside>
 
-        {/* Main Content - Dynamic based on sub-nav */}
+        {/* Main Content */}
         <main className="fw-main">
-          {activeSubNav === 'find-projects' && (
-            <>
-              <div className="fw-search-bar">
-                <input
-                  type="text"
-                  className="fw-search-input"
-                  placeholder="Search jobs..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-                <div className="fw-search-tags">
-                  <span className="fw-tag">English <span className="fw-tag-close">×</span></span>
+          <div className="fw-search-bar">
+            <input
+              type="text"
+              className="fw-search-input"
+              placeholder="Search jobs..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <div className="fw-search-tags">
+              <span className="fw-tag">English <span className="fw-tag-close">×</span></span>
+            </div>
+          </div>
+
+          {loading ? (
+            <div className="fw-loading">Loading jobs...</div>
+          ) : error ? (
+            <div className="fw-no-results">
+              <h3>Error loading projects</h3>
+              <p>{error}</p>
+            </div>
+          ) : (
+            <div className="fw-jobs">
+              {visibleProjects.length === 0 ? (
+                <div className="fw-no-results">
+                  <h3>No jobs found</h3>
+                  <p>Try adjusting your search criteria or filters</p>
                 </div>
-              </div>
-
-            {loading ? (
-                <div className="fw-loading">Loading jobs...</div>
               ) : (
-                <div className="fw-jobs">
-                  {visibleProjects.length === 0 ? (
-                    <div className="fw-no-results">
-                      <h3>No jobs found</h3>
-                      <p>Try adjusting your search criteria or filters</p>
+                visibleProjects.map((job) => (
+                  <div key={job._id} className="fw-job-card">
+                    <div className="fw-job-header">
+                      <h3 className="fw-job-title">{job.title}</h3>
+                      <button 
+                        className="fw-bid-btn"
+                        onClick={() => handleBidClick(job)}
+                        disabled={!user}
+                      >
+                        Place a bid
+                      </button>
                     </div>
-                  ) : (
-                    visibleProjects.map((job) => (
-                      <div key={job._id} className="fw-job-card">
-                        <div className="fw-job-header">
-                          <h3 className="fw-job-title">{job.title}</h3>
-                        <button 
-                            className="fw-bid-btn"
-                            onClick={() => handleBidClick(job)}
-                          disabled={!user}
-                        >
-                          Place a bid
-                        </button>
-                        </div>
-                        
-                        <div className="fw-job-meta">
-                          <span className="fw-budget">{job.budget}</span>
-                          <span className="fw-separator">•</span>
-                          <span className="fw-published">Published: {job.published}</span>
-                          <span className="fw-separator">•</span>
-                          <span className="fw-bids">Bids: {job.bids}</span>
-                        </div>
+                    
+                    <div className="fw-job-meta">
+                      <span className="fw-budget">{job.budget}</span>
+                      <span className="fw-separator">•</span>
+                      <span className="fw-published">Published: {job.published}</span>
+                      <span className="fw-separator">•</span>
+                      <span className="fw-bids">Bids: {job.bids}</span>
+                    </div>
 
-                        <p className="fw-job-description">{job.description}</p>
+                    <p className="fw-job-description">{truncateDescription(job.description)}</p>
 
-                        <div className="fw-job-skills">
-                          {job.skills && job.skills.map((skill, index) => (
-                            <span key={index} className="fw-skill-tag">{skill}</span>
-                          ))}
-                          {job.skills && job.skills.length > 5 && (
-                            <span className="fw-skill-more">+</span>
-                          )}
-                        </div>
-
-                        <div className="fw-job-client">
-                          <div className="fw-client-info">
-                            <div className="fw-client-avatar">{job.client?.initials}</div>
-                            <div className="fw-client-details">
-                              <div className="fw-client-meta">
-                                {job.client?.lastReply && (
-                                  <>
-                                    <span>Last reply: {job.client.lastReply}</span>
-                                    <span className="fw-separator">•</span>
-                                  </>
-                                )}
-                                <span>{job.client?.location}</span>
-                                <span className="fw-separator">•</span>
-                                <span className="fw-rating">{'★'.repeat(job.client?.rating || 5)}</span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="fw-payment-method">
-                            {job.verified ? (
-                              <span className="fw-verified">✓ Verified</span>
-                            ) : (
-                              <span className="fw-unverified">Unverified</span>
-                            )}
-                          </div>
-                        </div>
-
-                        <a href="#" className="fw-flag-link">Flag as inappropriate</a>
-                      </div>
-                    ))
+                    <div className="fw-job-skills">
+                      {job.skills && job.skills.map((skill, index) => (
+                        <span key={index} className="fw-skill-tag">{skill}</span>
+                      ))}
+                      {job.skills && job.skills.length > 5 && (
+                        <span className="fw-skill-more">+</span>
                       )}
                     </div>
-              )}
-            </>
-          )}
 
-          {activeSubNav === 'projects-with-skills' && (
-            <>
-              <div className="fw-search-bar">
-                <input
-                  type="text"
-                  className="fw-search-input"
-                  placeholder="Search jobs..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-                <div className="fw-search-tags">
-                  <span className="fw-tag">English <span className="fw-tag-close">×</span></span>
-                  <span className="fw-tag">CSS <span className="fw-tag-close">×</span></span>
-                  <span className="fw-tag">HTML <span className="fw-tag-close">×</span></span>
-                  <span className="fw-tag">JavaScript <span className="fw-tag-close">×</span></span>
-                </div>
-              </div>
-
-              {loading ? (
-                <div className="fw-loading">Loading jobs...</div>
-              ) : (
-                <div className="fw-jobs">
-                  {visibleProjects.length === 0 ? (
-                    <div className="fw-no-results">
-                      <h3>No jobs found</h3>
-                      <p>Try adjusting your search criteria or filters</p>
-                    </div>
-                  ) : (
-                    visibleProjects.map((job) => (
-                      <div key={job._id} className="fw-job-card">
-                        <div className="fw-job-header">
-                          <h3 className="fw-job-title">{job.title}</h3>
-                          <button 
-                            className="fw-bid-btn"
-                            onClick={() => handleBidClick(job)}
-                            disabled={!user}
-                          >
-                            Place a bid
-                          </button>
-                        </div>
-                        
-                        <div className="fw-job-meta">
-                          <span className="fw-budget">{job.budget}</span>
-                          <span className="fw-separator">•</span>
-                          <span className="fw-published">Published: {job.published}</span>
-                          <span className="fw-separator">•</span>
-                          <span className="fw-bids">Bids: {job.bids}</span>
-                          {job.deliveryTerm && (
-                            <>
-                              <span className="fw-separator">•</span>
-                              <span className="fw-delivery">Delivery term: {job.deliveryTerm}</span>
-                            </>
-                          )}
-                        </div>
-
-                        <p className="fw-job-description">{job.description}</p>
-
-                        <div className="fw-job-skills">
-                          {job.skills && job.skills.map((skill, index) => (
-                            <span key={index} className="fw-skill-tag">{skill}</span>
-                          ))}
-                          {job.skills && job.skills.length > 5 && (
-                            <span className="fw-skill-more">+</span>
-                          )}
-                        </div>
-
-                        <div className="fw-job-client">
-                          <div className="fw-client-info">
-                            <div className="fw-client-avatar">{job.client?.initials}</div>
-                            <div className="fw-client-details">
-                              <div className="fw-client-meta">
-                                {job.client?.lastReply && (
-                                  <>
-                                    <span>Last reply: {job.client.lastReply}</span>
-                                    <span className="fw-separator">•</span>
-                                  </>
-                                )}
-                                <span>{job.client?.location}</span>
+                    <div className="fw-job-client">
+                      <div className="fw-client-info">
+                        <div className="fw-client-avatar">{job.client?.initials}</div>
+                        <div className="fw-client-details">
+                          <div className="fw-client-meta">
+                            {job.client?.lastReply && (
+                              <>
+                                <span>Last reply: {job.client.lastReply}</span>
                                 <span className="fw-separator">•</span>
-                                <span className="fw-rating">{'★'.repeat(job.client?.rating || 5)}</span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="fw-payment-method">
-                            {job.verified ? (
-                              <span className="fw-verified">✓ Verified</span>
-                            ) : (
-                              <span className="fw-unverified">Unverified</span>
+                              </>
                             )}
+                            <span>{job.client?.location}</span>
+                            <span className="fw-separator">•</span>
+                            <span className="fw-rating">{'★'.repeat(job.client?.rating || 5)}</span>
                           </div>
                         </div>
-
-                        <a href="#" className="fw-flag-link">Flag as inappropriate</a>
                       </div>
-                    ))
-                    )}
-                  </div>
-              )}
-            </>
-          )}
+                      <div className="fw-payment-method">
+                        {job.verified ? (
+                          <span className="fw-verified">✓ Verified</span>
+                        ) : (
+                          <span className="fw-unverified">Unverified</span>
+                        )}
+                      </div>
+                    </div>
 
-          {activeSubNav === 'membership' && (
-            <div className="fw-sub-content">
-              <h2>Membership Plans</h2>
-              <p>Upgrade your membership to get more visibility and better opportunities.</p>
-              <div className="fw-membership-cards">
-                <div className="fw-membership-card">
-                  <h3>Basic</h3>
-                  <div className="fw-price">Free</div>
-                  <ul>
-                    <li>Basic project visibility</li>
-                    <li>Standard support</li>
-                    <li>Basic analytics</li>
-                  </ul>
-                  <button className="fw-membership-btn current">Current Plan</button>
-                </div>
-                <div className="fw-membership-card featured">
-                  <h3>Pro</h3>
-                  <div className="fw-price">$29/month</div>
-                  <ul>
-                    <li>Priority project visibility</li>
-                    <li>Advanced analytics</li>
-                    <li>Priority support</li>
-                    <li>Custom proposals</li>
-                  </ul>
-                  <button className="fw-membership-btn">Upgrade</button>
-                </div>
-                <div className="fw-membership-card">
-                  <h3>Premium</h3>
-                  <div className="fw-price">$99/month</div>
-                  <ul>
-                    <li>Maximum visibility</li>
-                    <li>All Pro features</li>
-                    <li>Dedicated account manager</li>
-                    <li>Custom branding</li>
-                  </ul>
-                  <button className="fw-membership-btn">Upgrade</button>
-                </div>
-              </div>
+                    <a href="#" className="fw-flag-link">Flag as inappropriate</a>
+                  </div>
+                ))
+              )}
             </div>
           )}
-
-          {activeSubNav === 'favorite-clients' && (
-            <div className="fw-sub-content">
-              <h2>My favorite clients</h2>
-              <p>Keep track of clients you've worked with and want to work with again.</p>
-              <div className="fw-placeholder">
-                <div className="fw-placeholder-icon">❤️</div>
-                <h3>No favorite clients yet</h3>
-                <p>Start working with clients and add them to your favorites to see them here.</p>
-                <button className="fw-primary-btn">Find projects</button>
-              </div>
-              </div>
-            )}
-          </main>
+        </main>
       </div>
 
       <button className="fw-help-btn">❓ Help</button>

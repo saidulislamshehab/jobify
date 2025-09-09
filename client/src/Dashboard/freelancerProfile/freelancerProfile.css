@@ -3,268 +3,14 @@
   min-height: 100vh;
   background-color: #f8f9fa;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
-/* Header Styles */
-.profile-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-
-.header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 64px;
-}
-
-.logo {
-  font-size: 24px;
-  font-weight: bold;
-  color: #2563eb;
-  letter-spacing: 1px;
-}
-
-.logo-accent {
-  color: #8b5cf6;
-}
-
-.header-nav {
-  display: flex;
-  gap: 32px;
-}
-
-.nav-link {
-  color: #374151;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.2s;
-}
-
-.nav-link:hover {
-  color: #8b5cf6;
-}
-
-.header-actions {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-}
-
-.action-btn {
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 8px;
-  transition: background-color 0.2s;
-}
-
-.action-btn:hover {
-  background-color: #f3f4f6;
-}
-
-/* Profile Dropdown Styles */
-.profile-dropdown-container {
   position: relative;
+  z-index: 1;
+  padding-top: 64px; /* Add padding to account for fixed navbar */
 }
 
-.profile-dropdown {
-  position: fixed;
-  top: 64px;
-  right: 24px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-  padding: 20px;
-  min-width: 320px;
-  z-index: 9999;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-10px);
-  transition: all 0.3s ease;
-  border: 1px solid #e5e7eb;
-}
+/* Header Styles - Using DashboardNav instead */
 
-.profile-dropdown-container:hover .profile-dropdown {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-.dropdown-header {
-  margin-bottom: 20px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #f3f4f6;
-}
-
-.user-name {
-  font-size: 16px;
-  font-weight: 700;
-  color: #111827;
-  margin-bottom: 12px;
-  line-height: 1.3;
-}
-
-.modality-section {
-  margin-bottom: 8px;
-}
-
-.modality-label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 8px;
-}
-
-.modality-options {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.modality-option {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  border-radius: 8px;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  transition: all 0.2s ease;
-}
-
-.modality-option.active {
-  background: #8b5cf6;
-  color: white;
-  border-color: #8b5cf6;
-}
-
-.modality-text {
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.modality-check {
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.dropdown-section {
-  margin-bottom: 20px;
-}
-
-.dropdown-section-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.dropdown-links {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-.dropdown-link {
-  display: block;
-  padding: 8px 12px;
-  color: #374151;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-}
-
-.dropdown-link:hover {
-  background: #f3f4f6;
-  color: #111827;
-}
-
-.dropdown-button {
-  grid-column: 1 / -1;
-  background: #8b5cf6;
-  color: white;
-  border: none;
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-top: 8px;
-}
-
-.dropdown-button:hover {
-  background: #7c3aed;
-  transform: translateY(-1px);
-}
-
-.dropdown-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 16px;
-  border-top: 1px solid #f3f4f6;
-}
-
-.language-section {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.language-label {
-  font-size: 14px;
-  color: #6b7280;
-}
-
-.language-options {
-  display: flex;
-  gap: 4px;
-}
-
-.language-option {
-  padding: 4px 8px;
-  font-size: 12px;
-  color: #6b7280;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-}
-
-.language-option.active {
-  color: #8b5cf6;
-  font-weight: 600;
-}
-
-.language-option:hover {
-  background: #f3f4f6;
-}
-
-.logout-link {
-  color: #374151;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  padding: 8px 12px;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-}
-
-.logout-link:hover {
-  background: #f3f4f6;
-  color: #111827;
-}
+/* Profile Dropdown Styles - Using DashboardNav dropdown instead */
 
 /* Main Content Layout */
 .profile-content {
@@ -275,37 +21,18 @@
   flex-direction: column;
   gap: 24px;
   min-height: calc(100vh - 200px);
+  position: relative;
+  z-index: 1;
 }
 
-/* Profile Tabs */
-.profile-tabs {
+.profile-main {
   display: flex;
-  gap: 0;
-  margin-bottom: 24px;
-  border-bottom: 1px solid #e5e7eb;
+  flex-direction: column;
+  gap: 24px;
+  position: relative;
+  z-index: 1;
 }
 
-.tab-button {
-  background: none;
-  border: none;
-  padding: 12px 24px;
-  font-size: 16px;
-  font-weight: 500;
-  color: #6b7280;
-  cursor: pointer;
-  border-bottom: 3px solid transparent;
-  transition: all 0.2s ease;
-}
-
-.tab-button.active {
-  color: #8b5cf6;
-  border-bottom-color: #8b5cf6;
-  font-weight: 600;
-}
-
-.tab-button:hover:not(.active) {
-  color: #374151;
-}
 
 /* Main Profile Card */
 .main-profile-card {
@@ -1798,20 +1525,6 @@ input:checked + .slider:before {
     gap: 12px;
   }
   
-  .profile-tabs {
-    flex-direction: column;
-  }
-  
-  .tab-button {
-    text-align: left;
-    border-bottom: none;
-    border-left: 3px solid transparent;
-  }
-  
-  .tab-button.active {
-    border-bottom-color: transparent;
-    border-left-color: #8b5cf6;
-  }
 }
 
 @media (max-width: 480px) {
@@ -2086,4 +1799,26 @@ input:checked + .slider:before {
 
 .save-button:hover {
   background: #059669;
+}
+
+/* Simplified Display Styles for Experience, Education, and Languages */
+.experience-content,
+.education-content,
+.languages-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.experience-text,
+.education-text,
+.language-text {
+  margin: 0;
+  padding: 12px 16px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  color: #374151;
+  font-size: 14px;
+  line-height: 1.5;
 }

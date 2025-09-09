@@ -3,7 +3,7 @@ import ClientProject from "../models/ClientProject.js";
 export const createClientProject = async (req, res) => {
     try {
         console.log('Received project creation request:', req.body);
-        const { title, description, paymentOption, budget, skills, clientId, clientEmail } = req.body;
+        const { title, description, paymentOption, budget, skills, clientId, clientEmail, clientCountry } = req.body;
         
         // Validate required fields
         if (!title || !description || !paymentOption || !budget || !clientId || !clientEmail) {
@@ -42,6 +42,7 @@ export const createClientProject = async (req, res) => {
             skills,
             clientId,
             clientEmail,
+            clientCountry: clientCountry || 'United States',
             status: 'draft'
         });
 
@@ -111,7 +112,7 @@ export const getClientProjectById = async (req, res) => {
 export const updateClientProject = async (req, res) => {
     try {
         const { id } = req.params;
-        const { title, description, paymentOption, budget, skills, status } = req.body;
+        const { title, description, paymentOption, budget, skills, status, clientCountry } = req.body;
         
         if (!id) {
             return res.status(400).json({ message: "Project ID is required" });
@@ -138,6 +139,7 @@ export const updateClientProject = async (req, res) => {
         if (budget) updateData.budget = budget;
         if (skills) updateData.skills = skills;
         if (status) updateData.status = status;
+        if (clientCountry) updateData.clientCountry = clientCountry;
 
         const project = await ClientProject.findByIdAndUpdate(id, updateData, { new: true });
         

@@ -6,7 +6,6 @@ import DashboardNav from '../DashboardNav';
 const ClientProfile = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('client');
   const [showPhotoModal, setShowPhotoModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState('');
@@ -224,18 +223,8 @@ const ClientProfile = () => {
       <div className="profile-content">
         {/* Profile Tabs */}
         <div className="profile-tabs">
-          <button 
-            className={`tab-button ${activeTab === 'freelancer' ? 'active' : ''}`}
-            onClick={() => window.location.href = '/freelancer-profile'}
-          >
-            My Profile As Freelancer
-          </button>
-          <button 
-            className={`tab-button ${activeTab === 'client' ? 'active' : ''}`}
-            onClick={() => setActiveTab('client')}
-          >
-            My Profile As Client
-          </button>
+         
+        
         </div>
 
         {/* Main Profile Card */}
@@ -274,12 +263,6 @@ const ClientProfile = () => {
             </div>
 
             <div className="profile-actions">
-              <div className="hourly-rate-section">
-                <span className="rate-label">Hourly rate</span>
-                <span className="rate-value">$0.00</span>
-                <span className="rate-dash">-</span>
-              </div>
-
               <div className="profile-visibility">
                 <div className="visibility-option">
                   <label className="toggle-switch">
@@ -329,32 +312,6 @@ const ClientProfile = () => {
           </div>
         </div>
 
-        {/* Work History Section */}
-        <div className="work-history-section">
-          <div className="section-header">
-            <h3>Work history</h3>
-            <button className="edit-button">Edit</button>
-          </div>
-        </div>
-
-        {/* Certifications Section */}
-        <div className="certifications-section">
-          <div className="section-header">
-            <h3>Certifications (0)</h3>
-            <button className="edit-button">Edit</button>
-          </div>
-        </div>
-
-        {/* Languages Section */}
-        <div className="languages-section">
-          <div className="section-header">
-            <h3>Languages</h3>
-            <button className="edit-button">Edit</button>
-          </div>
-          <div className="language-content">
-            <p className="language-text">English: Native or Bilingual</p>
-          </div>
-        </div>
       </div>
 
       {/* Photo Upload Modal */}

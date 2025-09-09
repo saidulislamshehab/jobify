@@ -37,26 +37,9 @@ const FreelancerProfile = () => {
   const [isEditingExperience, setIsEditingExperience] = useState(false);
   const [isEditingEducation, setIsEditingEducation] = useState(false);
   const [isEditingLanguages, setIsEditingLanguages] = useState(false);
-  const [newExperience, setNewExperience] = useState({
-    company: '',
-    position: '',
-    startDate: '',
-    endDate: '',
-    description: '',
-    current: false
-  });
-  const [newEducation, setNewEducation] = useState({
-    institution: '',
-    degree: '',
-    fieldOfStudy: '',
-    startDate: '',
-    endDate: '',
-    description: ''
-  });
-  const [newLanguage, setNewLanguage] = useState({
-    language: '',
-    proficiency: 'Intermediate'
-  });
+  const [newExperience, setNewExperience] = useState('');
+  const [newEducation, setNewEducation] = useState('');
+  const [newLanguage, setNewLanguage] = useState('');
 
   useEffect(() => {
     // Get user data from localStorage or sessionStorage
@@ -129,7 +112,7 @@ const FreelancerProfile = () => {
                 // Load experience data
                 if (userDataFromDB.experience && Array.isArray(userDataFromDB.experience) && userDataFromDB.experience.length > 0) {
                   const experienceWithIds = userDataFromDB.experience.map((exp, index) => ({
-                    ...exp,
+                    text: exp.text || exp.company || exp.position || exp,
                     id: exp._id || `exp_${Date.now()}_${index}`
                   }));
                   setExperience(experienceWithIds);
@@ -142,7 +125,7 @@ const FreelancerProfile = () => {
                 // Load education data
                 if (userDataFromDB.education && Array.isArray(userDataFromDB.education) && userDataFromDB.education.length > 0) {
                   const educationWithIds = userDataFromDB.education.map((edu, index) => ({
-                    ...edu,
+                    text: edu.text || edu.institution || edu.degree || edu,
                     id: edu._id || `edu_${Date.now()}_${index}`
                   }));
                   setEducation(educationWithIds);
@@ -155,14 +138,14 @@ const FreelancerProfile = () => {
                 // Load languages data
                 if (userDataFromDB.languages && Array.isArray(userDataFromDB.languages) && userDataFromDB.languages.length > 0) {
                   const languagesWithIds = userDataFromDB.languages.map((lang, index) => ({
-                    ...lang,
+                    text: lang.text || lang.language || lang,
                     id: lang._id || `lang_${Date.now()}_${index}`
                   }));
                   setLanguages(languagesWithIds);
                   console.log('Languages loaded from DB:', languagesWithIds);
                 } else {
                   console.log('No languages data found in DB, initializing with default English');
-                  setLanguages([{ language: 'English', proficiency: 'Native', id: 'default_english' }]);
+                  setLanguages([{ text: 'English', id: 'default_english' }]);
                 }
               } else {
                 console.log('Could not fetch user data from database, using local data');
@@ -175,14 +158,14 @@ const FreelancerProfile = () => {
               // Initialize with empty arrays if DB fetch fails
               setExperience([]);
               setEducation([]);
-              setLanguages([{ language: 'English', proficiency: 'Native', id: 'default_english' }]);
+              setLanguages([{ text: 'English', id: 'default_english' }]);
             }
           } else {
             // No userId, initialize with empty arrays
             console.log('No userId found, initializing with empty arrays');
             setExperience([]);
             setEducation([]);
-            setLanguages([{ language: 'English', proficiency: 'Native', id: 'default_english' }]);
+            setLanguages([{ text: 'English', id: 'default_english' }]);
           }
         } else {
           console.log('No user data found, redirecting to login');
@@ -601,20 +584,18 @@ const FreelancerProfile = () => {
 
   // Experience handlers
   const handleAddExperience = () => {
-    if (newExperience.company && newExperience.position && newExperience.startDate) {
+    if (newExperience.trim()) {
       const experienceToAdd = {
-        ...newExperience,
+        text: newExperience.trim(),
         id: Date.now().toString()
       };
-      setExperience([...experience, experienceToAdd]);
-      setNewExperience({
-        company: '',
-        position: '',
-        startDate: '',
-        endDate: '',
-        description: '',
-        current: false
-      });
+      const updatedExperience = [...experience, experienceToAdd];
+      console.log('Adding new experience:', experienceToAdd);
+      console.log('Updated experience array:', updatedExperience);
+      setExperience(updatedExperience);
+      setNewExperience('');
+    } else {
+      alert('Please enter experience details');
     }
   };
 
@@ -628,24 +609,15 @@ const FreelancerProfile = () => {
       console.log('Saving experience for user ID:', userId);
       console.log('Experience data to save:', experience);
       
+      if (!userId) {
+        alert('User ID not found. Please log in again.');
+        return;
+      }
+      
       // Test server connection first
       const testResponse = await fetch('http://localhost:5000/api/jobseekers/test');
       if (!testResponse.ok) {
         throw new Error('Server is not responding. Please make sure the server is running on port 5000.');
-      }
-      
-      // Test data sending
-      const testUpdateResponse = await fetch('http://localhost:5000/api/jobseekers/test-update', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ testData: experience })
-      });
-      
-      if (testUpdateResponse.ok) {
-        const testResult = await testUpdateResponse.json();
-        console.log('Test update successful:', testResult);
       }
       
       const response = await fetch(`http://localhost:5000/api/jobseekers/update-experience/${userId}`, {
@@ -661,9 +633,15 @@ const FreelancerProfile = () => {
       if (response.ok) {
         const result = await response.json();
         console.log('Experience update result:', result);
-        const updatedUser = { ...user, experience: result.experience };
+        
+        // Update local user data with the response from server
+        const updatedUser = { ...user, experience: result.experience || experience };
         localStorage.setItem('user', JSON.stringify(updatedUser));
         setUser(updatedUser);
+        
+        // Update local state to match what was saved
+        setExperience(result.experience || experience);
+        
         setIsEditingExperience(false);
         alert('Experience updated successfully!');
       } else {
@@ -675,6 +653,8 @@ const FreelancerProfile = () => {
       console.error('Error updating experience:', error);
       if (error.name === 'TypeError' && error.message.includes('fetch')) {
         alert('Cannot connect to server. Please make sure the server is running on port 5000.');
+      } else if (error.message.includes('Server is not responding')) {
+        alert(error.message);
       } else {
         alert('Network error: ' + error.message);
       }
@@ -683,20 +663,18 @@ const FreelancerProfile = () => {
 
   // Education handlers
   const handleAddEducation = () => {
-    if (newEducation.institution && newEducation.degree && newEducation.startDate) {
+    if (newEducation.trim()) {
       const educationToAdd = {
-        ...newEducation,
+        text: newEducation.trim(),
         id: Date.now().toString()
       };
-      setEducation([...education, educationToAdd]);
-      setNewEducation({
-        institution: '',
-        degree: '',
-        fieldOfStudy: '',
-        startDate: '',
-        endDate: '',
-        description: ''
-      });
+      const updatedEducation = [...education, educationToAdd];
+      console.log('Adding new education:', educationToAdd);
+      console.log('Updated education array:', updatedEducation);
+      setEducation(updatedEducation);
+      setNewEducation('');
+    } else {
+      alert('Please enter education details');
     }
   };
 
@@ -709,6 +687,11 @@ const FreelancerProfile = () => {
       const userId = user._id || user.id;
       console.log('Saving education for user ID:', userId);
       console.log('Education data to save:', education);
+      
+      if (!userId) {
+        alert('User ID not found. Please log in again.');
+        return;
+      }
       
       // Test server connection first
       const testResponse = await fetch('http://localhost:5000/api/jobseekers/test');
@@ -729,9 +712,15 @@ const FreelancerProfile = () => {
       if (response.ok) {
         const result = await response.json();
         console.log('Education update result:', result);
-        const updatedUser = { ...user, education: result.education };
+        
+        // Update local user data with the response from server
+        const updatedUser = { ...user, education: result.education || education };
         localStorage.setItem('user', JSON.stringify(updatedUser));
         setUser(updatedUser);
+        
+        // Update local state to match what was saved
+        setEducation(result.education || education);
+        
         setIsEditingEducation(false);
         alert('Education updated successfully!');
       } else {
@@ -743,6 +732,8 @@ const FreelancerProfile = () => {
       console.error('Error updating education:', error);
       if (error.name === 'TypeError' && error.message.includes('fetch')) {
         alert('Cannot connect to server. Please make sure the server is running on port 5000.');
+      } else if (error.message.includes('Server is not responding')) {
+        alert(error.message);
       } else {
         alert('Network error: ' + error.message);
       }
@@ -751,16 +742,18 @@ const FreelancerProfile = () => {
 
   // Language handlers
   const handleAddLanguage = () => {
-    if (newLanguage.language) {
+    if (newLanguage.trim()) {
       const languageToAdd = {
-        ...newLanguage,
+        text: newLanguage.trim(),
         id: Date.now().toString()
       };
-      setLanguages([...languages, languageToAdd]);
-      setNewLanguage({
-        language: '',
-        proficiency: 'Intermediate'
-      });
+      const updatedLanguages = [...languages, languageToAdd];
+      console.log('Adding new language:', languageToAdd);
+      console.log('Updated languages array:', updatedLanguages);
+      setLanguages(updatedLanguages);
+      setNewLanguage('');
+    } else {
+      alert('Please enter a language name');
     }
   };
 
@@ -773,6 +766,11 @@ const FreelancerProfile = () => {
       const userId = user._id || user.id;
       console.log('Saving languages for user ID:', userId);
       console.log('Languages data to save:', languages);
+      
+      if (!userId) {
+        alert('User ID not found. Please log in again.');
+        return;
+      }
       
       // Test server connection first
       const testResponse = await fetch('http://localhost:5000/api/jobseekers/test');
@@ -793,9 +791,15 @@ const FreelancerProfile = () => {
       if (response.ok) {
         const result = await response.json();
         console.log('Languages update result:', result);
-        const updatedUser = { ...user, languages: result.languages };
+        
+        // Update local user data with the response from server
+        const updatedUser = { ...user, languages: result.languages || languages };
         localStorage.setItem('user', JSON.stringify(updatedUser));
         setUser(updatedUser);
+        
+        // Update local state to match what was saved
+        setLanguages(result.languages || languages);
+        
         setIsEditingLanguages(false);
         alert('Languages updated successfully!');
       } else {
@@ -807,6 +811,8 @@ const FreelancerProfile = () => {
       console.error('Error updating languages:', error);
       if (error.name === 'TypeError' && error.message.includes('fetch')) {
         alert('Cannot connect to server. Please make sure the server is running on port 5000.');
+      } else if (error.message.includes('Server is not responding')) {
+        alert(error.message);
       } else {
         alert('Network error: ' + error.message);
       }
@@ -856,21 +862,6 @@ const FreelancerProfile = () => {
       <div className="profile-content">
         {/* Main Content */}
         <main className="profile-main">
-        {/* Profile Tabs */}
-        <div className="profile-tabs">
-          <button 
-            className={`tab-button ${activeTab === 'freelancer' ? 'active' : ''}`}
-            onClick={() => setActiveTab('freelancer')}
-          >
-            My Profile As Freelancer
-          </button>
-          <button 
-            className={`tab-button ${activeTab === 'client' ? 'active' : ''}`}
-            onClick={() => setActiveTab('client')}
-          >
-            My Profile As Client
-          </button>
-        </div>
 
           {/* Main Profile Card */}
           {activeTab === 'freelancer' ? (
@@ -1397,62 +1388,13 @@ const FreelancerProfile = () => {
                     {/* Add New Experience Form */}
                     <div className="add-experience-form">
                       <h4>Add New Experience</h4>
-                      <div className="form-row">
-                        <div className="form-group">
-                          <label>Company</label>
-                          <input
-                            type="text"
-                            value={newExperience.company}
-                            onChange={(e) => setNewExperience({...newExperience, company: e.target.value})}
-                            placeholder="Company name"
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label>Position</label>
-                          <input
-                            type="text"
-                            value={newExperience.position}
-                            onChange={(e) => setNewExperience({...newExperience, position: e.target.value})}
-                            placeholder="Job title"
-                          />
-                        </div>
-                      </div>
-                      <div className="form-row">
-                        <div className="form-group">
-                          <label>Start Date</label>
-                          <input
-                            type="month"
-                            value={newExperience.startDate}
-                            onChange={(e) => setNewExperience({...newExperience, startDate: e.target.value})}
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label>End Date</label>
-                          <input
-                            type="month"
-                            value={newExperience.endDate}
-                            onChange={(e) => setNewExperience({...newExperience, endDate: e.target.value})}
-                            disabled={newExperience.current}
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label>
-                            <input
-                              type="checkbox"
-                              checked={newExperience.current}
-                              onChange={(e) => setNewExperience({...newExperience, current: e.target.checked})}
-                            />
-                            Currently working here
-                          </label>
-                        </div>
-                      </div>
                       <div className="form-group">
-                        <label>Description</label>
-                        <textarea
-                          value={newExperience.description}
-                          onChange={(e) => setNewExperience({...newExperience, description: e.target.value})}
-                          placeholder="Describe your role and achievements"
-                          rows="3"
+                        <label>Experience Details</label>
+                        <input
+                          type="text"
+                          value={newExperience}
+                          onChange={(e) => setNewExperience(e.target.value)}
+                          placeholder="e.g., Software Developer at Tech Corp (2020-2023)"
                         />
                       </div>
                       <button className="add-button" onClick={handleAddExperience}>
@@ -1465,7 +1407,7 @@ const FreelancerProfile = () => {
                       {experience.map((exp) => (
                         <div key={exp.id} className="experience-item">
                           <div className="experience-header">
-                            <h4>{exp.position} at {exp.company}</h4>
+                            <h4>{exp.text}</h4>
                             <button 
                               className="remove-btn"
                               onClick={() => handleRemoveExperience(exp.id)}
@@ -1473,12 +1415,6 @@ const FreelancerProfile = () => {
                               ×
                             </button>
                           </div>
-                          <p className="experience-dates">
-                            {exp.startDate} - {exp.current ? 'Present' : exp.endDate}
-                          </p>
-                          {exp.description && (
-                            <p className="experience-description">{exp.description}</p>
-                          )}
                         </div>
                       ))}
                     </div>
@@ -1486,18 +1422,10 @@ const FreelancerProfile = () => {
                 ) : (
                   <div className="experience-display">
                     {experience.length > 0 ? (
-                      <div className="experience-list">
-                        {experience.map((exp) => (
-                          <div key={exp.id} className="experience-item">
-                            <h4>{exp.position} at {exp.company}</h4>
-                            <p className="experience-dates">
-                              {exp.startDate} - {exp.current ? 'Present' : exp.endDate}
-                            </p>
-                            {exp.description && (
-                              <p className="experience-description">{exp.description}</p>
-                            )}
-                          </div>
-                        ))}
+                      <div className="experience-content">
+                        <p className="experience-text">
+                          {experience.map(exp => exp.text).join(', ')}
+                        </p>
                       </div>
                     ) : (
                       <p className="no-experience">No experience added yet. Click Edit to add your work experience.</p>
@@ -1533,60 +1461,13 @@ const FreelancerProfile = () => {
                     {/* Add New Education Form */}
                     <div className="add-education-form">
                       <h4>Add New Education</h4>
-                      <div className="form-row">
-                        <div className="form-group">
-                          <label>Institution</label>
-                          <input
-                            type="text"
-                            value={newEducation.institution}
-                            onChange={(e) => setNewEducation({...newEducation, institution: e.target.value})}
-                            placeholder="University/School name"
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label>Degree</label>
-                          <input
-                            type="text"
-                            value={newEducation.degree}
-                            onChange={(e) => setNewEducation({...newEducation, degree: e.target.value})}
-                            placeholder="e.g., Bachelor's, Master's"
-                          />
-                        </div>
-                      </div>
-                      <div className="form-row">
-                        <div className="form-group">
-                          <label>Field of Study</label>
-                          <input
-                            type="text"
-                            value={newEducation.fieldOfStudy}
-                            onChange={(e) => setNewEducation({...newEducation, fieldOfStudy: e.target.value})}
-                            placeholder="e.g., Computer Science"
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label>Start Date</label>
-                          <input
-                            type="month"
-                            value={newEducation.startDate}
-                            onChange={(e) => setNewEducation({...newEducation, startDate: e.target.value})}
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label>End Date</label>
-                          <input
-                            type="month"
-                            value={newEducation.endDate}
-                            onChange={(e) => setNewEducation({...newEducation, endDate: e.target.value})}
-                          />
-                        </div>
-                      </div>
                       <div className="form-group">
-                        <label>Description</label>
-                        <textarea
-                          value={newEducation.description}
-                          onChange={(e) => setNewEducation({...newEducation, description: e.target.value})}
-                          placeholder="Additional details about your education"
-                          rows="3"
+                        <label>Education Details</label>
+                        <input
+                          type="text"
+                          value={newEducation}
+                          onChange={(e) => setNewEducation(e.target.value)}
+                          placeholder="e.g., Bachelor's in Computer Science from MIT (2018-2022)"
                         />
                       </div>
                       <button className="add-button" onClick={handleAddEducation}>
@@ -1599,7 +1480,7 @@ const FreelancerProfile = () => {
                       {education.map((edu) => (
                         <div key={edu.id} className="education-item">
                           <div className="education-header">
-                            <h4>{edu.degree} in {edu.fieldOfStudy}</h4>
+                            <h4>{edu.text}</h4>
                             <button 
                               className="remove-btn"
                               onClick={() => handleRemoveEducation(edu.id)}
@@ -1607,13 +1488,6 @@ const FreelancerProfile = () => {
                               ×
                             </button>
                           </div>
-                          <p className="education-institution">{edu.institution}</p>
-                          <p className="education-dates">
-                            {edu.startDate} - {edu.endDate}
-                          </p>
-                          {edu.description && (
-                            <p className="education-description">{edu.description}</p>
-                          )}
                         </div>
                       ))}
                     </div>
@@ -1621,19 +1495,10 @@ const FreelancerProfile = () => {
                 ) : (
                   <div className="education-display">
                     {education.length > 0 ? (
-                      <div className="education-list">
-                        {education.map((edu) => (
-                          <div key={edu.id} className="education-item">
-                            <h4>{edu.degree} in {edu.fieldOfStudy}</h4>
-                            <p className="education-institution">{edu.institution}</p>
-                            <p className="education-dates">
-                              {edu.startDate} - {edu.endDate}
-                            </p>
-                            {edu.description && (
-                              <p className="education-description">{edu.description}</p>
-                            )}
-                          </div>
-                        ))}
+                      <div className="education-content">
+                        <p className="education-text">
+                          {education.map(edu => edu.text).join(', ')}
+                        </p>
                       </div>
                     ) : (
                       <p className="no-education">No education added yet. Click Edit to add your educational background.</p>
@@ -1669,34 +1534,18 @@ const FreelancerProfile = () => {
                     {/* Add New Language Form */}
                     <div className="add-language-form">
                       <h4>Add New Language</h4>
-                      <div className="form-row">
-                        <div className="form-group">
-                          <label>Language</label>
-                          <input
-                            type="text"
-                            value={newLanguage.language}
-                            onChange={(e) => setNewLanguage({...newLanguage, language: e.target.value})}
-                            placeholder="e.g., Spanish, French"
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label>Proficiency</label>
-                          <select
-                            value={newLanguage.proficiency}
-                            onChange={(e) => setNewLanguage({...newLanguage, proficiency: e.target.value})}
-                          >
-                            <option value="Beginner">Beginner</option>
-                            <option value="Intermediate">Intermediate</option>
-                            <option value="Advanced">Advanced</option>
-                            <option value="Native">Native</option>
-                          </select>
-                        </div>
-                        <div className="form-group">
-                          <button className="add-button" onClick={handleAddLanguage}>
-                            Add Language
-                          </button>
-                        </div>
+                      <div className="form-group">
+                        <label>Language</label>
+                        <input
+                          type="text"
+                          value={newLanguage}
+                          onChange={(e) => setNewLanguage(e.target.value)}
+                          placeholder="e.g., Spanish, French, German"
+                        />
                       </div>
+                      <button className="add-button" onClick={handleAddLanguage}>
+                        Add Language
+                      </button>
                     </div>
 
                     {/* Languages List */}
@@ -1704,8 +1553,7 @@ const FreelancerProfile = () => {
                       {languages.map((lang) => (
                         <div key={lang.id} className="language-item">
                           <div className="language-header">
-                            <span className="language-name">{lang.language}</span>
-                            <span className="language-proficiency">{lang.proficiency}</span>
+                            <span className="language-name">{lang.text}</span>
                             <button 
                               className="remove-btn"
                               onClick={() => handleRemoveLanguage(lang.id)}
@@ -1720,13 +1568,10 @@ const FreelancerProfile = () => {
                 ) : (
                   <div className="languages-display">
                     {languages.length > 0 ? (
-                      <div className="languages-list">
-                        {languages.map((lang) => (
-                          <div key={lang.id} className="language-item">
-                            <span className="language-name">{lang.language}</span>
-                            <span className="language-proficiency">{lang.proficiency}</span>
-                          </div>
-                        ))}
+                      <div className="languages-content">
+                        <p className="language-text">
+                          {languages.map(lang => lang.text).join(', ')}
+                        </p>
                       </div>
                     ) : (
                       <p className="no-languages">No languages added yet. Click Edit to add your languages.</p>

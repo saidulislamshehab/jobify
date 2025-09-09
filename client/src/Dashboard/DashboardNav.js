@@ -51,7 +51,7 @@ const DashboardNav = ({ user }) => {
                   <a href="#" className="dropdown-link">My account</a>
                   <a href="/profile" className="dropdown-link">My profile</a>
                   <a href="#" className="dropdown-link">Membership</a>
-                  <a href="#" className="dropdown-link">Certify my skills</a>
+                  <a href="/client-profile" className="dropdown-link">Client profile</a>
                 </div>
               </div>
               <div className="dropdown-section">

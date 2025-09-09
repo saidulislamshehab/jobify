@@ -12,6 +12,8 @@ const AddJobSeeker = () => {
     password: ''
   });
   const [acceptTerms, setAcceptTerms] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,19 +25,40 @@ const AddJobSeeker = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setIsLoading(true);
+    
+    // Basic validation
+    if (!formData.firstName.trim() || !formData.lastName.trim()) {
+      setError('Please enter both first and last name');
+      setIsLoading(false);
+      return;
+    }
+    
+    if (!formData.email.trim()) {
+      setError('Please enter your email address');
+      setIsLoading(false);
+      return;
+    }
+    
+    if (!formData.password || formData.password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      setIsLoading(false);
+      return;
+    }
     
     if (!acceptTerms) {
-      alert('Please accept the Terms & Conditions');
+      setError('Please accept the Terms & Conditions');
+      setIsLoading(false);
       return;
     }
 
     try {
       // Create a job seeker with the form data
       const jobSeekerData = {
-        name: `${formData.firstName} ${formData.lastName}`,
-        email: formData.email,
+        name: `${formData.firstName.trim()} ${formData.lastName.trim()}`,
+        email: formData.email.trim().toLowerCase(),
         password: formData.password
-        // MongoDB will handle all other fields with defaults
       };
 
       console.log('Sending data to MongoDB:', jobSeekerData);
@@ -48,7 +71,7 @@ const AddJobSeeker = () => {
         alert('Account created successfully! You can now login and complete your profile.');
         navigate('/login');
       } else {
-        alert('Failed to create account. Please try again.');
+        setError('Failed to create account. Please try again.');
       }
     } catch (error) {
       console.error('Error details:', error);
@@ -56,16 +79,18 @@ const AddJobSeeker = () => {
       if (error.response) {
         // Server responded with error status
         console.error('Server error:', error.response.data);
-        alert(`Server error: ${error.response.data.message || 'Unknown error'}`);
+        setError(error.response.data.message || 'Server error occurred');
       } else if (error.request) {
         // Request was made but no response received
         console.error('Network error:', error.request);
-        alert('Network error: Cannot connect to server. Please check if server is running.');
+        setError('Cannot connect to server. Please check if server is running.');
       } else {
         // Something else happened
         console.error('Other error:', error.message);
-        alert(`Error: ${error.message}`);
+        setError(`Error: ${error.message}`);
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -94,6 +119,12 @@ const AddJobSeeker = () => {
             <h1>Sign Up</h1>
             
             <form onSubmit={handleSubmit} className="signup-form">
+              {error && (
+                <div className="error-message">
+                  {error}
+                </div>
+              )}
+              
               <div className="form-group">
                 <input
                   type="text"
@@ -103,6 +134,7 @@ const AddJobSeeker = () => {
                   placeholder="First name"
                   required
                   className="form-input"
+                  disabled={isLoading}
                 />
               </div>
 
@@ -115,6 +147,7 @@ const AddJobSeeker = () => {
                   placeholder="Last name"
                   required
                   className="form-input"
+                  disabled={isLoading}
                 />
               </div>
 
@@ -127,6 +160,7 @@ const AddJobSeeker = () => {
                   placeholder="Email address"
                   required
                   className="form-input"
+                  disabled={isLoading}
                 />
               </div>
 
@@ -140,6 +174,7 @@ const AddJobSeeker = () => {
                   required
                   className="form-input"
                   minLength="6"
+                  disabled={isLoading}
                 />
               </div>
 
@@ -150,6 +185,7 @@ const AddJobSeeker = () => {
                     checked={acceptTerms}
                     onChange={(e) => setAcceptTerms(e.target.checked)}
                     required
+                    disabled={isLoading}
                   />
                   <span className="checkmark"></span>
                   Accept Terms & Conditions
@@ -159,8 +195,9 @@ const AddJobSeeker = () => {
               <button 
                 type="submit" 
                 className="join-button"
+                disabled={isLoading}
               >
-                Join us →
+                {isLoading ? 'Creating Account...' : 'Join us →'}
               </button>
             </form>
 

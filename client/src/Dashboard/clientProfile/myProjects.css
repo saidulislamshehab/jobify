@@ -4,16 +4,17 @@
   background-color: #f8fafc;
   display: flex;
   flex-direction: column;
+  padding-top: 64px;
 }
 
 /* Header */
 .projects-header {
   background: white;
   border-bottom: 1px solid #e5e7eb;
-  padding: 20px 0;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  padding: 24px 0;
+  position: relative;
+  z-index: 10;
+  margin-bottom: 24px;
 }
 
 .header-content {
@@ -131,60 +132,23 @@
   margin: 0;
 }
 
-.project-skills {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.skills-label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-  margin-top: 4px;
-  flex-shrink: 0;
-}
-
-.skills-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.skill-tag {
-  background: #ede9fe;
-  color: #7c3aed;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.skill-more {
-  color: #6b7280;
-  font-size: 12px;
-  font-style: italic;
-}
+/* Removed skills section for compact design */
 
 .project-actions {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+  justify-content: flex-end;
   align-items: center;
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #f3f4f6;
+  margin-top: 8px;
 }
 
 .publish-btn,
 .view-bids-btn {
-  background: #8b5cf6;
+  background: #007bff;
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -192,35 +156,12 @@
 
 .publish-btn:hover,
 .view-bids-btn:hover {
-  background: #7c3aed;
-  transform: translateY(-1px);
+  background: #0056b3;
 }
 
-.project-stats-mini {
-  display: flex;
-  gap: 8px;
-  margin-left: auto;
-}
+/* Removed complex button animations for simple design */
 
-.stat-pending,
-.stat-accepted {
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.stat-pending {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.stat-accepted {
-  background: #d1fae5;
-  color: #065f46;
-}
+/* Removed stats mini section for compact design */
 
 .project-menu {
   background: none;
@@ -264,7 +205,7 @@
 /* Main Content */
 .projects-content {
   flex: 1;
-  padding: 32px 0;
+  padding: 0 0 32px 0;
 }
 
 .projects-container {
@@ -483,31 +424,33 @@
 
 /* Project Card */
 .project-card {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.2s ease;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid #e9ecef;
+  transition: all 0.2s ease;
+  position: relative;
 }
 
 .project-card:hover {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-color: #dee2e6;
 }
 
 .project-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 
 .project-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
-  color: #111827;
+  color: #212529;
   margin: 0;
   flex: 1;
-  margin-right: 16px;
+  margin-right: 12px;
   line-height: 1.4;
 }
 
@@ -519,35 +462,35 @@
 
 .status-tag {
   padding: 4px 12px;
-  border-radius: 20px;
+  border-radius: 16px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
 .status-tag.evaluating {
-  background: #fef3c7;
-  color: #92400e;
-  border: 1px solid #fbbf24;
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
 }
 
 .status-tag.in-progress {
-  background: #dbeafe;
-  color: #1e40af;
-  border: 1px solid #3b82f6;
+  background: #cce5ff;
+  color: #004085;
+  border: 1px solid #80bdff;
 }
 
 .status-tag.completed {
-  background: #d1fae5;
-  color: #065f46;
-  border: 1px solid #10b981;
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
 }
 
 .status-tag.draft {
-  background: #f3f4f6;
-  color: #6b7280;
-  border: 1px solid #9ca3af;
+  background: #e2e3e5;
+  color: #6c757d;
+  border: 1px solid #ced4da;
 }
 
 .project-menu {
@@ -569,38 +512,43 @@
 .project-details {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
 }
 
-.project-meta {
+.project-info {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
-.meta-item {
+.project-meta-line {
   display: flex;
   align-items: center;
-  gap: 4px;
-}
-
-.meta-item:first-child {
-  flex-direction: row;
-  align-items: center;
-  gap: 0;
-}
-
-.meta-label {
-  font-size: 12px;
-  color: #6b7280;
-  font-weight: 500;
-}
-
-.meta-value {
+  gap: 8px;
   font-size: 14px;
-  color: #111827;
+  color: #495057;
+  line-height: 1.4;
+}
+
+.project-meta-line .meta-label {
   font-weight: 500;
+  color: #6c757d;
+}
+
+.project-meta-line .meta-value {
+  font-weight: 400;
+  color: #212529;
+}
+
+.project-meta-line .meta-link {
+  color: #007bff;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.project-meta-line .meta-link:hover {
+  color: #0056b3;
 }
 
 .meta-text {
@@ -613,10 +561,6 @@
   text-decoration: underline;
   color: #2563eb;
   font-weight: 500;
-}
-
-.project-actions {
-  margin-top: 8px;
 }
 
 .view-freelancers-link {
@@ -635,24 +579,7 @@
   text-decoration: underline;
 }
 
-.project-description {
-  margin: 12px 0;
-}
-
-.project-description p {
-  margin: 0;
-  color: #374151;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.project-actions {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  flex-wrap: wrap;
-  margin-top: 12px;
-}
+/* Removed description section for compact design */
 
 .edit-project-btn,
 .delete-project-btn {
@@ -702,6 +629,14 @@
 }
 
 @media (max-width: 768px) {
+  .my-projects-page {
+    padding-top: 64px;
+  }
+  
+  .projects-header {
+    margin-bottom: 16px;
+  }
+  
   .header-content {
     flex-direction: column;
     gap: 16px;
@@ -710,7 +645,12 @@
   
   .header-right {
     width: 100%;
-    justify-content: space-between;
+    justify-content: flex-start;
+  }
+  
+  .post-project-btn {
+    width: 100%;
+    text-align: center;
   }
   
   .projects-content {
@@ -738,6 +678,10 @@
 }
 
 @media (max-width: 480px) {
+  .my-projects-page {
+    padding-top: 64px;
+  }
+  
   .header-content {
     padding: 0 16px;
   }

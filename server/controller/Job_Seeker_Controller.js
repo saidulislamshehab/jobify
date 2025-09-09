@@ -23,7 +23,7 @@ export const createJobSeeker = async (req, res) => {
             // Initialize new fields with default values
             experience: [],
             education: [],
-            languages: [{ language: 'English', proficiency: 'Native' }]
+            languages: [{ text: 'English' }]
         });
         
         await jobSeeker.save();
@@ -329,9 +329,15 @@ export const updateExperience = async (req, res) => {
             return res.status(400).json({ message: 'Experience must be an array' });
         }
         
+        // Convert to simple string format for storage
+        const experienceStrings = experience.map(exp => ({
+            text: exp.text || exp,
+            _id: exp.id || exp._id
+        }));
+        
         const jobSeeker = await Job_Seeker.findByIdAndUpdate(
             id,
-            { experience },
+            { experience: experienceStrings },
             { new: true, runValidators: false }
         );
         
@@ -366,9 +372,15 @@ export const updateEducation = async (req, res) => {
             return res.status(400).json({ message: 'Education must be an array' });
         }
         
+        // Convert to simple string format for storage
+        const educationStrings = education.map(edu => ({
+            text: edu.text || edu,
+            _id: edu.id || edu._id
+        }));
+        
         const jobSeeker = await Job_Seeker.findByIdAndUpdate(
             id,
-            { education },
+            { education: educationStrings },
             { new: true, runValidators: false }
         );
         
@@ -403,9 +415,15 @@ export const updateLanguages = async (req, res) => {
             return res.status(400).json({ message: 'Languages must be an array' });
         }
         
+        // Convert to simple string format for storage
+        const languageStrings = languages.map(lang => ({
+            text: lang.text || lang,
+            _id: lang.id || lang._id
+        }));
+        
         const jobSeeker = await Job_Seeker.findByIdAndUpdate(
             id,
-            { languages },
+            { languages: languageStrings },
             { new: true, runValidators: false }
         );
         
@@ -453,7 +471,7 @@ export const migrateUserData = async (req, res) => {
                 updateData.education = [];
             }
             if (!jobSeeker.languages) {
-                updateData.languages = [{ language: 'English', proficiency: 'Native' }];
+                updateData.languages = [{ text: 'English' }];
             }
             
             const updatedJobSeeker = await Job_Seeker.findByIdAndUpdate(

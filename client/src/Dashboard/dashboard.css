@@ -3,73 +3,10 @@
   min-height: 100vh;
   background-color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding-top: 64px;
 }
 
-/* Header Styles */
-.dashboard-header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 0 24px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 64px;
-}
-
-.logo {
-  font-size: 24px;
-  font-weight: bold;
-  color: #2563eb;
-  letter-spacing: 1px;
-}
-
-.logo-accent {
-  color: #8b5cf6;
-}
-
-.header-nav {
-  display: flex;
-  gap: 32px;
-}
-
-.nav-link {
-  color: #374151;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.2s;
-}
-
-.nav-link:hover {
-  color: #8b5cf6;
-}
-
-.header-actions {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-}
-
-.action-btn {
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 8px;
-  transition: background-color 0.2s;
-}
-
-.action-btn:hover {
-  background-color: #f3f4f6;
-}
+/* Header Styles - Removed as DashboardNav component is used */
 
 /* Main Content Layout */
 .dashboard-content {
@@ -820,17 +757,13 @@
 }
 
 @media (max-width: 768px) {
+  .dashboard-page {
+    padding-top: 64px;
+  }
+  
   .dashboard-content {
     grid-template-columns: 1fr;
     gap: 20px;
-  }
-  
-  .header-nav {
-    display: none;
-  }
-  
-  .header-actions {
-    gap: 12px;
   }
   
   .main-title {
@@ -853,6 +786,10 @@
 }
 
 @media (max-width: 480px) {
+  .dashboard-page {
+    padding-top: 64px;
+  }
+  
   .dashboard-content {
     padding: 16px;
   }

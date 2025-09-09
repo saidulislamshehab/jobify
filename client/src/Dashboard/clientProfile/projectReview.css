@@ -5,6 +5,7 @@
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   display: flex;
   flex-direction: column;
+  padding-top: 64px; /* Account for fixed navbar */
 }
 
 /* Header Styles */
@@ -42,6 +43,9 @@
   background: white;
   padding: 24px 0;
   border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 64px; /* Position below the fixed navbar */
+  z-index: 99;
 }
 
 .progress-container {

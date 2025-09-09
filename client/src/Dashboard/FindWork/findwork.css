@@ -1,6 +1,7 @@
 .fw-page {
   background: #fafafa;
   min-height: 100vh;
+  padding-top: 64px;
 }
 
 /* Sub Navigation */
@@ -47,7 +48,6 @@
   gap: 0;
   max-width: 1400px;
   margin: 0 auto;
-  min-height: calc(100vh - 80px);
 }
 
 /* Left Sidebar - Filters */
@@ -55,8 +55,6 @@
   background: #ffffff;
   border-right: 1px solid #e5e7eb;
   padding: 20px;
-  overflow-y: auto;
-  height: calc(100vh - 80px);
 }
 
 .fw-filter-section {
@@ -159,8 +157,6 @@
 .fw-main {
   background: #ffffff;
   padding: 20px;
-  overflow-y: auto;
-  height: calc(100vh - 80px);
 }
 
 .fw-search-bar {
@@ -583,6 +579,10 @@
 }
 
 @media (max-width: 768px) {
+  .fw-page {
+    padding-top: 64px;
+  }
+  
   .fw-container {
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
@@ -612,5 +612,11 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .fw-page {
+    padding-top: 64px;
   }
 }

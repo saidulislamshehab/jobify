@@ -50,6 +50,8 @@ const FindFreelancers = () => {
     return (
       (f.name || '').toLowerCase().includes(term) ||
       (f.email || '').toLowerCase().includes(term) ||
+      (f.title || f.jobTitle || '').toLowerCase().includes(term) ||
+      (f.freelancerAboutMe || f.aboutMe || f.bio || '').toLowerCase().includes(term) ||
       (Array.isArray(f.skills) ? f.skills.join(',') : (f.skills || '')).toLowerCase().includes(term)
     );
   });
@@ -60,53 +62,53 @@ const FindFreelancers = () => {
       _id: '1',
       name: 'Victor',
       title: 'RANK #1 WORKANA',
-      rating: 5,
       location: 'Brazil',
       hourlyRate: 104.90,
       projectsCompleted: 150,
       hoursWorked: 2500,
-      bio: 'Experienced developer with 5+ years in web development',
+      aboutMe: 'Experienced developer with 5+ years in web development. I specialize in creating scalable web applications and have worked with various technologies including Python, Django, and modern frontend frameworks. I\'m passionate about clean code and delivering high-quality solutions.',
       skills: ['Python (3 to 5 years)', 'Web Scraping (3 to 5 years)', 'Graphic Design (3 to 5 years)'],
-      isHero: true
+      isHero: true,
+      profilePhoto: '/man.png'
     },
     {
       _id: '2',
       name: 'Matheus K.',
       title: 'Front-end Developer',
-      rating: 5,
       location: 'Brazil',
       hourlyRate: 18.44,
       projectsCompleted: 45,
       hoursWorked: 890,
-      bio: 'Passionate frontend developer specializing in React and Vue.js',
+      aboutMe: 'Passionate frontend developer specializing in React and Vue.js. I love creating beautiful, responsive user interfaces and have a strong eye for design. I\'m always learning new technologies and staying up-to-date with the latest web development trends.',
       skills: ['React (2 to 3 years)', 'Vue.js (1 to 2 years)', 'JavaScript (3 to 5 years)'],
-      isHero: true
+      isHero: true,
+      profilePhoto: '/man.png'
     },
     {
       _id: '3',
       name: 'Diego B.',
       title: 'Full Stack Developer',
-      rating: 5,
       location: 'Brazil',
       hourlyRate: 27.65,
       projectsCompleted: 78,
       hoursWorked: 1200,
-      bio: 'Full-stack developer with expertise in both frontend and backend technologies',
+      aboutMe: 'Full-stack developer with expertise in both frontend and backend technologies. I enjoy building complete solutions from database design to user interface. My experience spans across multiple industries and I\'m comfortable working with both small startups and large enterprises.',
       skills: ['Node.js (3 to 5 years)', 'React (2 to 3 years)', 'MongoDB (2 to 3 years)'],
-      isHero: true
+      isHero: true,
+      profilePhoto: '/man.png'
     },
     {
       _id: '4',
       name: 'Mari S.',
       title: 'Visual designer',
-      rating: 5,
       location: 'Brazil',
       hourlyRate: 46.09,
       projectsCompleted: 32,
       hoursWorked: 650,
-      bio: 'Creative visual designer with a focus on user experience and branding',
+      aboutMe: 'Creative visual designer with a focus on user experience and branding. I believe good design should not only look beautiful but also solve real problems. I work closely with clients to understand their vision and bring it to life through thoughtful design.',
       skills: ['UI/UX Design (3 to 5 years)', 'Adobe Creative Suite (3 to 5 years)', 'Figma (2 to 3 years)'],
-      isHero: true
+      isHero: true,
+      profilePhoto: '/man.png'
     }
   ];
 
@@ -119,7 +121,11 @@ const FindFreelancers = () => {
       <div className="ff-container">
         {/* Left Sidebar - Filters */}
         <aside className="ff-sidebar">
-          <div className="ff-filter-section">
+          <div className="ff-sidebar-header">
+            <h2 className="ff-sidebar-title">Filters</h2>
+          </div>
+          <div className="ff-sidebar-content">
+            <div className="ff-filter-section">
             <div className="ff-filter-item">
               <label className="ff-toggle">
                 <input 
@@ -372,6 +378,7 @@ const FindFreelancers = () => {
             </div>
 
             <button className="ff-save-search">Save search</button>
+            </div>
           </div>
         </aside>
 
@@ -381,37 +388,60 @@ const FindFreelancers = () => {
             <input
               type="text"
               className="ff-search-input"
-              placeholder="Search freelancers..."
+              placeholder="Search freelancers by name, skills, or description..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
             <div className="ff-search-tags">
               <span className="ff-tag">English</span>
+              <span className="ff-results-count">{displayFreelancers.length} freelancers found</span>
             </div>
           </div>
 
           {loading ? (
-            <div className="ff-loading">Loading freelancers...</div>
+            <div className="ff-loading">
+              <div className="ff-loading-spinner"></div>
+              <p>Loading freelancers...</p>
+            </div>
+          ) : displayFreelancers.length === 0 ? (
+            <div className="ff-no-results">
+              <div className="ff-no-results-icon">🔍</div>
+              <h3>No freelancers found</h3>
+              <p>Try adjusting your search criteria or filters to find more freelancers.</p>
+            </div>
           ) : (
             <div className="ff-freelancers">
               {displayFreelancers.map((f) => (
                 <div key={f._id} className="ff-freelancer-card">
                   <div className="ff-card-header">
                     <div className="ff-avatar">
-                      {(f.name || 'U').charAt(0).toUpperCase()}
+                      {f.profilePhoto && f.profilePhoto !== '/man.png' ? (
+                        <img 
+                          src={f.profilePhoto} 
+                          alt={f.name || 'User'} 
+                          className="ff-avatar-img"
+                        />
+                      ) : (
+                        <span className="ff-avatar-text">
+                          {(f.name || 'U').charAt(0).toUpperCase()}
+                        </span>
+                      )}
                     </div>
                     <div className="ff-card-info">
                       <div className="ff-name-row">
                         <h3 className="ff-name">{f.name}</h3>
                         {f.isHero && <span className="ff-hero-badge">HERO</span>}
                       </div>
-                      <p className="ff-title">{f.title}</p>
-                      <div className="ff-rating">
-                        {'★'.repeat(f.rating || 5)}
-                      </div>
-                      <p className="ff-location">{f.location}</p>
+                      <p className="ff-title">{f.jobTitle || f.title}</p>
+                      <p className="ff-location"> {f.country || f.location}</p>
                     </div>
-                    <button className="ff-hire-btn">Hire</button>
+                    <div className="ff-hire-section">
+                      <div className="ff-hourly-rate">
+                        <span className="ff-rate-label">Hourly Rate</span>
+                        <span className="ff-rate-value">${f.hourlyRate}/hr</span>
+                      </div>
+                      <button className="ff-hire-btn">Hire</button>
+                    </div>
                   </div>
                   
                   <div className="ff-card-stats">
@@ -420,20 +450,26 @@ const FindFreelancers = () => {
                       <span className="ff-stat-value">{f.projectsCompleted}</span>
                     </div>
                     <div className="ff-stat">
-                      <span className="ff-stat-label">Hours worked in hourly projects</span>
+                      <span className="ff-stat-label">Hours worked</span>
                       <span className="ff-stat-value">{f.hoursWorked}</span>
                     </div>
                   </div>
 
-                  <p className="ff-bio">{f.bio}</p>
-
-                  <div className="ff-skills">
-                    {f.skills && f.skills.map((skill, index) => (
-                      <span key={index} className="ff-skill-tag">{skill}</span>
-                    ))}
+                  <div className="ff-about-section">
+                    <h4 className="ff-about-title">About Me</h4>
+                    <p className="ff-about-text">{f.freelancerAboutMe || f.aboutMe || f.bio || 'No description available.'}</p>
                   </div>
 
-                  <a href="/profile" className="ff-view-more">View more</a>
+                  <div className="ff-skills">
+                    <h4 className="ff-skills-title">Skills</h4>
+                    <div className="ff-skills-list">
+                      {f.skills && f.skills.map((skill, index) => (
+                        <span key={index} className="ff-skill-tag">{skill}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <a href="/profile" className="ff-view-more">View full profile →</a>
                 </div>
               ))}
             </div>
