@@ -71,6 +71,35 @@ const FindWork = () => {
   const mockJobs = [
     {
       _id: '1',
+      title: 'Develop an Innovative and Disruptive Website for a Sound Healing Sc...',
+      budget: 'USD 250 - 500',
+      published: '3 hours ago',
+      bids: 4,
+      description: 'We are seeking a skilled web developer or team to create a new website for our sound healing school. The goal is to develop an innovative and disruptive online presence that reflects the unique nature of sound healing and stands out in the educational sector. The website should be modern, highly functional, and provide an exceptional user experienc... View more',
+      skills: ['HTML', 'CSS', 'JavaScript', 'PHP', 'MySQL', 'WordPress', 'Responsive Web Design', 'React.js'],
+      client: { initials: 'M.L.', lastReply: '15 minutes ago', location: 'Sri Lanka', rating: 5 },
+      verified: true,
+      category: 'IT & Programming',
+      contractType: 'Fixed price',
+      language: 'English'
+    },
+    {
+      _id: '2',
+      title: 'Flash usdt sender',
+      budget: 'USD 250 - 500',
+      published: '4 hours ago',
+      bids: 5,
+      deliveryTerm: '2025/01/30',
+      description: 'I\'m interested in flash USDT sender software USDT must be transferable tradeble and convertible USDT must remain in target wallet 180 days Category: IT & Programming Subcategory: Web development What is the scope of the project?: Create a new custom site ... View more',
+      skills: ['JavaScript', 'MySQL', 'PHP', 'API', 'CSS', 'HTML', 'Python', 'WordPress', 'Responsive Web Design'],
+      client: { initials: 'H.M.', lastReply: '2 hours ago', location: 'Uzbekistan', rating: 5 },
+      verified: true,
+      category: 'IT & Programming',
+      contractType: 'Fixed price',
+      language: 'English'
+    },
+    {
+      _id: '3',
       title: 'Junior Digital & AI Generalist (Part-time, Remote)',
       budget: 'USD 250 - 500',
       published: '19 hours ago',
@@ -84,7 +113,7 @@ const FindWork = () => {
       language: 'English'
     },
     {
-      _id: '2',
+      _id: '4',
       title: 'Virtual Assistant (Fluent English, U.S. Business Experience) - Bris...',
       budget: 'Less than USD 15 / hour',
       published: 'Yesterday',
@@ -95,20 +124,6 @@ const FindWork = () => {
       verified: true,
       category: 'Admin Support',
       contractType: 'Hourly',
-      language: 'English'
-    },
-    {
-      _id: '3',
-      title: 'Data Analyst | Accuracy | Data entry',
-      budget: 'Less than USD 50',
-      published: '2 hours ago',
-      bids: 0,
-      description: 'I am a dedicated and detail-oriented freelancer with experience in data entry, online research, and document formatting. Skilled in Microsoft Excel, Google Sheets and Word. I hold a principle where accuracy, timeliness and understandibility to perform a tasks.',
-      skills: ['Data Entry', 'Microsoft Excel', 'Google Sheets', 'Research'],
-      client: { initials: 'H.A.', lastReply: null, location: 'Malaysia', rating: 5 },
-      verified: false,
-      category: 'Sales & Marketing',
-      contractType: 'Fixed price',
       language: 'English'
     }
   ];
@@ -194,7 +209,7 @@ const FindWork = () => {
   return (
     <div className="fw-page">
       <DashboardNav user={user} />
-      
+
       {/* Sub Navigation */}
       <div className="fw-sub-nav">
         <div className="fw-sub-nav-container">
@@ -311,11 +326,11 @@ const FindWork = () => {
                   <span>Engineering & Manufacturing</span>
                 </label>
               </div>
-            </div>
+        </div>
 
             <div className="fw-filter-item">
               <label className="fw-label">Skills</label>
-              <input
+            <input
                 type="text"
                 className="fw-input"
                 placeholder="Enter the skills you need"
@@ -326,7 +341,7 @@ const FindWork = () => {
 
             <div className="fw-filter-item">
               <label className="fw-label">Publication date</label>
-              <select 
+              <select
                 className="fw-select"
                 value={filters.publicationDate}
                 onChange={(e) => setFilters({...filters, publicationDate: e.target.value})}
@@ -522,8 +537,8 @@ const FindWork = () => {
             </div>
 
             <button className="fw-save-search">Save search</button>
-          </div>
-        </aside>
+            </div>
+          </aside>
 
         {/* Main Content - Dynamic based on sub-nav */}
         <main className="fw-main">
@@ -542,7 +557,7 @@ const FindWork = () => {
                 </div>
               </div>
 
-              {loading ? (
+            {loading ? (
                 <div className="fw-loading">Loading jobs...</div>
               ) : (
                 <div className="fw-jobs">
@@ -556,13 +571,13 @@ const FindWork = () => {
                       <div key={job._id} className="fw-job-card">
                         <div className="fw-job-header">
                           <h3 className="fw-job-title">{job.title}</h3>
-                          <button 
+                        <button 
                             className="fw-bid-btn"
                             onClick={() => handleBidClick(job)}
-                            disabled={!user}
-                          >
-                            Place a bid
-                          </button>
+                          disabled={!user}
+                        >
+                          Place a bid
+                        </button>
                         </div>
                         
                         <div className="fw-job-meta">
@@ -613,22 +628,111 @@ const FindWork = () => {
                         <a href="#" className="fw-flag-link">Flag as inappropriate</a>
                       </div>
                     ))
-                  )}
-                </div>
+                      )}
+                    </div>
               )}
             </>
           )}
 
           {activeSubNav === 'projects-with-skills' && (
-            <div className="fw-sub-content">
-              <h2>Projects with my skills</h2>
-              <p>Find projects that match your specific skills and expertise.</p>
-              <div className="fw-placeholder">
-                <div className="fw-placeholder-icon">🎯</div>
-                <h3>Smart matching coming soon</h3>
-                <p>We'll show you projects that perfectly match your skills and experience level.</p>
+            <>
+              <div className="fw-search-bar">
+                <input
+                  type="text"
+                  className="fw-search-input"
+                  placeholder="Search jobs..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+                <div className="fw-search-tags">
+                  <span className="fw-tag">English <span className="fw-tag-close">×</span></span>
+                  <span className="fw-tag">CSS <span className="fw-tag-close">×</span></span>
+                  <span className="fw-tag">HTML <span className="fw-tag-close">×</span></span>
+                  <span className="fw-tag">JavaScript <span className="fw-tag-close">×</span></span>
+                </div>
               </div>
-            </div>
+
+              {loading ? (
+                <div className="fw-loading">Loading jobs...</div>
+              ) : (
+                <div className="fw-jobs">
+                  {visibleProjects.length === 0 ? (
+                    <div className="fw-no-results">
+                      <h3>No jobs found</h3>
+                      <p>Try adjusting your search criteria or filters</p>
+                    </div>
+                  ) : (
+                    visibleProjects.map((job) => (
+                      <div key={job._id} className="fw-job-card">
+                        <div className="fw-job-header">
+                          <h3 className="fw-job-title">{job.title}</h3>
+                          <button 
+                            className="fw-bid-btn"
+                            onClick={() => handleBidClick(job)}
+                            disabled={!user}
+                          >
+                            Place a bid
+                          </button>
+                        </div>
+                        
+                        <div className="fw-job-meta">
+                          <span className="fw-budget">{job.budget}</span>
+                          <span className="fw-separator">•</span>
+                          <span className="fw-published">Published: {job.published}</span>
+                          <span className="fw-separator">•</span>
+                          <span className="fw-bids">Bids: {job.bids}</span>
+                          {job.deliveryTerm && (
+                            <>
+                              <span className="fw-separator">•</span>
+                              <span className="fw-delivery">Delivery term: {job.deliveryTerm}</span>
+                            </>
+                          )}
+                        </div>
+
+                        <p className="fw-job-description">{job.description}</p>
+
+                        <div className="fw-job-skills">
+                          {job.skills && job.skills.map((skill, index) => (
+                            <span key={index} className="fw-skill-tag">{skill}</span>
+                          ))}
+                          {job.skills && job.skills.length > 5 && (
+                            <span className="fw-skill-more">+</span>
+                          )}
+                        </div>
+
+                        <div className="fw-job-client">
+                          <div className="fw-client-info">
+                            <div className="fw-client-avatar">{job.client?.initials}</div>
+                            <div className="fw-client-details">
+                              <div className="fw-client-meta">
+                                {job.client?.lastReply && (
+                                  <>
+                                    <span>Last reply: {job.client.lastReply}</span>
+                                    <span className="fw-separator">•</span>
+                                  </>
+                                )}
+                                <span>{job.client?.location}</span>
+                                <span className="fw-separator">•</span>
+                                <span className="fw-rating">{'★'.repeat(job.client?.rating || 5)}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="fw-payment-method">
+                            {job.verified ? (
+                              <span className="fw-verified">✓ Verified</span>
+                            ) : (
+                              <span className="fw-unverified">Unverified</span>
+                            )}
+                          </div>
+                        </div>
+
+                        <a href="#" className="fw-flag-link">Flag as inappropriate</a>
+                      </div>
+                    ))
+                    )}
+                  </div>
+              )}
+            </>
           )}
 
           {activeSubNav === 'membership' && (
@@ -682,9 +786,9 @@ const FindWork = () => {
                 <p>Start working with clients and add them to your favorites to see them here.</p>
                 <button className="fw-primary-btn">Find projects</button>
               </div>
-            </div>
-          )}
-        </main>
+              </div>
+            )}
+          </main>
       </div>
 
       <button className="fw-help-btn">❓ Help</button>
