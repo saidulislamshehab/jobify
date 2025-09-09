@@ -24,6 +24,13 @@ const MyFinances = () => {
   const [withdrawThresholdEnabled, setWithdrawThresholdEnabled] = useState(false);
   const [withdrawThreshold, setWithdrawThreshold] = useState('Pay me regardless of the amount');
   const [withdrawSchedule, setWithdrawSchedule] = useState('');
+  const [invoiceLegalName, setInvoiceLegalName] = useState('');
+  const [invoiceAddress, setInvoiceAddress] = useState('');
+  const [invoiceCity, setInvoiceCity] = useState('');
+  const [invoiceCountry, setInvoiceCountry] = useState('Bangladesh');
+  const [invoiceTaxId, setInvoiceTaxId] = useState('');
+  const [invoiceZipCode, setInvoiceZipCode] = useState('');
+  const [invoiceState, setInvoiceState] = useState('');
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -262,7 +269,110 @@ const MyFinances = () => {
         );
       case 'invoice':
         return (
-          <div className="mf-card alt"><div className="mf-placeholder">Configure your billing and invoice details.</div></div>
+          <div className="mf-card">
+            <h2 className="mf-title">Invoice information</h2>
+            <p className="invoice-description">
+              This information will be used for the receipts generated for your clients, as well as for the receipts you download from Jobify.
+            </p>
+            
+            <form className="invoice-form" onSubmit={(e) => { e.preventDefault(); }}>
+              <div className="invoice-grid">
+                <div className="invoice-column">
+                  <div className="cc-field">
+                    <label className="cc-label">Legal name</label>
+                    <input
+                      className="cc-input"
+                      type="text"
+                      placeholder="Legal name"
+                      value={invoiceLegalName}
+                      onChange={(e) => setInvoiceLegalName(e.target.value)}
+                    />
+                  </div>
+                  
+                  <div className="cc-field">
+                    <label className="cc-label">Legal address</label>
+                    <input
+                      className="cc-input"
+                      type="text"
+                      placeholder="Legal address"
+                      value={invoiceAddress}
+                      onChange={(e) => setInvoiceAddress(e.target.value)}
+                    />
+                  </div>
+                  
+                  <div className="cc-field">
+                    <label className="cc-label">City</label>
+                    <input
+                      className="cc-input"
+                      type="text"
+                      placeholder="City"
+                      value={invoiceCity}
+                      onChange={(e) => setInvoiceCity(e.target.value)}
+                    />
+                  </div>
+                  
+                  <div className="cc-field">
+                    <label className="cc-label">Country</label>
+                    <select
+                      className="cc-input"
+                      value={invoiceCountry}
+                      onChange={(e) => setInvoiceCountry(e.target.value)}
+                    >
+                      <option value="Bangladesh">Bangladesh</option>
+                      <option value="United States">United States</option>
+                      <option value="United Kingdom">United Kingdom</option>
+                      <option value="Canada">Canada</option>
+                      <option value="Australia">Australia</option>
+                      <option value="Germany">Germany</option>
+                      <option value="France">France</option>
+                      <option value="India">India</option>
+                      <option value="Brazil">Brazil</option>
+                      <option value="Mexico">Mexico</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div className="invoice-column">
+                  <div className="cc-field">
+                    <label className="cc-label">Tax ID</label>
+                    <input
+                      className="cc-input"
+                      type="text"
+                      placeholder="Tax ID"
+                      value={invoiceTaxId}
+                      onChange={(e) => setInvoiceTaxId(e.target.value)}
+                    />
+                  </div>
+                  
+                  <div className="cc-field">
+                    <label className="cc-label">Zip code</label>
+                    <input
+                      className="cc-input"
+                      type="text"
+                      placeholder="Zip code"
+                      value={invoiceZipCode}
+                      onChange={(e) => setInvoiceZipCode(e.target.value)}
+                    />
+                  </div>
+                  
+                  <div className="cc-field">
+                    <label className="cc-label">State</label>
+                    <input
+                      className="cc-input"
+                      type="text"
+                      placeholder="State"
+                      value={invoiceState}
+                      onChange={(e) => setInvoiceState(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="invoice-actions">
+                <button type="submit" className="invoice-save-btn">Save</button>
+              </div>
+            </form>
+          </div>
         );
       default:
         return null;

@@ -178,4 +178,17 @@
 .wm-cancel { border: none; background: transparent; color: #6b7280; cursor: pointer; }
 .wm-save { background: #6d28d9; color: #fff; border: none; border-radius: 999px; padding: 10px 16px; cursor: pointer; }
 
+/* Invoice information */
+.invoice-description { color: #6b7280; margin-bottom: 20px; line-height: 1.5; }
+.invoice-form { margin-top: 8px; }
+.invoice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.invoice-column { display: flex; flex-direction: column; gap: 0; }
+.invoice-actions { display: flex; justify-content: flex-end; margin-top: 20px; }
+.invoice-save-btn { background: #6b7280; color: #fff; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; font-weight: 600; }
+.invoice-save-btn:hover { background: #4b5563; }
+
+@media (max-width: 768px) {
+  .invoice-grid { grid-template-columns: 1fr; }
+}
+
 
