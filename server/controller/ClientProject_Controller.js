@@ -65,12 +65,15 @@ export const createClientProject = async (req, res) => {
 
 export const getClientProjects = async (req, res) => {
     try {
-        const { clientId } = req.query;
-        console.log('getClientProjects called with clientId:', clientId);
+        const { clientId, status } = req.query;
+        console.log('getClientProjects called with clientId:', clientId, 'status:', status);
         
         let query = {};
         if (clientId) {
             query.clientId = clientId;
+        }
+        if (status) {
+            query.status = status;
         }
 
         console.log('Query for projects:', query);

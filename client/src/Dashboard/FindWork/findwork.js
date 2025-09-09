@@ -24,10 +24,12 @@ const FindWork = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/projects');
+        // Only fetch published projects for the Find Work page
+        const res = await fetch('http://localhost:5000/api/projects?status=published');
         const data = await res.json();
         const currentUserId = user?.id || user?._id;
         const all = Array.isArray(data) ? data : [];
+        // Filter out projects created by the current user (they can't bid on their own projects)
         const filtered = currentUserId ? all.filter(p => String(p.clientId) !== String(currentUserId)) : all;
         setProjects(filtered);
       } catch (_) {
@@ -166,11 +168,17 @@ const FindWork = () => {
                       {p.createdAt && <span className="time">{new Date(p.createdAt).toLocaleDateString()}</span>}
                     </div>
                     <p className="project-desc">{p.description}</p>
-                    {p.skills && (
-                      <div className="tags">
-                        {(Array.isArray(p.skills) ? p.skills : String(p.skills).split(',')).slice(0, 8).map((s, i) => (
-                          <span key={i} className="tag">{String(s).trim()}</span>
-                        ))}
+                    {p.skills && p.skills.length > 0 && (
+                      <div className="project-skills">
+                        <span className="skills-label">Tags:</span>
+                        <div className="tags">
+                          {(Array.isArray(p.skills) ? p.skills : String(p.skills).split(',')).slice(0, 8).map((s, i) => (
+                            <span key={i} className="tag">{String(s).trim()}</span>
+                          ))}
+                          {p.skills.length > 8 && (
+                            <span className="tags-more">+{p.skills.length - 8} more</span>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>

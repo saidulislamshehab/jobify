@@ -33,8 +33,11 @@
 .project-meta { display: flex; align-items: center; gap: 8px; color: #6b7280; font-size: 13px; margin-bottom: 8px; }
 .dot { opacity: 0.6; }
 .project-desc { color: #374151; font-size: 14px; margin: 0 0 8px 0; line-height: 1.5; }
-.tags { display: flex; flex-wrap: wrap; gap: 8px; }
-.tag { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; padding: 4px 8px; font-size: 12px; border-radius: 16px; }
+.project-skills { display: flex; align-items: flex-start; gap: 8px; margin-top: 12px; }
+.skills-label { font-size: 14px; font-weight: 600; color: #374151; margin-top: 4px; flex-shrink: 0; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { background: #ede9fe; color: #7c3aed; padding: 4px 8px; font-size: 12px; border-radius: 12px; font-weight: 500; }
+.tags-more { color: #6b7280; font-size: 12px; font-style: italic; margin-top: 4px; }
 @media (max-width: 768px) { .findwork-body { grid-template-columns: 1fr; } }
 
 

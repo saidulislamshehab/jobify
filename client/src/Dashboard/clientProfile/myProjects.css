@@ -119,6 +119,148 @@
   color: #374151;
 }
 
+/* Enhanced Project Card Styles */
+.project-description {
+  margin-bottom: 16px;
+}
+
+.project-description p {
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.project-skills {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.skills-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.skills-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.skill-tag {
+  background: #ede9fe;
+  color: #7c3aed;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.skill-more {
+  color: #6b7280;
+  font-size: 12px;
+  font-style: italic;
+}
+
+.project-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.publish-btn,
+.view-bids-btn {
+  background: #8b5cf6;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.publish-btn:hover,
+.view-bids-btn:hover {
+  background: #7c3aed;
+  transform: translateY(-1px);
+}
+
+.project-stats-mini {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.stat-pending,
+.stat-accepted {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.stat-accepted {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.project-menu {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.project-menu:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .project-skills {
+    margin-bottom: 12px;
+  }
+  
+  .project-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .project-stats-mini {
+    margin-left: 0;
+    margin-top: 8px;
+  }
+  
+  .publish-btn,
+  .view-bids-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 /* Main Content */
 .projects-content {
   flex: 1;
@@ -495,10 +637,6 @@
 
 .project-description {
   margin: 12px 0;
-  padding: 12px;
-  background: #f9fafb;
-  border-radius: 8px;
-  border-left: 3px solid #7c3aed;
 }
 
 .project-description p {
