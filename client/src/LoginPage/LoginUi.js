@@ -40,8 +40,8 @@ const LoginUi = () => {
         sessionStorage.setItem('user', JSON.stringify(response.data.user));
       }
 
-      // Navigate to profile page after successful login
-      navigate('/profile');
+      // Navigate to dashboard after successful login
+      navigate('/dashboard');
     } catch (error) {
       console.error('Login error:', error);
       setError(error.response?.data?.message || 'Login failed. Please try again.');

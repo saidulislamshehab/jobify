@@ -5,10 +5,6 @@ const studentSchema = new mongoose.Schema({
         type : String,
         required : true,
     },
-    age : {
-        type : Number,
-        required : true,
-    },
     email : {
         type : String,
         required : true,
@@ -19,45 +15,42 @@ const studentSchema = new mongoose.Schema({
     },
     phone : {
         type : String,
-        required : true,
-    },
-    address : {
-        type : String,
-    },
-    city : {
-        type : String,
-        required : true,
-    },
-    state : {
-        type : String,
+        default : 'Not provided',
     },
     country : {
         type : String,
-        required : true,
-    },
-    zip : {
-        type : String,
+        default : 'Not provided',
     },
     education : {
         type : String,
-        required : true,
+        default : 'Not specified',
     },
     experience : {
         type : String,
     },
     skills : {
-        type : String,
-        required : true,
+        type : [String],
+        default : ['Not specified'],
     },
     resume : {
         type : String,
+        default : '',
     },
-    coverLetter : {
+    clientAboutMe : {
         type : String,
-        required : true,
+        default : 'Tell us about yourself as a client...',
+    },
+    freelancerAboutMe : {
+        type : String,
+        default : 'Tell us about yourself as a freelancer...',
+    },
+    language : {
+        type : String,
+        default : 'English',
     },
     jobTitle : {
         type : String,
+        default : 'Not specified',
     }
 });
 

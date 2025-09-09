@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './dashboard.css';
 import Footer from '../LandingPage/footer';
+import DashboardNav from './DashboardNav';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [projectsCount, setProjectsCount] = useState(0);
 
   useEffect(() => {
     // Get user data from localStorage or sessionStorage
@@ -30,6 +32,23 @@ const Dashboard = () => {
 
     getUserData();
   }, []);
+
+  useEffect(() => {
+    const fetchProjectsCount = async () => {
+      try {
+        if (!user) return;
+        const clientId = user.id || user._id;
+        const response = await fetch(`http://localhost:5000/api/projects?clientId=${clientId}`);
+        if (response.ok) {
+          const data = await response.json();
+          setProjectsCount(Array.isArray(data) ? data.length : 0);
+        }
+      } catch (err) {
+        // silently ignore count errors on dashboard
+      }
+    };
+    fetchProjectsCount();
+  }, [user]);
 
   if (loading) {
     return (
@@ -66,60 +85,26 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="profile-page">
-      {/* Header Navigation */}
-      <header className="profile-header">
-        <div className="header-content">
-          <div className="logo">J<span className="logo-accent">O</span>BIFY</div>
-          <nav className="header-nav">
-            <a href="#" className="nav-link">Find work</a>
-            <a href="#" className="nav-link">My projects</a>
-            <a href="#" className="nav-link">My finances</a>
-          </nav>
-          <div className="header-actions">
-            <button className="action-btn search-btn">🔍</button>
-            <button className="action-btn notification-btn">🔔</button>
-            <button className="action-btn message-btn">💬</button>
-            <button className="action-btn profile-btn">😊</button>
-            <button 
-              className="action-btn logout-btn" 
-              onClick={() => {
-                localStorage.removeItem('user');
-                sessionStorage.removeItem('user');
-                window.location.href = '/login';
-              }}
-              title="Logout"
-            >
-              🚪
-            </button>
-          </div>
-        </div>
-      </header>
+    <div className="dashboard-page">
+      {/* Header Navigation (extracted component) */}
+      <DashboardNav user={user} />
 
-      <div className="profile-content">
+      <div className="dashboard-content">
         {/* Left Sidebar */}
-        <aside className="profile-sidebar">
+        <aside className="dashboard-sidebar">
           {/* Profile Card */}
           <div className="profile-card">
             <div className="profile-avatar">
-              <span className="avatar-icon"></span>
+              <span className="avatar-icon">😊</span>
             </div>
-            <h3 className="profile-name">{user.name || 'User'}</h3>
-            {user.email && (
-              <p className="profile-email">{user.email}</p>
-            )}
-            {user.jobTitle && (
-              <p className="profile-job-title">{user.jobTitle}</p>
-            )}
-            {user.city && user.country && (
-              <p className="profile-location">📍 {user.city}, {user.country}</p>
-            )}
+            <h3 className="profile-name">{user.name || 'Scarlet Wizard'}</h3>
             <div className="rating">
               <span className="star">⭐</span>
               <span className="star">⭐</span>
               <span className="star">⭐</span>
               <span className="star">⭐</span>
               <span className="star">⭐</span>
+              <span>3.5</span>
             </div>
             <button className="find-work-btn">Find work</button>
             <div className="profile-stats">
@@ -128,8 +113,8 @@ const Dashboard = () => {
                 <span className="stat-desc">Available balance</span>
               </div>
               <div className="stat-item">
-                <span className="stat-label">0</span>
-                <span className="stat-desc">Ongoing projects</span>
+                <span className="stat-label">{projectsCount}</span>
+                <span className="stat-desc">Projects posted</span>
                 <span className="info-icon">ℹ️</span>
               </div>
             </div>
@@ -148,12 +133,11 @@ const Dashboard = () => {
           {/* Current Level Card */}
           <div className="level-card">
             <h4 className="card-title">Your current level is <span className="level-badge iron">IRON</span></h4>
-            <div className="level-progress">
+            <div className="level-badges">
               <div className="level-badge active">I</div>
               <div className="level-badge">B</div>
               <div className="level-badge">S</div>
               <div className="level-badge">G</div>
-              <div className="level-badge">P</div>
               <div className="level-badge">🏆</div>
             </div>
             <span className="dropdown-icon">▼</span>
@@ -161,37 +145,34 @@ const Dashboard = () => {
         </aside>
 
         {/* Main Content */}
-        <main className="profile-main">
-          <div className="welcome-section">
-            <h1 className="main-title">Welcome back, {user.name || 'User'}! 👋</h1>
-            <p className="welcome-subtitle">Here's what's happening with your profile today.</p>
-          </div>
+        <main className="dashboard-main">
+          <h1 className="main-title">Welcome!</h1>
           
-          {/* Profile Update Notification */}
+          {/* Profile Review Notification */}
           <div className="notification-card">
             <div className="notification-header">
               <span className="notification-icon">🕐</span>
-              <h3 className="notification-title">Update on your profile</h3>
+              <h3 className="notification-title">We're reviewing your profile</h3>
             </div>
             <p className="notification-text">
-              We regret to inform you that we couldn't approve your profile. You didn't do anything wrong. 
-              We receive a high volume of applications every day, which compels us to be very selective.
+              We review every profile in order to guarantee the quality of our freelance talent pool. 
+              This process can take at least 15 days. We'll email you when your profile is approved.
             </p>
+            <a href="#" className="help-link">What does it mean when it says my profile is being reviewed?</a>
           </div>
 
-          {/* Profile Moderation Offer */}
+          {/* Priority Moderation Card */}
           <div className="moderation-card">
-            <h3 className="moderation-title">Do you want us to reconsider moderating your profile?</h3>
-            <div className="moderation-content">
-              <div className="moderation-info">
-                <span className="moderation-price">USD 11.90</span>
-                <p className="moderation-text">
-                  Complete your profile and opt for our 'Quick Moderation' service. We will carefully review 
-                  your profile in the next 24 hours. If we fail to approve it, we guarantee a refund of your money.
-                </p>
-                <button className="moderation-btn">I want Priority Moderation!</button>
-              </div>
+            <div className="moderation-header">
+              <h3 className="moderation-title">Get to the top of the list.</h3>
+              <div className="moderation-price">USD 11.90</div>
             </div>
+            <p className="moderation-text">
+              Start working now! Your profile will be reviewed within 24 hours. 
+              If it's not approved, you get your money back. 
+              <a href="#" className="help-link">Find out more about this benefit</a>
+            </p>
+            <button className="moderation-btn">I want Priority Moderation!</button>
           </div>
 
           {/* Current Projects Empty State */}

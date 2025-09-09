@@ -34,15 +34,8 @@ const AddJobSeeker = () => {
       const jobSeekerData = {
         name: `${formData.firstName} ${formData.lastName}`,
         email: formData.email,
-        password: formData.password,
-        // Add required fields for MongoDB
-        age: 25,
-        phone: 'Not provided',
-        city: 'Not provided',
-        country: 'Not provided',
-        education: 'Not specified',
-        skills: 'Not specified',
-        coverLetter: 'Created via signup form'
+        password: formData.password
+        // MongoDB will handle all other fields with defaults
       };
 
       console.log('Sending data to MongoDB:', jobSeekerData);
@@ -52,7 +45,7 @@ const AddJobSeeker = () => {
       
       if (response.status === 201) {
         console.log('Job seeker created successfully in MongoDB:', response.data);
-        alert('Account created successfully! You can now login.');
+        alert('Account created successfully! You can now login and complete your profile.');
         navigate('/login');
       } else {
         alert('Failed to create account. Please try again.');
