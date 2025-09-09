@@ -17,6 +17,13 @@ const MyFinances = () => {
   const [cardName, setCardName] = useState('');
   const [cardExpiry, setCardExpiry] = useState('');
   const [cardCvv, setCardCvv] = useState('');
+  const [addCurrency, setAddCurrency] = useState('USD');
+  const [addAmount, setAddAmount] = useState('');
+  const [addMethod, setAddMethod] = useState('card');
+  const [withdrawMethod, setWithdrawMethod] = useState('payoneer');
+  const [withdrawThresholdEnabled, setWithdrawThresholdEnabled] = useState(false);
+  const [withdrawThreshold, setWithdrawThreshold] = useState('Pay me regardless of the amount');
+  const [withdrawSchedule, setWithdrawSchedule] = useState('');
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -135,11 +142,123 @@ const MyFinances = () => {
         );
       case 'add-credit':
         return (
-          <div className="mf-card alt"><div className="mf-placeholder">Add funds to your account balance.</div></div>
+          <div className="mf-card">
+            <h2 className="mf-title">Add credit to my account</h2>
+            <div className="ac-grid">
+              <div>
+                <div className="cc-field">
+                  <label className="cc-label">Amount</label>
+                  <div className="ac-amount">
+                    <select className="ac-currency" value={addCurrency} onChange={(e)=>setAddCurrency(e.target.value)}>
+                      <option value="USD">USD</option>
+                    </select>
+                    <input className="ac-input" type="number" min="0" step="1" placeholder="0" value={addAmount} onChange={(e)=>setAddAmount(e.target.value)} />
+                  </div>
+                </div>
+
+                <div className="ac-methods">
+                  <label className="ac-method">
+                    <input type="radio" name="add-method" checked={addMethod==='card'} onChange={()=>setAddMethod('card')} />
+                    <div className="ac-method-box">
+                      <div className="ac-method-title">Credit card in U.S. dollars <span className="ac-pill">Suggested</span></div>
+                      <div className="ac-logos">
+                        <span className="logo visa" />
+                        <span className="logo mc" />
+                        <span className="logo amex" />
+                      </div>
+                    </div>
+                  </label>
+
+                  <label className="ac-method">
+                    <input type="radio" name="add-method" checked={addMethod==='paypal'} onChange={()=>setAddMethod('paypal')} />
+                    <div className="ac-method-box">
+                      <div className="ac-method-title">Paypal</div>
+                      <div className="ac-logos"><span className="logo paypal" /></div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <div className="ac-summary">
+                <div className="ac-summary-box">
+                  <div className="ac-summary-title">Amount to add</div>
+                  <div className="ac-summary-value">{addCurrency} {Number(addAmount||0).toLocaleString()}</div>
+                </div>
+              </div>
+            </div>
+          </div>
         );
       case 'withdrawal':
         return (
-          <div className="mf-card alt"><div className="mf-placeholder">Set up how you want to get paid.</div></div>
+          <div className="mf-card">
+            <h2 className="mf-title">Set up your withdrawal methods</h2>
+
+            <div className="wm-info">
+              <div className="wm-info-title">Do you need more info?</div>
+              <button className="wm-help">Visit our Help Center</button>
+            </div>
+            <div className="wm-note">Important: Regardless of which method you choose to be paid with, Jobify will not add any extra fees to the specified amounts.</div>
+
+            <div className="wm-option">
+              <label className="wm-radio">
+                <input type="radio" name="withdraw" checked={withdrawMethod==='payoneer'} onChange={()=>setWithdrawMethod('payoneer')} />
+                <div className="wm-box">
+                  <div className="wm-title">International Bank Transfer + International Debit Card</div>
+                  <div className="wm-provider">Payoneer</div>
+                </div>
+              </label>
+              <button className="wm-cta">Sign up</button>
+            </div>
+
+            <div className="wm-option">
+              <label className="wm-radio">
+                <input type="radio" name="withdraw" checked={withdrawMethod==='paypal'} onChange={()=>setWithdrawMethod('paypal')} />
+                <div className="wm-box">
+                  <div className="wm-title">Receive your payments into your PayPal account</div>
+                  <div className="wm-provider">PayPal</div>
+                </div>
+              </label>
+              <button className="wm-cta">Sign up</button>
+            </div>
+
+            <div className="wm-card">
+              <div className="wm-card-title">Do not withdraw my balance unless the amount exceeds...</div>
+              <label className="wm-toggle">
+                <input type="checkbox" checked={withdrawThresholdEnabled} onChange={(e)=>setWithdrawThresholdEnabled(e.target.checked)} />
+                <span>Enable threshold</span>
+              </label>
+              <select className="wm-select" value={withdrawThreshold} onChange={(e)=>setWithdrawThreshold(e.target.value)}>
+                <option>Pay me regardless of the amount</option>
+                <option>USD 50</option>
+                <option>USD 100</option>
+                <option>USD 250</option>
+              </select>
+              <div className="wm-small">Important: If you select an amount, you will only be able to withdraw your funds once your balance reaches this amount. The minimum applies only for monthly and biweekly payments, not for weekly payments.</div>
+            </div>
+
+            <div className="wm-card">
+              <div className="wm-card-title">Specify when you want to withdraw your funds:</div>
+              <div className="wm-schedule">
+                <label className="wm-schedule-item">
+                  <input type="radio" name="schedule" checked={withdrawSchedule==='beginning'} onChange={()=>setWithdrawSchedule('beginning')} />
+                  <span>Beginning of the month (between the 1st and 5th)</span>
+                </label>
+                <label className="wm-schedule-item">
+                  <input type="radio" name="schedule" checked={withdrawSchedule==='middle'} onChange={()=>setWithdrawSchedule('middle')} />
+                  <span>Middle of the month (between the 15th and 20th)</span>
+                </label>
+                <label className="wm-schedule-item">
+                  <input type="radio" name="schedule" checked={withdrawSchedule==='weekly'} onChange={()=>setWithdrawSchedule('weekly')} />
+                  <span>Weekly (every Wednesday)</span>
+                </label>
+              </div>
+            </div>
+
+            <div className="wm-actions">
+              <button className="wm-cancel">Cancel</button>
+              <button className="wm-save">Save changes</button>
+            </div>
+          </div>
         );
       case 'invoice':
         return (
