@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './projectDescription.css';
 import Footer from '../../LandingPage/footer';
+import DashboardNav from '../DashboardNav';
 
 const ProjectDescription = () => {
   const [user, setUser] = useState(null);
@@ -89,12 +90,8 @@ const ProjectDescription = () => {
 
   return (
     <div className="project-description-page">
-      {/* Header */}
-      <header className="project-header">
-        <div className="header-content">
-          <div className="logo">J<span className="logo-accent">O</span>BIFY</div>
-        </div>
-      </header>
+      {/* Shared Dashboard Navigation */}
+      <DashboardNav user={user} />
 
       {/* Progress Indicator */}
       <div className="progress-section">

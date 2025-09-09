@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './index.css';
+import './findfreelancer.css';
 import DashboardNav from '../DashboardNav';
 import Footer from '../../LandingPage/footer';
 
@@ -12,9 +12,7 @@ const FindFreelancers = () => {
   useEffect(() => {
     const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
     if (userData) {
-      try {
-        setUser(JSON.parse(userData));
-      } catch (_) {}
+      try { setUser(JSON.parse(userData)); } catch (_) {}
     }
   }, []);
 

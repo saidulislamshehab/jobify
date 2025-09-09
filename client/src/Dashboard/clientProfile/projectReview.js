@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './projectReview.css';
 import Footer from '../../LandingPage/footer';
+import DashboardNav from '../DashboardNav';
 
 const ProjectReview = () => {
   const [user, setUser] = useState(null);
@@ -193,12 +194,8 @@ const ProjectReview = () => {
 
   return (
     <div className="project-review-page">
-      {/* Header */}
-      <header className="project-header">
-        <div className="header-content">
-          <div className="logo">J<span className="logo-accent">O</span>BIFY</div>
-        </div>
-      </header>
+      {/* Shared Dashboard Navigation */}
+      <DashboardNav user={user} />
 
       {/* Progress Indicator */}
       <div className="progress-section">

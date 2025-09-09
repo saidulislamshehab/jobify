@@ -14,7 +14,8 @@ import AddProject from './Dashboard/clientProfile/addProject';
 import ProjectDescription from './Dashboard/clientProfile/projectDescription';
 import ProjectReview from './Dashboard/clientProfile/projectReview';
 import MyProjects from './Dashboard/clientProfile/myProjects';
-import FindFreelancers from './Dashboard/FindFreelancers';
+import FindFreelancers from './Dashboard/FindFreelancers/findfreelancer';
+import FindWork from './Dashboard/FindWork/findwork';
 import './LandingPage/WantToHire.css';
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
         <Route path="/project-review" element={<ProjectReview />} />
         <Route path="/my-projects" element={<MyProjects />} />
         <Route path="/find-freelancers" element={<FindFreelancers />} />
+        <Route path="/find-work" element={<FindWork />} />
       </Routes>
     </BrowserRouter>
   );

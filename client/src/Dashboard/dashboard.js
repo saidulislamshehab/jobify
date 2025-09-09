@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './dashboard.css';
 import Footer from '../LandingPage/footer';
 import DashboardNav from './DashboardNav';
+import profileIcon from './NavbarIcons/profile-user.png';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -94,19 +95,15 @@ const Dashboard = () => {
         <aside className="dashboard-sidebar">
           {/* Profile Card */}
           <div className="profile-card">
-            <div className="profile-avatar">
-              <span className="avatar-icon">😊</span>
+            <div className="profile-header">
+              <div className="profile-left">
+                <img src={profileIcon} alt="Profile" className="avatar-icon" />
+                <div className="profile-info">
+                  <h3 className="profile-name">{user.name || 'Scarlet Wizard'}</h3>
+                </div>
+              </div>
+              <button className="find-work-btn">Find work</button>
             </div>
-            <h3 className="profile-name">{user.name || 'Scarlet Wizard'}</h3>
-            <div className="rating">
-              <span className="star">⭐</span>
-              <span className="star">⭐</span>
-              <span className="star">⭐</span>
-              <span className="star">⭐</span>
-              <span className="star">⭐</span>
-              <span>3.5</span>
-            </div>
-            <button className="find-work-btn">Find work</button>
             <div className="profile-stats">
               <div className="stat-item">
                 <span className="stat-label">USD 0.00</span>
@@ -114,8 +111,7 @@ const Dashboard = () => {
               </div>
               <div className="stat-item">
                 <span className="stat-label">{projectsCount}</span>
-                <span className="stat-desc">Projects posted</span>
-                <span className="info-icon">ℹ️</span>
+                <span className="stat-desc">Ongoing projects <span className="info-icon">i</span></span>
               </div>
             </div>
           </div>

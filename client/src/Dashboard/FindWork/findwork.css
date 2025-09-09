@@ -1,0 +1,27 @@
+.findwork-page { background: #fff; min-height: 100vh; }
+.findwork-content { max-width: 1200px; margin: 0 auto; padding: 24px; }
+.findwork-header { margin-bottom: 16px; }
+.findwork-title { font-size: 28px; font-weight: 700; color: #111827; margin: 0 0 8px 0; }
+.findwork-subtitle { color: #6b7280; margin: 0; }
+.findwork-body { display: grid; grid-template-columns: 280px 1fr; gap: 24px; }
+.filters { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; }
+.filters-title { margin: 0 0 12px 0; font-size: 16px; font-weight: 600; color: #111827; }
+.filter-input { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; margin-bottom: 12px; }
+.filters-row { display: flex; gap: 8px; }
+.status-select { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; }
+.results { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px; min-height: 300px; }
+.empty { color: #6b7280; }
+.projects-list { display: flex; flex-direction: column; gap: 16px; }
+.project-card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; background: #fff; }
+.project-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px; }
+.project-title { margin: 0; font-size: 18px; font-weight: 600; color: #111827; }
+.bid-btn { background: #2563eb; color: #fff; border: none; padding: 8px 12px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.bid-btn:hover { background: #1d4ed8; }
+.project-meta { display: flex; align-items: center; gap: 8px; color: #6b7280; font-size: 13px; margin-bottom: 8px; }
+.dot { opacity: 0.6; }
+.project-desc { color: #374151; font-size: 14px; margin: 0 0 8px 0; line-height: 1.5; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; padding: 4px 8px; font-size: 12px; border-radius: 16px; }
+@media (max-width: 768px) { .findwork-body { grid-template-columns: 1fr; } }
+
+

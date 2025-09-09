@@ -1,22 +1,35 @@
 import React from 'react';
+import './DashboardNav.css';
+import magnifierIcon from './NavbarIcons/magnifier.png';
+import notificationIcon from './NavbarIcons/notification.png';
+import chatIcon from './NavbarIcons/chat.png';
+import profileIcon from './NavbarIcons/profile-user.png';
 
 const DashboardNav = ({ user }) => {
   return (
     <header className="dashboard-header">
       <div className="header-content">
-        <div className="logo">J<span className="logo-accent">O</span>BIFY</div>
+        <a href="/dashboard" className="logo">J<span className="logo-accent">O</span>BIFY</a>
         <nav className="header-nav">
-          <a href="#" className="nav-link">Find work</a>
+          <a href="/find-work" className="nav-link">Find work</a>
           <a href="/my-projects" className="nav-link">My projects</a>
           <a href="#" className="nav-link">My finances</a>
           <a href="/find-freelancers" className="nav-link">Find freelancers</a>
         </nav>
         <div className="header-actions">
-          <button className="action-btn search-btn">🔍</button>
-          <button className="action-btn notification-btn">🔔</button>
-          <button className="action-btn message-btn">💬</button>
+          <button className="action-btn search-btn">
+            <img src={magnifierIcon} alt="Search" className="action-icon" />
+          </button>
+          <button className="action-btn notification-btn">
+            <img src={notificationIcon} alt="Notifications" className="action-icon" />
+          </button>
+          <button className="action-btn message-btn">
+            <img src={chatIcon} alt="Messages" className="action-icon" />
+          </button>
           <div className="profile-dropdown-container">
-            <button className="action-btn profile-btn">😊</button>
+            <button className="action-btn profile-btn">
+              <img src={profileIcon} alt="Profile" className="action-icon" />
+            </button>
             <div className="profile-dropdown">
               <div className="dropdown-header">
                 <div className="user-name">{user?.name || 'User'}</div>
