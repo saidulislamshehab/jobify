@@ -28,17 +28,20 @@ const FreelancerProfile = () => {
     hourlyRate: '',
     profilePhoto: ''
   });
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState('');
   const [savingProfile, setSavingProfile] = useState(false);
 
   useEffect(() => {
     // Get user data from localStorage or sessionStorage
-    const getUserData = () => {
+    const getUserData = async () => {
       try {
         const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
         if (userData) {
           const parsedUser = JSON.parse(userData);
           console.log('User data loaded:', parsedUser);
           setUser(parsedUser);
+          
           // Initialize skills from user data
           if (parsedUser.skills && Array.isArray(parsedUser.skills)) {
             setSkills(parsedUser.skills.map(skill => ({
@@ -48,11 +51,38 @@ const FreelancerProfile = () => {
               projects: '-'
             })));
           }
+          
           // Initialize about me text
           if (parsedUser.freelancerAboutMe) {
             setAboutMeText(parsedUser.freelancerAboutMe);
           } else if (parsedUser.clientAboutMe) {
             setAboutMeText(parsedUser.clientAboutMe);
+          }
+          
+          // Load projects from database
+          const userId = parsedUser._id || parsedUser.id;
+          if (userId) {
+            try {
+              const response = await fetch(`http://localhost:5000/api/jobseekers/${userId}`);
+              if (response.ok) {
+                const userDataFromDB = await response.json();
+                console.log('User data from DB:', userDataFromDB);
+                
+                if (userDataFromDB.githubProjects && Array.isArray(userDataFromDB.githubProjects)) {
+                  // Add unique IDs to projects for local state management
+                  const projectsWithIds = userDataFromDB.githubProjects.map((project, index) => ({
+                    ...project,
+                    id: project._id || `project_${Date.now()}_${index}`
+                  }));
+                  setProjects(projectsWithIds);
+                  console.log('Projects loaded from DB:', projectsWithIds);
+                }
+              } else {
+                console.log('Could not fetch user data from database, using local data');
+              }
+            } catch (dbError) {
+              console.log('Database fetch failed, using local data:', dbError);
+            }
           }
         } else {
           console.log('No user data found, redirecting to login');
@@ -195,24 +225,108 @@ const FreelancerProfile = () => {
     setNewProject({ name: '', githubLink: '', description: '' });
   };
 
-  const handleSaveProject = () => {
+  const handleSaveProject = async () => {
     if (newProject.name.trim() && newProject.githubLink.trim()) {
       const project = {
-        id: Date.now(),
         name: newProject.name.trim(),
         githubLink: newProject.githubLink.trim(),
         description: newProject.description.trim()
       };
-      setProjects([...projects, project]);
-      setNewProject({ name: '', githubLink: '', description: '' });
-      setIsAddingProject(false);
+      
+      const updatedProjects = [...projects, project];
+      
+      try {
+        // Test server connection first
+        const testResponse = await fetch('http://localhost:5000/api/jobseekers/test');
+        if (!testResponse.ok) {
+          throw new Error('Server is not responding. Please make sure the server is running on port 5000.');
+        }
+
+        // Save to MongoDB
+        const userId = user._id || user.id;
+        if (!userId) {
+          alert('User ID not found. Please log in again.');
+          return;
+        }
+
+        const response = await fetch(`http://localhost:5000/api/jobseekers/update-github-projects/${userId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ githubProjects: updatedProjects })
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          console.log('Projects update result:', result);
+          
+          // Update local state
+          setProjects(updatedProjects);
+          setNewProject({ name: '', githubLink: '', description: '' });
+          setIsAddingProject(false);
+          alert('Project added successfully!');
+        } else {
+          const errorData = await response.json();
+          alert(`Error saving project: ${errorData.message || 'Unknown error'}`);
+        }
+      } catch (error) {
+        console.error('Error saving project:', error);
+        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+          alert('Cannot connect to server. Please make sure the server is running on port 5000.');
+        } else {
+          alert(`Error saving project: ${error.message}`);
+        }
+      }
     } else {
       alert('Please fill in project name and GitHub link');
     }
   };
 
-  const handleRemoveProject = (projectId) => {
-    setProjects(projects.filter(project => project.id !== projectId));
+  const handleRemoveProject = async (projectId) => {
+    const updatedProjects = projects.filter(project => project.id !== projectId);
+    
+    try {
+      // Test server connection first
+      const testResponse = await fetch('http://localhost:5000/api/jobseekers/test');
+      if (!testResponse.ok) {
+        throw new Error('Server is not responding. Please make sure the server is running on port 5000.');
+      }
+
+      // Save to MongoDB
+      const userId = user._id || user.id;
+      if (!userId) {
+        alert('User ID not found. Please log in again.');
+        return;
+      }
+
+      const response = await fetch(`http://localhost:5000/api/jobseekers/update-github-projects/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ githubProjects: updatedProjects })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Projects update result:', result);
+        
+        // Update local state
+        setProjects(updatedProjects);
+        alert('Project removed successfully!');
+      } else {
+        const errorData = await response.json();
+        alert(`Error removing project: ${errorData.message || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Error removing project:', error);
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        alert('Cannot connect to server. Please make sure the server is running on port 5000.');
+      } else {
+        alert(`Error removing project: ${error.message}`);
+      }
+    }
   };
 
   const handleEditProfile = () => {
@@ -244,6 +358,74 @@ const FreelancerProfile = () => {
     }));
   };
 
+  const compressImage = (file, maxWidth = 800, quality = 0.8) => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      
+      img.onload = () => {
+        // Calculate new dimensions
+        let { width, height } = img;
+        if (width > maxWidth) {
+          height = (height * maxWidth) / width;
+          width = maxWidth;
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        // Draw and compress
+        ctx.drawImage(img, 0, 0, width, height);
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(compressedDataUrl);
+      };
+      
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
+  const handleFileSelect = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+      }
+      
+      // Validate file size (max 10MB before compression)
+      if (file.size > 10 * 1024 * 1024) {
+        alert('File size must be less than 10MB');
+        return;
+      }
+      
+      setSelectedFile(file);
+      
+      try {
+        // Compress the image
+        const compressedDataUrl = await compressImage(file);
+        setPreviewUrl(compressedDataUrl);
+        setProfileEditData(prev => ({
+          ...prev,
+          profilePhoto: compressedDataUrl
+        }));
+      } catch (error) {
+        console.error('Error compressing image:', error);
+        alert('Error processing image. Please try again.');
+      }
+    }
+  };
+
+  const handleRemovePhoto = () => {
+    setSelectedFile(null);
+    setPreviewUrl('');
+    setProfileEditData(prev => ({
+      ...prev,
+      profilePhoto: ''
+    }));
+  };
+
   const handleSaveProfile = async () => {
     setSavingProfile(true);
     try {
@@ -257,6 +439,12 @@ const FreelancerProfile = () => {
         return;
       }
       
+      // Test server connection first
+      const testResponse = await fetch('http://localhost:5000/api/jobseekers/test');
+      if (!testResponse.ok) {
+        throw new Error('Server is not responding. Please make sure the server is running on port 5000.');
+      }
+      
       const response = await fetch(`http://localhost:5000/api/jobseekers/update-profile/${userId}`, {
         method: 'PUT',
         headers: {
@@ -266,6 +454,15 @@ const FreelancerProfile = () => {
       });
 
       console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
+      
+      // Check if response is JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const textResponse = await response.text();
+        console.error('Non-JSON response:', textResponse);
+        throw new Error(`Server returned non-JSON response: ${textResponse.substring(0, 200)}...`);
+      }
       
       if (response.ok) {
         const result = await response.json();
@@ -284,13 +481,16 @@ const FreelancerProfile = () => {
         const errorData = await response.json();
         console.error('Update error:', errorData);
         console.error('Response status:', response.status);
-        console.error('Response headers:', response.headers);
         alert(`Error updating profile: ${errorData.message || `HTTP ${response.status} - ${response.statusText}`}`);
       }
     } catch (error) {
       console.error('Error updating profile:', error);
       if (error.name === 'TypeError' && error.message.includes('fetch')) {
-        alert('Cannot connect to server. Please make sure the server is running.');
+        alert('Cannot connect to server. Please make sure the server is running on port 5000.');
+      } else if (error.message.includes('Server is not responding')) {
+        alert(error.message);
+      } else if (error.message.includes('non-JSON response')) {
+        alert(error.message);
       } else {
         alert(`Error updating profile: ${error.message}`);
       }
@@ -365,9 +565,10 @@ const FreelancerProfile = () => {
                   <div className="profile-photo-section">
                     <div className="profile-photo">
                       <img 
-                        src={user.profilePhoto || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"} 
+                        src={profileEditData.profilePhoto || user.profilePhoto || "/man.png"} 
                         alt="Profile" 
                       />
+                      
                     </div>
                   </div>
 
@@ -446,13 +647,38 @@ const FreelancerProfile = () => {
                   <div className="edit-form-content">
                     <div className="form-row">
                       <div className="form-group">
-                        <label>Profile Photo URL</label>
-                        <input
-                          type="url"
-                          value={profileEditData.profilePhoto}
-                          onChange={(e) => handleProfileInputChange('profilePhoto', e.target.value)}
-                          placeholder="Enter profile photo URL"
-                        />
+                        <label>Profile Photo</label>
+                        <div className="photo-upload-container">
+                          <div className="photo-preview">
+                        {previewUrl ? (
+                          <img src={previewUrl} alt="Preview" className="preview-image" />
+                        ) : (
+                          <img src="/man.png" alt="Default Profile" className="preview-image" />
+                        )}
+                          </div>
+                          <div className="photo-upload-controls">
+                            <input
+                              type="file"
+                              id="photo-upload"
+                              accept="image/*"
+                              onChange={handleFileSelect}
+                              style={{ display: 'none' }}
+                            />
+                            <label htmlFor="photo-upload" className="upload-btn">
+                              Choose Photo
+                            </label>
+                            {previewUrl && (
+                              <button
+                                type="button"
+                                onClick={handleRemovePhoto}
+                                className="remove-btn"
+                              >
+                                Remove
+                              </button>
+                            )}
+                          </div>
+                          <p className="upload-hint">Max file size: 10MB. Supported formats: JPG, PNG, GIF</p>
+                        </div>
                       </div>
                     </div>
 
@@ -508,12 +734,10 @@ const FreelancerProfile = () => {
               <div className="profile-photo-section">
                 <div className="profile-photo">
                   <img 
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face" 
+                    src="/man.png" 
                     alt="Profile" 
                   />
-                  <button className="photo-edit-icon">
-                    <img src={pencilIcon} alt="Edit" className="photo-edit-icon-img" />
-                  </button>
+                  
                 </div>
               </div>
 

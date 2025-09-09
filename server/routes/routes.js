@@ -1,5 +1,5 @@
 import express from "express";
-import { createJobSeeker, loginJobSeeker, getJobSeeker, getJobSeekerById, updateJobSeeker, deleteJobSeeker, updateSkills, updateAboutMe, updateProfile } from "../controller/Job_Seeker_Controller.js";
+import { createJobSeeker, loginJobSeeker, getJobSeeker, getJobSeekerById, updateJobSeeker, deleteJobSeeker, updateSkills, updateAboutMe, updateProfile, updateGitHubProjects } from "../controller/Job_Seeker_Controller.js";
 
 const router = express.Router();
 
@@ -39,6 +39,7 @@ router.put("/update/:id", updateJobSeeker);
 router.put("/update-skills/:id", updateSkills);
 router.put("/update-about-me/:id", updateAboutMe);
 router.put("/update-profile/:id", updateProfile);
+router.put("/update-github-projects/:id", updateGitHubProjects);
 router.delete("/delete/:id", deleteJobSeeker);
 
 

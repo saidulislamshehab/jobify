@@ -54,7 +54,7 @@ const studentSchema = new mongoose.Schema({
     },
     profilePhoto : {
         type : String,
-        default : '',
+        default : '/man.png',
     },
     githubProjects : {
         type : [{
