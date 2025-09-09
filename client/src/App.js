@@ -6,6 +6,7 @@ import LoginUi from './LoginPage/LoginUi';
 import SignupUi from './SignupPage/SignupUi';
 import ContactPage from './LandingPage/contact_page';
 import Dashboard from './Dashboard/dashboard';
+import MyFinances from './Dashboard/MyFinances/myfinances';
 import AddJobSeeker from './SignupPage/AddJobSeeker';
 import ClientSignup from './SignupPage/clientsignup';
 import FreelancerProfile from './Dashboard/freelancerProfile/freelancerProfile';
@@ -28,6 +29,7 @@ function App() {
         <Route path="/signup" element={<SignupUi />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/my-finances" element={<MyFinances />} />
         <Route path="/add-jobseeker" element={<AddJobSeeker />} />
         <Route path="/clientsignup" element={<ClientSignup />} />
         <Route path="/profile" element={<FreelancerProfile />} />

@@ -13,7 +13,7 @@ const DashboardNav = ({ user }) => {
         <nav className="header-nav">
           <a href="/find-work" className="nav-link">Find work</a>
           <a href="/my-projects" className="nav-link">My projects</a>
-          <a href="#" className="nav-link">My finances</a>
+          <a href="/my-finances" className="nav-link">My finances</a>
           <a href="/find-freelancers" className="nav-link">Find freelancers</a>
         </nav>
         <div className="header-actions">

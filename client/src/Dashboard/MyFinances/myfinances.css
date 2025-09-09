@@ -1,0 +1,114 @@
+.mf-page {
+  background: #fafafa;
+  min-height: 100vh;
+}
+
+.mf-container {
+  max-width: 1100px;
+  margin: 24px auto 80px;
+  padding: 0 16px;
+}
+
+.mf-tabs {
+  display: flex;
+  gap: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.mf-tab {
+  background: transparent;
+  border: none;
+  padding: 12px 4px;
+  color: #6b7280;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+}
+
+.mf-tab.active {
+  color: #4f46e5;
+}
+
+.mf-tab.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 100%;
+  height: 2px;
+  background: #4f46e5;
+}
+
+.mf-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 24px;
+  margin-top: 20px;
+}
+
+.mf-card.alt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  min-height: 220px;
+}
+
+.mf-empty {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 24px;
+  align-items: center;
+}
+
+.mf-title {
+  margin: 0 0 16px;
+  font-size: 22px;
+  color: #111827;
+}
+
+.mf-info {
+  background: #f9fafb;
+  border: 1px solid #eef2f7;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.mf-info-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px; }
+.mf-bullet { flex: 0 0 auto; background: #e0e7ff; color: #4f46e5; border-radius: 999px; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.mf-info-text { color: #4b5563; line-height: 1.5; }
+
+.mf-primary-btn {
+  display: inline-block;
+  margin-top: 16px;
+  background: #4f46e5;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.mf-empty-illustration { display: flex; align-items: center; justify-content: center; }
+.mf-illustration-laptop { width: 280px; height: 170px; background: linear-gradient(180deg,#eef2ff,#fff); border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.6); }
+
+.mf-help-btn {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  border: none;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.mf-placeholder { color: #6b7280; }
+
+@media (max-width: 900px) {
+  .mf-empty { grid-template-columns: 1fr; }
+}
+
+
