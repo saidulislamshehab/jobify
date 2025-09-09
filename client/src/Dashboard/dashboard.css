@@ -94,16 +94,35 @@
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  padding: 0;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
   color: #1e293b;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
-.profile-header {
+.profile-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+}
+
+.das-profile-header {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-bottom: 1px solid #e2e8f0;
+  padding: 28px 24px;
+  margin-top: 0px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  min-height: 80px;
 }
 
 .profile-left {
@@ -125,13 +144,20 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: #f1f5f9;
-  border: 2px solid #e2e8f0;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  border: 3px solid #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #64748b;
   font-size: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.profile-avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 .avatar-icon {
@@ -140,12 +166,14 @@
   object-fit: contain;
 }
 
-.profile-name {
-  font-size: 2px;
-  font-weight: 400;
-  color: #045ae4;
+.das-profile-name {
+  font-size: 18px;
+  font-weight: 500;
+  color: #1e293b;
   margin: 0;
-  line-height: 1;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .rating {
@@ -179,21 +207,40 @@
 }
 
 .find-work-btn {
-  background: #8b5cf6;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
   color: white;
   border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
+  padding: 12px 20px;
+  border-radius: 12px;
   font-weight: 600;
   cursor: pointer;
   font-size: 14px;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
   white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.find-work-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.find-work-btn:hover::before {
+  left: 100%;
 }
 
 .find-work-btn:hover {
-  background: #7c3aed;
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
 }
 
 .profile-stats {
@@ -201,6 +248,8 @@
   flex-direction: row;
   gap: 16px;
   justify-content: space-between;
+  padding: 16px 24px;
+  background: #ffffff;
 }
 
 .stat-item {
@@ -285,18 +334,20 @@
 }
 
 .level-badge {
-  display: inline-block;
-  padding: 4px 8px;
+  display: inline-flex;
+  padding: 8px;
   border-radius: 50%;
-  background: #e5e7eb;
+  background: #f3f4f6;
   color: #6b7280;
   font-weight: 600;
-  font-size: 12px;
-  width: 24px;
-  height: 24px;
-  display: flex;
+  font-size: 16px;
+  width: 40px;
+  height: 40px;
   align-items: center;
   justify-content: center;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  cursor: pointer;
 }
 
 .level-badge.iron {
@@ -309,14 +360,52 @@
 }
 
 .level-badge.active {
-  background: #dc2626;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
   color: white;
+  border-color: #8b5cf6;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+  transform: scale(1.1);
+}
+
+.level-badge:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.level-badge.active:hover {
+  transform: scale(1.15);
+  box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
 }
 
 .level-badges {
   display: flex;
-  gap: 8px;
-  margin: 12px 0;
+  gap: 12px;
+  margin: 16px 0;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.rank-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  filter: grayscale(100%) opacity(0.6);
+  transition: all 0.3s ease;
+}
+
+.level-badge.active .rank-icon {
+  filter: grayscale(0%) opacity(1);
+  transform: scale(1.1);
+}
+
+.level-badge:hover .rank-icon {
+  filter: grayscale(50%) opacity(0.8);
+  transform: scale(1.05);
+}
+
+.level-badge.active:hover .rank-icon {
+  filter: grayscale(0%) opacity(1);
+  transform: scale(1.2);
 }
 
 /* Main Content Styles */

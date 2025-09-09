@@ -3,6 +3,11 @@ import './dashboard.css';
 import Footer from '../LandingPage/footer';
 import DashboardNav from './DashboardNav';
 import profileIcon from './NavbarIcons/profile-user.png';
+import ironIcon from './rankicons/iron.png';
+import bronzeIcon from './rankicons/bronze.png';
+import silverIcon from './rankicons/silver.png';
+import goldIcon from './rankicons/gold.png';
+import platinumIcon from './rankicons/platinum.png';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -95,11 +100,11 @@ const Dashboard = () => {
         <aside className="dashboard-sidebar">
           {/* Profile Card */}
           <div className="profile-card">
-            <div className="profile-header">
+            <div className="das-profile-header">
               <div className="profile-left">
                 <img src={profileIcon} alt="Profile" className="avatar-icon" />
                 <div className="profile-info">
-                  <h3 className="profile-name">{user.name || 'Scarlet Wizard'}</h3>
+                  <h3 className="das-profile-name">{user.name}</h3>
                 </div>
               </div>
               <button className="find-work-btn">Find work</button>
@@ -130,11 +135,21 @@ const Dashboard = () => {
           <div className="level-card">
             <h4 className="card-title">Your current level is <span className="level-badge iron">IRON</span></h4>
             <div className="level-badges">
-              <div className="level-badge active">I</div>
-              <div className="level-badge">B</div>
-              <div className="level-badge">S</div>
-              <div className="level-badge">G</div>
-              <div className="level-badge">🏆</div>
+              <div className="level-badge active">
+                <img src={ironIcon} alt="Iron" className="rank-icon" />
+              </div>
+              <div className="level-badge">
+                <img src={bronzeIcon} alt="Bronze" className="rank-icon" />
+              </div>
+              <div className="level-badge">
+                <img src={silverIcon} alt="Silver" className="rank-icon" />
+              </div>
+              <div className="level-badge">
+                <img src={goldIcon} alt="Gold" className="rank-icon" />
+              </div>
+              <div className="level-badge">
+                <img src={platinumIcon} alt="Platinum" className="rank-icon" />
+              </div>
             </div>
             <span className="dropdown-icon">▼</span>
           </div>
