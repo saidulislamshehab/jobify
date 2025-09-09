@@ -111,4 +111,29 @@
   .mf-empty { grid-template-columns: 1fr; }
 }
 
+/* Credit cards UI */
+.cc-wrap { display: grid; grid-template-columns: 1fr 420px; gap: 24px; align-items: start; }
+.cc-form { max-width: 520px; }
+.cc-field { margin-bottom: 14px; }
+.cc-label { display: block; font-size: 12px; color: #6b7280; margin-bottom: 6px; }
+.cc-input { width: 100%; border: 1px solid #e5e7eb; border-radius: 8px; height: 40px; padding: 0 12px; font-size: 14px; }
+.cc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.cc-cvv-wrap { position: relative; }
+.cc-cvv-info { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; border-radius: 999px; background: #eef2ff; border: 1px solid #c7d2fe; }
+.cc-actions { margin-top: 8px; }
+.cc-next { padding-left: 26px; padding-right: 26px; }
+
+.cc-preview { display: flex; align-items: center; justify-content: center; }
+.cc-card { width: 340px; height: 200px; background: linear-gradient(135deg,#0ea5e9,#6366f1); color: #fff; border-radius: 12px; padding: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+.cc-chip { width: 40px; height: 28px; background: #f3f4f6; border-radius: 6px; opacity: 0.8; }
+.cc-number { margin-top: 26px; letter-spacing: 2px; font-weight: 600; }
+.cc-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 28px; }
+.cc-name { font-weight: 600; text-transform: uppercase; }
+.cc-exp { text-align: left; }
+.cc-label-mini { font-size: 10px; opacity: 0.85; }
+
+@media (max-width: 900px) {
+  .cc-wrap { grid-template-columns: 1fr; }
+}
+
 

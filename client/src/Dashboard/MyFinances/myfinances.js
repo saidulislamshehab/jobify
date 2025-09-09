@@ -13,6 +13,10 @@ const TABS = [
 
 const MyFinances = () => {
   const [activeTab, setActiveTab] = useState('movements');
+  const [cardNumber, setCardNumber] = useState('');
+  const [cardName, setCardName] = useState('');
+  const [cardExpiry, setCardExpiry] = useState('');
+  const [cardCvv, setCardCvv] = useState('');
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -46,7 +50,88 @@ const MyFinances = () => {
         );
       case 'cards':
         return (
-          <div className="mf-card alt"><div className="mf-placeholder">Manage your saved credit cards here.</div></div>
+          <div className="mf-card">
+            <h2 className="mf-title">Associate a new credit card</h2>
+            <div className="cc-wrap">
+              <form
+                className="cc-form"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                }}
+              >
+                <div className="cc-field">
+                  <label className="cc-label">Number</label>
+                  <input
+                    className="cc-input"
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="1234 5678 9012 3456"
+                    value={cardNumber}
+                    onChange={(e) => setCardNumber(e.target.value)}
+                  />
+                </div>
+
+                <div className="cc-field">
+                  <label className="cc-label">Name and last name</label>
+                  <input
+                    className="cc-input"
+                    type="text"
+                    placeholder="As it appears on the card"
+                    value={cardName}
+                    onChange={(e) => setCardName(e.target.value)}
+                  />
+                </div>
+
+                <div className="cc-row">
+                  <div className="cc-field">
+                    <label className="cc-label">Expiration</label>
+                    <input
+                      className="cc-input"
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="MM / YY"
+                      value={cardExpiry}
+                      onChange={(e) => setCardExpiry(e.target.value)}
+                    />
+                  </div>
+                  <div className="cc-field">
+                    <label className="cc-label">Security code</label>
+                    <div className="cc-cvv-wrap">
+                      <input
+                        className="cc-input"
+                        type="password"
+                        inputMode="numeric"
+                        placeholder="CVV"
+                        value={cardCvv}
+                        onChange={(e) => setCardCvv(e.target.value)}
+                      />
+                      <span className="cc-cvv-info" title="3 or 4 digits on your card" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="cc-actions">
+                  <button type="submit" className="mf-primary-btn cc-next">Next</button>
+                </div>
+              </form>
+
+              <div className="cc-preview" aria-hidden="true">
+                <div className="cc-card">
+                  <div className="cc-chip" />
+                  <div className="cc-number">
+                    {(cardNumber || '•••• •••• •••• ••••').replace(/(\d{4})(?=\d)/g, '$1 ')}
+                  </div>
+                  <div className="cc-footer">
+                    <div className="cc-exp">
+                      <div className="cc-label-mini">MM/YY</div>
+                      <div>{cardExpiry || 'MM/YY'}</div>
+                    </div>
+                    <div className="cc-name">{cardName || 'NAME LAST NAME'}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         );
       case 'add-credit':
         return (
