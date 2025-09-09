@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './myProjects.css';
 import Footer from '../../LandingPage/footer';
 import DashboardNav from '../DashboardNav';
+import ProjectActionsModal from './ProjectActionsModal';
+import BidManagementModal from './BidManagementModal';
 
 const MyProjects = () => {
   const [user, setUser] = useState(null);
@@ -12,6 +14,11 @@ const MyProjects = () => {
   const [selectedMessageFilter, setSelectedMessageFilter] = useState('All');
   const [hasDeliverables, setHasDeliverables] = useState(false);
   const [projectsLoading, setProjectsLoading] = useState(false);
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [isActionsModalOpen, setIsActionsModalOpen] = useState(false);
+  const [isBidModalOpen, setIsBidModalOpen] = useState(false);
+  const [projectBids, setProjectBids] = useState({});
+  const [projectStats, setProjectStats] = useState({});
 
   useEffect(() => {
     // Get user data from localStorage or sessionStorage
@@ -58,6 +65,9 @@ const MyProjects = () => {
             
             setProjects(userProjects);
             setFilteredProjects(userProjects);
+            
+            // Fetch bid counts for each project
+            fetchProjectBids(userProjects);
           }
         } catch (error) {
           console.error('Error fetching projects:', error);
@@ -75,6 +85,40 @@ const MyProjects = () => {
 
     fetchProjects();
   }, [user]);
+
+  const fetchProjectBids = async (projectList) => {
+    const bidsData = {};
+    const statsData = {};
+    
+    for (const project of projectList) {
+      if (project.status === 'published' || project.status === 'in-progress' || project.status === 'completed') {
+        try {
+          const response = await fetch(`http://localhost:5000/api/bids/project/${project._id}`);
+          if (response.ok) {
+            const data = await response.json();
+            bidsData[project._id] = data.bids || [];
+            
+            // Calculate stats
+            const bids = data.bids || [];
+            statsData[project._id] = {
+              total: bids.length,
+              pending: bids.filter(b => b.status === 'pending').length,
+              accepted: bids.filter(b => b.status === 'accepted').length,
+              rejected: bids.filter(b => b.status === 'rejected').length,
+              avgBid: bids.length > 0 ? bids.reduce((sum, b) => sum + b.bidAmount, 0) / bids.length : 0,
+              minBid: bids.length > 0 ? Math.min(...bids.map(b => b.bidAmount)) : 0,
+              maxBid: bids.length > 0 ? Math.max(...bids.map(b => b.bidAmount)) : 0
+            };
+          }
+        } catch (error) {
+          console.error(`Error fetching bids for project ${project._id}:`, error);
+        }
+      }
+    }
+    
+    setProjectBids(bidsData);
+    setProjectStats(statsData);
+  };
 
   useEffect(() => {
     // Filter projects based on selected filters
@@ -221,10 +265,8 @@ const MyProjects = () => {
   };
 
   const handleEditProject = (projectId) => {
-    // Navigate to edit project page or open edit modal
-    console.log('Edit project:', projectId);
-    // For now, just show an alert
-    alert(`Edit project functionality for project ${projectId} will be implemented soon!`);
+    // Navigate to edit project page
+    window.location.href = `/edit-project/${projectId}`;
   };
 
   const handleDeleteProject = async (projectId) => {
@@ -236,8 +278,19 @@ const MyProjects = () => {
 
         if (response.ok) {
           // Remove the project from the local state
-          setProjects(projects.filter(project => project._id !== projectId));
-          setFilteredProjects(filteredProjects.filter(project => project._id !== projectId));
+          const updatedProjects = projects.filter(project => project._id !== projectId);
+          const updatedFilteredProjects = filteredProjects.filter(project => project._id !== projectId);
+          setProjects(updatedProjects);
+          setFilteredProjects(updatedFilteredProjects);
+          
+          // Remove from bids data
+          const newProjectBids = { ...projectBids };
+          const newProjectStats = { ...projectStats };
+          delete newProjectBids[projectId];
+          delete newProjectStats[projectId];
+          setProjectBids(newProjectBids);
+          setProjectStats(newProjectStats);
+          
           alert('Project deleted successfully!');
         } else {
           const errorData = await response.json();
@@ -248,6 +301,76 @@ const MyProjects = () => {
         alert('Network error: ' + error.message);
       }
     }
+  };
+
+  const handlePublishProject = async (projectId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/projects/publish/${projectId}`, {
+        method: 'PUT',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        
+        // Update the project status in local state
+        const updatedProjects = projects.map(project => 
+          project._id === projectId 
+            ? { ...project, status: 'published', updatedAt: data.project.updatedAt }
+            : project
+        );
+        setProjects(updatedProjects);
+        setFilteredProjects(updatedProjects.filter(project => {
+          // Re-apply current filters
+          if (selectedStatus !== 'All') {
+            switch (selectedStatus) {
+              case 'Draft':
+                return project.status === 'draft';
+              case 'Evaluating bids':
+                return project.status === 'published';
+              case 'In progress':
+                return project.status === 'in-progress' || project.status === 'active';
+              case 'Completed':
+                return project.status === 'completed' || project.status === 'finished';
+              default:
+                return true;
+            }
+          }
+          return true;
+        }));
+        
+        alert('Project published successfully! Freelancers can now see it in Find Work and start bidding.');
+      } else {
+        const errorData = await response.json();
+        alert('Failed to publish project: ' + (errorData.message || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Error publishing project:', error);
+      alert('Network error: ' + error.message);
+    }
+  };
+
+  const handleViewBids = (projectId) => {
+    const project = projects.find(p => p._id === projectId);
+    setSelectedProject(project);
+    setIsBidModalOpen(true);
+  };
+
+  const handleProjectMenu = (project) => {
+    setSelectedProject(project);
+    setIsActionsModalOpen(true);
+  };
+
+  const getBidCount = (projectId) => {
+    return projectStats[projectId]?.total || 0;
+  };
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount);
   };
 
   if (loading) {
@@ -362,32 +485,89 @@ const MyProjects = () => {
                         <span className={`status-tag ${getStatusColor(project.status)}`}>
                           {getStatusText(project.status)}
                         </span>
-                        <button className="project-menu">
+                        <button 
+                          className="project-menu"
+                          onClick={() => handleProjectMenu(project)}
+                        >
                           <span>⋮</span>
                         </button>
                       </div>
                     </div>
                     
                     <div className="project-details">
+                      <div className="project-description">
+                        <p>{project.description?.substring(0, 150)}{project.description?.length > 150 ? '...' : ''}</p>
+                      </div>
+                      
                       <div className="project-meta">
-                        <span className="meta-item">
-                          <span className="meta-text">13 messages (<span className="new-message">1 new</span>)</span>
-                        </span>
                         <span className="meta-item">
                           <span className="meta-label">Type:</span>
                           <span className="meta-value">{getPaymentTypeText(project.paymentOption)}</span>
                         </span>
                         <span className="meta-item">
-                          <span className="meta-label">Published:</span>
+                          <span className="meta-label">Budget:</span>
+                          <span className="meta-value">
+                            {project.paymentOption === 'hourly' 
+                              ? `${formatCurrency(project.budget)}/hr` 
+                              : formatCurrency(project.budget)
+                            }
+                          </span>
+                        </span>
+                        <span className="meta-item">
+                          <span className="meta-label">Created:</span>
                           <span className="meta-value">{formatTimeAgo(project.createdAt)}</span>
                         </span>
+                        {getBidCount(project._id) > 0 && (
+                          <span className="meta-item">
+                            <span className="meta-label">Bids:</span>
+                            <span className="meta-value">{getBidCount(project._id)}</span>
+                          </span>
+                        )}
                       </div>
+
+                      {project.skills && project.skills.length > 0 && (
+                        <div className="project-skills">
+                          <span className="skills-label">Tags:</span>
+                          <div className="skills-container">
+                            {project.skills.slice(0, 5).map((skill, index) => (
+                              <span key={index} className="skill-tag">{skill}</span>
+                            ))}
+                            {project.skills.length > 5 && (
+                              <span className="skill-more">+{project.skills.length - 5} more</span>
+                            )}
+                          </div>
+                        </div>
+                      )}
                       
                       <div className="project-actions">
-                        <a href="#" className="view-freelancers-link">
-                          View all interested<br />
-                          freelancers
-                        </a>
+                        {project.status === 'draft' && (
+                          <button 
+                            className="publish-btn"
+                            onClick={() => handlePublishProject(project._id)}
+                          >
+                            Publish Project
+                          </button>
+                        )}
+                        
+                        {(project.status === 'published' || project.status === 'in-progress' || project.status === 'completed') && (
+                          <button 
+                            className="view-bids-btn"
+                            onClick={() => handleViewBids(project._id)}
+                          >
+                            View Bids ({getBidCount(project._id)})
+                          </button>
+                        )}
+                        
+                        {projectStats[project._id] && (
+                          <div className="project-stats-mini">
+                            {projectStats[project._id].pending > 0 && (
+                              <span className="stat-pending">{projectStats[project._id].pending} pending</span>
+                            )}
+                            {projectStats[project._id].accepted > 0 && (
+                              <span className="stat-accepted">{projectStats[project._id].accepted} accepted</span>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -400,8 +580,35 @@ const MyProjects = () => {
 
       {/* Footer */}
       <Footer />
+      
+      {/* Project Actions Modal */}
+      <ProjectActionsModal
+        isOpen={isActionsModalOpen}
+        onClose={() => {
+          setIsActionsModalOpen(false);
+          setSelectedProject(null);
+        }}
+        project={selectedProject}
+        onEdit={handleEditProject}
+        onDelete={handleDeleteProject}
+        onPublish={handlePublishProject}
+        onViewBids={handleViewBids}
+        bidCount={selectedProject ? getBidCount(selectedProject._id) : 0}
+      />
+      
+      {/* Bid Management Modal */}
+      <BidManagementModal
+        isOpen={isBidModalOpen}
+        onClose={() => {
+          setIsBidModalOpen(false);
+          setSelectedProject(null);
+        }}
+        projectId={selectedProject?._id}
+        project={selectedProject}
+      />
     </div>
   );
 };
 
 export default MyProjects;
+

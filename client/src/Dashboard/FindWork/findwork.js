@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './findwork.css';
 import DashboardNav from '../DashboardNav';
 import Footer from '../../LandingPage/footer';
+import BidModal from './BidModal';
 
 const FindWork = () => {
   const [user, setUser] = useState(null);
@@ -9,6 +10,9 @@ const FindWork = () => {
   const [projects, setProjects] = useState([]);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [isBidModalOpen, setIsBidModalOpen] = useState(false);
+  const [userBids, setUserBids] = useState([]);
 
   useEffect(() => {
     const data = localStorage.getItem('user') || sessionStorage.getItem('user');
@@ -20,10 +24,12 @@ const FindWork = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/projects');
+        // Only fetch published projects for the Find Work page
+        const res = await fetch('http://localhost:5000/api/projects?status=published');
         const data = await res.json();
         const currentUserId = user?.id || user?._id;
         const all = Array.isArray(data) ? data : [];
+        // Filter out projects created by the current user (they can't bid on their own projects)
         const filtered = currentUserId ? all.filter(p => String(p.clientId) !== String(currentUserId)) : all;
         setProjects(filtered);
       } catch (_) {
@@ -35,6 +41,23 @@ const FindWork = () => {
     fetchProjects();
   }, [user]);
 
+  useEffect(() => {
+    const fetchUserBids = async () => {
+      if (user?.id || user?._id) {
+        try {
+          const res = await fetch(`http://localhost:5000/api/bids/freelancer/${user.id || user._id}`);
+          const data = await res.json();
+          if (data.bids) {
+            setUserBids(data.bids);
+          }
+        } catch (error) {
+          console.error('Error fetching user bids:', error);
+        }
+      }
+    };
+    fetchUserBids();
+  }, [user]);
+
   const visibleProjects = projects.filter((p) => {
     const term = search.toLowerCase();
     const matchesText =
@@ -44,6 +67,39 @@ const FindWork = () => {
     const matchesStatus = statusFilter === 'All' ? true : p.status === statusFilter.toLowerCase();
     return matchesText && matchesStatus;
   });
+
+  const handleBidClick = (project) => {
+    setSelectedProject(project);
+    setIsBidModalOpen(true);
+  };
+
+  const handleCloseBidModal = () => {
+    setIsBidModalOpen(false);
+    setSelectedProject(null);
+  };
+
+  const handleBidSubmitted = (newBid) => {
+    // Add the new bid to userBids
+    setUserBids(prev => [newBid, ...prev]);
+    
+    // Optionally refresh projects or show a success message
+    console.log('Bid submitted successfully:', newBid);
+  };
+
+  const hasUserBidOnProject = (projectId) => {
+    return userBids.some(bid => 
+      String(bid.projectId._id || bid.projectId) === String(projectId) && 
+      bid.status !== 'withdrawn'
+    );
+  };
+
+  const getUserBidStatus = (projectId) => {
+    const bid = userBids.find(bid => 
+      String(bid.projectId._id || bid.projectId) === String(projectId) && 
+      bid.status !== 'withdrawn'
+    );
+    return bid ? bid.status : null;
+  };
 
   return (
     <div className="findwork-page">
@@ -90,7 +146,21 @@ const FindWork = () => {
                   <div key={p._id} className="project-card">
                     <div className="project-header">
                       <h3 className="project-title">{p.title}</h3>
-                      <button className="bid-btn">Place a bid</button>
+                      {hasUserBidOnProject(p._id) ? (
+                        <span className={`bid-status ${getUserBidStatus(p._id)}`}>
+                          {getUserBidStatus(p._id) === 'pending' && 'Bid Placed'}
+                          {getUserBidStatus(p._id) === 'accepted' && 'Bid Accepted'}
+                          {getUserBidStatus(p._id) === 'rejected' && 'Bid Rejected'}
+                        </span>
+                      ) : (
+                        <button 
+                          className="bid-btn"
+                          onClick={() => handleBidClick(p)}
+                          disabled={!user}
+                        >
+                          Place a bid
+                        </button>
+                      )}
                     </div>
                     <div className="project-meta">
                       <span className="price">{p.paymentOption === 'hourly' ? `Over USD ${p.budget} / hour` : `USD ${p.budget}`}</span>
@@ -98,11 +168,17 @@ const FindWork = () => {
                       {p.createdAt && <span className="time">{new Date(p.createdAt).toLocaleDateString()}</span>}
                     </div>
                     <p className="project-desc">{p.description}</p>
-                    {p.skills && (
-                      <div className="tags">
-                        {(Array.isArray(p.skills) ? p.skills : String(p.skills).split(',')).slice(0, 8).map((s, i) => (
-                          <span key={i} className="tag">{String(s).trim()}</span>
-                        ))}
+                    {p.skills && p.skills.length > 0 && (
+                      <div className="project-skills">
+                        <span className="skills-label">Tags:</span>
+                        <div className="tags">
+                          {(Array.isArray(p.skills) ? p.skills : String(p.skills).split(',')).slice(0, 8).map((s, i) => (
+                            <span key={i} className="tag">{String(s).trim()}</span>
+                          ))}
+                          {p.skills.length > 8 && (
+                            <span className="tags-more">+{p.skills.length - 8} more</span>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -114,6 +190,15 @@ const FindWork = () => {
       </div>
 
       <Footer />
+      
+      {/* Bid Modal */}
+      <BidModal 
+        isOpen={isBidModalOpen}
+        onClose={handleCloseBidModal}
+        project={selectedProject}
+        user={user}
+        onBidSubmitted={handleBidSubmitted}
+      />
     </div>
   );
 };
