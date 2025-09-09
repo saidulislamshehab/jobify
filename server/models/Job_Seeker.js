@@ -13,9 +13,9 @@ const studentSchema = new mongoose.Schema({
         type : String,
         required : true,
     },
-    phone : {
+    hourlyRate : {
         type : String,
-        default : 'Not provided',
+        default : 'Not specified',
     },
     country : {
         type : String,
@@ -51,6 +51,27 @@ const studentSchema = new mongoose.Schema({
     jobTitle : {
         type : String,
         default : 'Not specified',
+    },
+    profilePhoto : {
+        type : String,
+        default : '',
+    },
+    githubProjects : {
+        type : [{
+            name: {
+                type: String,
+                default: ''
+            },
+            githubLink: {
+                type: String,
+                default: ''
+            },
+            description: {
+                type: String,
+                default: ''
+            }
+        }],
+        default : []
     }
 });
 

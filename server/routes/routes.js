@@ -1,6 +1,5 @@
 import express from "express";
-import { createJobSeeker, loginJobSeeker, getJobSeeker, getJobSeekerById, updateJobSeeker, deleteJobSeeker, updateSkills, updateAboutMe } from "../controller/Job_Seeker_Controller.js";
-import { createClientProject, getClientProjects, getClientProjectById, updateClientProject, deleteClientProject, publishClientProject } from "../controller/ClientProject_Controller.js";
+import { createJobSeeker, loginJobSeeker, getJobSeeker, getJobSeekerById, updateJobSeeker, deleteJobSeeker, updateSkills, updateAboutMe, updateProfile } from "../controller/Job_Seeker_Controller.js";
 
 const router = express.Router();
 
@@ -39,15 +38,9 @@ router.get("/get", getJobSeeker);
 router.put("/update/:id", updateJobSeeker);
 router.put("/update-skills/:id", updateSkills);
 router.put("/update-about-me/:id", updateAboutMe);
+router.put("/update-profile/:id", updateProfile);
 router.delete("/delete/:id", deleteJobSeeker);
 
-// Client Project routes
-router.post("/projects/create", createClientProject);
-router.get("/projects", getClientProjects);
-router.get("/projects/:id", getClientProjectById);
-router.put("/projects/update/:id", updateClientProject);
-router.delete("/projects/delete/:id", deleteClientProject);
-router.put("/projects/publish/:id", publishClientProject);
 
 // Keep the dynamic ID route last to avoid conflicts with '/projects'
 router.get("/:id", getJobSeekerById);

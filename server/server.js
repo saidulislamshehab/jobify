@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import connectDb from './db/connect.js';
 import router from './routes/routes.js';
+import clientRouter from './routes/clientRoutes.js';
 
 dotenv.config();
 connectDb();
@@ -13,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/jobseekers', router);
-app.use('/api', router);
+app.use('/api/projects', clientRouter);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

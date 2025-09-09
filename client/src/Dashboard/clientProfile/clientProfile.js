@@ -96,53 +96,49 @@ const ClientProfile = () => {
                 src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face" 
                 alt="Profile" 
               />
-              <button className="photo-edit-icon">✏️</button>
+              <button className="photo-edit-icon">
+                <img src="/src/Dashboard/freelancerProfile/pencil.png" alt="Edit" className="photo-edit-icon-img" />
+              </button>
             </div>
           </div>
 
           <div className="profile-info-section">
-            <div className="profile-name-section">
-              <h1 className="profile-name">{user.name || 'SAIDUL ISLAM SHEHAB'}</h1>
-              <button className="edit-icon">✏️</button>
-            </div>
-
-            <div className="profile-role">
-              <span className="role-text">Client</span>
-            </div>
-
-            <div className="rating-section">
-              <div className="stars">
-                <span className="star">⭐</span>
-                <span className="star">⭐</span>
-                <span className="star">⭐</span>
-                <span className="star">⭐</span>
-                <span className="star">⭐</span>
+            <div className="profile-header-info">
+              <div className="profile-name-section">
+                <h1 className="profile-name">{user.name || 'SAIDUL ISLAM SHEHAB'}</h1>
+                <button className="edit-icon">
+                <img src="/src/Dashboard/freelancerProfile/pencil.png" alt="Edit" className="edit-icon-img" />
+              </button>
               </div>
-              <span className="rating-text">0/5</span>
+
+              <div className="profile-role">
+                <span className="role-badge">Client</span>
+              </div>
             </div>
 
-            <div className="location-section">
-              <span className="flag">🇺🇸</span>
-              <span className="location-text">United States</span>
+            <div className="profile-details">
+              <div className="location-section">
+                <span className="flag">🇺🇸</span>
+                <span className="location-text">United States</span>
+              </div>
+
             </div>
 
-            <div className="tagline-section">
-              <p className="tagline">Client expert in hiring and project management</p>
-            </div>
+            <div className="profile-actions">
+              <div className="hourly-rate-section">
+                <span className="rate-label">Hourly rate</span>
+                <span className="rate-value">$0.00</span>
+                <span className="rate-dash">-</span>
+              </div>
 
-            <div className="hourly-rate-section">
-              <span className="rate-label">Hourly rate</span>
-              <span className="rate-value">$0.00</span>
-              <span className="rate-dash">-</span>
-            </div>
-
-            <div className="profile-visibility">
-              <div className="visibility-option">
-                <label className="toggle-switch">
-                  <input type="checkbox" defaultChecked />
-                  <span className="slider"></span>
-                </label>
-                <span className="visibility-label">Profile visibility: Public</span>
+              <div className="profile-visibility">
+                <div className="visibility-option">
+                  <label className="toggle-switch">
+                    <input type="checkbox" defaultChecked />
+                    <span className="slider"></span>
+                  </label>
+                  <span className="visibility-label">Profile visibility: Public</span>
+                </div>
               </div>
             </div>
           </div>

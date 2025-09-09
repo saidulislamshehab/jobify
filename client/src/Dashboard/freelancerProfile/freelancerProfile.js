@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './freelancerProfile.css';
 import Footer from '../../LandingPage/footer';
 import DashboardNav from '../DashboardNav';
+import pencilIcon from '../pencil.png';
 
 const FreelancerProfile = () => {
   const [user, setUser] = useState(null);
@@ -16,6 +17,18 @@ const FreelancerProfile = () => {
   const [isEditingAboutMe, setIsEditingAboutMe] = useState(false);
   const [aboutMeText, setAboutMeText] = useState('');
   const [savingAboutMe, setSavingAboutMe] = useState(false);
+  const [projects, setProjects] = useState([]);
+  const [isAddingProject, setIsAddingProject] = useState(false);
+  const [newProject, setNewProject] = useState({ name: '', githubLink: '', description: '' });
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [profileEditData, setProfileEditData] = useState({
+    name: '',
+    jobTitle: '',
+    country: '',
+    hourlyRate: '',
+    profilePhoto: ''
+  });
+  const [savingProfile, setSavingProfile] = useState(false);
 
   useEffect(() => {
     // Get user data from localStorage or sessionStorage
@@ -94,7 +107,7 @@ const FreelancerProfile = () => {
     setSaving(true);
     try {
       const skillNames = skills.map(skill => skill.name);
-      const response = await fetch(`http://localhost:5000/api/update-skills/${user.id || user._id}`, {
+      const response = await fetch(`http://localhost:5000/api/jobseekers/update-skills/${user.id || user._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -141,7 +154,7 @@ const FreelancerProfile = () => {
     setSavingAboutMe(true);
     try {
       const fieldToUpdate = activeTab === 'freelancer' ? 'freelancerAboutMe' : 'clientAboutMe';
-      const response = await fetch(`http://localhost:5000/api/update-about-me/${user.id || user._id}`, {
+      const response = await fetch(`http://localhost:5000/api/jobseekers/update-about-me/${user.id || user._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -170,6 +183,119 @@ const FreelancerProfile = () => {
       alert('Network error: ' + error.message);
     } finally {
       setSavingAboutMe(false);
+    }
+  };
+
+  const handleAddProject = () => {
+    setIsAddingProject(true);
+  };
+
+  const handleCancelAddProject = () => {
+    setIsAddingProject(false);
+    setNewProject({ name: '', githubLink: '', description: '' });
+  };
+
+  const handleSaveProject = () => {
+    if (newProject.name.trim() && newProject.githubLink.trim()) {
+      const project = {
+        id: Date.now(),
+        name: newProject.name.trim(),
+        githubLink: newProject.githubLink.trim(),
+        description: newProject.description.trim()
+      };
+      setProjects([...projects, project]);
+      setNewProject({ name: '', githubLink: '', description: '' });
+      setIsAddingProject(false);
+    } else {
+      alert('Please fill in project name and GitHub link');
+    }
+  };
+
+  const handleRemoveProject = (projectId) => {
+    setProjects(projects.filter(project => project.id !== projectId));
+  };
+
+  const handleEditProfile = () => {
+    setIsEditingProfile(true);
+    setProfileEditData({
+      name: user.name || '',
+      jobTitle: user.jobTitle || '',
+      country: user.country || '',
+      hourlyRate: user.hourlyRate || '',
+      profilePhoto: user.profilePhoto || ''
+    });
+  };
+
+  const handleCancelProfileEdit = () => {
+    setIsEditingProfile(false);
+    setProfileEditData({
+      name: '',
+      jobTitle: '',
+      country: '',
+      hourlyRate: '',
+      profilePhoto: ''
+    });
+  };
+
+  const handleProfileInputChange = (field, value) => {
+    setProfileEditData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleSaveProfile = async () => {
+    setSavingProfile(true);
+    try {
+      const userId = user._id || user.id;
+      console.log('Updating profile for user ID:', userId);
+      console.log('User object:', user);
+      console.log('Profile data:', profileEditData);
+      
+      if (!userId) {
+        alert('User ID not found. Please log in again.');
+        return;
+      }
+      
+      const response = await fetch(`http://localhost:5000/api/jobseekers/update-profile/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(profileEditData)
+      });
+
+      console.log('Response status:', response.status);
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Update result:', result);
+        
+        // Update local user data
+        const updatedUser = { 
+          ...user, 
+          ...profileEditData
+        };
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        setUser(updatedUser);
+        setIsEditingProfile(false);
+        alert('Profile updated successfully!');
+      } else {
+        const errorData = await response.json();
+        console.error('Update error:', errorData);
+        console.error('Response status:', response.status);
+        console.error('Response headers:', response.headers);
+        alert(`Error updating profile: ${errorData.message || `HTTP ${response.status} - ${response.statusText}`}`);
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        alert('Cannot connect to server. Please make sure the server is running.');
+      } else {
+        alert(`Error updating profile: ${error.message}`);
+      }
+    } finally {
+      setSavingProfile(false);
     }
   };
 
@@ -234,74 +360,148 @@ const FreelancerProfile = () => {
           {/* Main Profile Card */}
           {activeTab === 'freelancer' ? (
             <div className="main-profile-card">
-              <div className="profile-photo-section">
-                <div className="profile-photo">
-                  <img 
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face" 
-                    alt="Profile" 
-                  />
-                </div>
-              </div>
-
-              <div className="profile-info-section">
-                <div className="profile-name-section">
-                  <h1 className="profile-name">{user.name || 'SAIDUL ISLAM SHEHAB'}</h1>
-                  <button className="edit-icon">✏️</button>
-                </div>
-
-                <div className="profile-role">
-                  <span className="role-text">Front-end Developer</span>
-                </div>
-
-                <div className="rating-section">
-                  <div className="stars">
-                    <span className="star">☆</span>
-                    <span className="star">☆</span>
-                    <span className="star">☆</span>
-                    <span className="star">☆</span>
-                    <span className="star">☆</span>
+              {!isEditingProfile ? (
+                <>
+                  <div className="profile-photo-section">
+                    <div className="profile-photo">
+                      <img 
+                        src={user.profilePhoto || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"} 
+                        alt="Profile" 
+                      />
+                    </div>
                   </div>
-                  <span className="rating-text">No ratings yet</span>
-                </div>
 
-                <div className="location-section">
-                  <span className="flag">🇺🇸</span>
-                  <span className="location-text">United States</span>
-                </div>
+                  <div className="profile-info-section">
+                    <div className="profile-header-info">
+                      <div className="profile-name-section">
+                        <h1 className="profile-name">{user.name || 'SAIDUL ISLAM SHEHAB'}</h1>
+                        <button className="edit-icon" onClick={handleEditProfile}>
+                          <img src={pencilIcon} alt="Edit" className="edit-icon-img" />
+                        </button>
+                      </div>
 
-                <div className="tagline-section">
-                  <span className="tagline">Freelancer expert in IT & Programming</span>
-                </div>
+                      <div className="profile-role">
+                        <span className="role-badge">{user.jobTitle || 'Front-end Developer'}</span>
+                      </div>
+                    </div>
 
-                <div className="hourly-rate-section">
-                  <div className="rate-label">Hourly rate</div>
-                  <div className="rate-value">
-                    <span className="rate-dash">—</span>
-                    <button className="edit-icon">✏️</button>
+                    <div className="profile-details">
+                      <div className="location-section">
+                        <span className="location-text">{user.country || 'United States'}</span>
+                      </div>
+                    </div>
+
+                    <div className="profile-actions">
+                      <div className="hourly-rate-section">
+                        <div className="rate-label">Hourly rate</div>
+                        <div className="rate-value">
+                          <span className="rate-dash">${user.hourlyRate || '0'}/hr</span>
+                          <button className="edit-icon" onClick={handleEditProfile}>
+                            <img src={pencilIcon} alt="Edit" className="edit-icon-img" />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="profile-visibility">
+                        <div className="visibility-option">
+                          <label className="toggle-switch">
+                            <input type="checkbox" />
+                            <span className="slider"></span>
+                          </label>
+                          <span className="visibility-label">Agency Profile</span>
+                        </div>
+                        <div className="visibility-option">
+                          <label className="toggle-switch">
+                            <input type="checkbox" defaultChecked />
+                            <span className="slider"></span>
+                          </label>
+                          <span className="visibility-label">Public Profile</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="profile-edit-form">
+                  <div className="edit-form-header">
+                    <h3>Edit Profile Information</h3>
+                    <div className="edit-form-actions">
+                      <button 
+                        className="cancel-edit-btn" 
+                        onClick={handleCancelProfileEdit}
+                        disabled={savingProfile}
+                      >
+                        Cancel
+                      </button>
+                      <button 
+                        className="save-edit-btn" 
+                        onClick={handleSaveProfile}
+                        disabled={savingProfile}
+                      >
+                        {savingProfile ? 'Saving...' : 'Save Changes'}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="edit-form-content">
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Profile Photo URL</label>
+                        <input
+                          type="url"
+                          value={profileEditData.profilePhoto}
+                          onChange={(e) => handleProfileInputChange('profilePhoto', e.target.value)}
+                          placeholder="Enter profile photo URL"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Full Name</label>
+                        <input
+                          type="text"
+                          value={profileEditData.name}
+                          onChange={(e) => handleProfileInputChange('name', e.target.value)}
+                          placeholder="Enter your full name"
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Job Title</label>
+                        <input
+                          type="text"
+                          value={profileEditData.jobTitle}
+                          onChange={(e) => handleProfileInputChange('jobTitle', e.target.value)}
+                          placeholder="e.g., Front-end Developer"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Country</label>
+                        <input
+                          type="text"
+                          value={profileEditData.country}
+                          onChange={(e) => handleProfileInputChange('country', e.target.value)}
+                          placeholder="Enter your country"
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Hourly Rate (USD)</label>
+                        <input
+                          type="number"
+                          value={profileEditData.hourlyRate}
+                          onChange={(e) => handleProfileInputChange('hourlyRate', e.target.value)}
+                          placeholder="Enter hourly rate"
+                          min="0"
+                          step="0.01"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
-
-                <div className="profile-visibility">
-                  <div className="visibility-option">
-                    <label className="toggle-switch">
-                      <input type="checkbox" />
-                      <span className="slider"></span>
-                    </label>
-                    <span className="visibility-label">Agency Profile</span>
-                  </div>
-                  <div className="visibility-option">
-                    <label className="toggle-switch">
-                      <input type="checkbox" defaultChecked />
-                      <span className="slider"></span>
-                    </label>
-                    <span className="visibility-label">Public Profile</span>
-                  </div>
-                </div>
-
-                <div className="skills-prompt">
-                  <span className="prompt-text">Choose your three main skills</span>
-                </div>
-              </div>
+              )}
             </div>
           ) : (
             <div className="main-profile-card client-profile">
@@ -311,26 +511,20 @@ const FreelancerProfile = () => {
                     src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face" 
                     alt="Profile" 
                   />
-                  <button className="photo-edit-icon">✏️</button>
+                  <button className="photo-edit-icon">
+                    <img src={pencilIcon} alt="Edit" className="photo-edit-icon-img" />
+                  </button>
                 </div>
               </div>
 
               <div className="profile-info-section">
                 <div className="profile-name-section">
                   <h1 className="profile-name">{user.name || 'SAIDUL ISLAM SHEHAB'}</h1>
-                  <button className="edit-icon">✏️</button>
+                  <button className="edit-icon">
+                    <img src={pencilIcon} alt="Edit" className="edit-icon-img" />
+                  </button>
                 </div>
 
-                <div className="rating-section">
-                  <div className="stars">
-                    <span className="star">⭐</span>
-                    <span className="star">⭐</span>
-                    <span className="star">⭐</span>
-                    <span className="star">⭐</span>
-                    <span className="star">⭐</span>
-                  </div>
-                  <span className="rating-text">0/5</span>
-                </div>
 
                 <div className="location-section">
                   <span className="flag">🇺🇸</span>
@@ -365,16 +559,6 @@ const FreelancerProfile = () => {
           {/* Conditional Content Based on Active Tab */}
           {activeTab === 'freelancer' ? (
             <>
-              {/* Iron Level Section */}
-              <div className="iron-level-section">
-                <div className="level-header">
-                  <h3>WHAT IS THE IRON PROFILE LEVEL?</h3>
-                  <div className="info-badge">i</div>
-                </div>
-                <p className="level-description">
-                  Iron is the starting level on Workana. Make good bids, obtain the best ratings, and add up your earnings to achieve more benefits. <a href="#" className="read-more-link">Read more</a>
-                </p>
-              </div>
 
               {/* Skills Section */}
               <div className="skills-section">
@@ -507,14 +691,90 @@ const FreelancerProfile = () => {
 
               {/* Featured Projects Section */}
               <div className="featured-projects-section">
+                <div className="section-header">
+                  <h3>Featured Projects</h3>
+                  <button className="edit-icon" onClick={handleAddProject}>
+                    <img src={pencilIcon} alt="Add Project" className="edit-icon-img" />
+                  </button>
+                </div>
                 <div className="section-description">
                   <p>In this section, you can include the projects you've worked on</p>
                 </div>
-                <div className="projects-cards">
-                  <div className="project-card add-project">
-                    <div className="project-icon">+</div>
-                    <span className="project-text">Add project</span>
+                
+                {isAddingProject && (
+                  <div className="add-project-form">
+                    <div className="form-group">
+                      <label>Project Name</label>
+                      <input
+                        type="text"
+                        value={newProject.name}
+                        onChange={(e) => setNewProject({...newProject, name: e.target.value})}
+                        placeholder="Enter project name"
+                        className="project-input"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>GitHub Link</label>
+                      <input
+                        type="url"
+                        value={newProject.githubLink}
+                        onChange={(e) => setNewProject({...newProject, githubLink: e.target.value})}
+                        placeholder="https://github.com/username/repository"
+                        className="project-input"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Description (Optional)</label>
+                      <textarea
+                        value={newProject.description}
+                        onChange={(e) => setNewProject({...newProject, description: e.target.value})}
+                        placeholder="Brief description of the project"
+                        className="project-textarea"
+                        rows="3"
+                      />
+                    </div>
+                    <div className="form-actions">
+                      <button className="cancel-button" onClick={handleCancelAddProject}>
+                        Cancel
+                      </button>
+                      <button className="save-button" onClick={handleSaveProject}>
+                        Save Project
+                      </button>
+                    </div>
                   </div>
+                )}
+
+                <div className="projects-cards">
+                  {projects.map((project) => (
+                    <div key={project.id} className="project-card">
+                      <div className="project-header">
+                        <h4 className="project-name">{project.name}</h4>
+                        <button 
+                          className="remove-project-btn"
+                          onClick={() => handleRemoveProject(project.id)}
+                        >
+                          ×
+                        </button>
+                      </div>
+                      <p className="project-description">{project.description}</p>
+                      <a 
+                        href={project.githubLink} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="project-link"
+                      >
+                        View on GitHub
+                      </a>
+                    </div>
+                  ))}
+                  
+                  {!isAddingProject && (
+                    <div className="project-card add-project" onClick={handleAddProject}>
+                      <div className="project-icon">+</div>
+                      <span className="project-text">Add project</span>
+                    </div>
+                  )}
+                  
                   <div className="project-card link-account">
                     <div className="project-icon behance">Bē</div>
                     <span className="project-text">Link account</span>
@@ -542,7 +802,7 @@ const FreelancerProfile = () => {
                       </>
                     ) : (
                       <button className="edit-icon" onClick={handleEditAboutMe}>
-                        ✏️
+                        <img src={pencilIcon} alt="Edit" className="edit-icon-img" />
                       </button>
                     )}
                   </div>
@@ -576,7 +836,7 @@ const FreelancerProfile = () => {
               <div className="work-history-section">
                 <div className="section-header">
                   <h3>Experience</h3>
-                  <button className="edit-icon">✏️</button>
+                  <button className="edit-icon"><img src={pencilIcon} alt="Edit" className="edit-icon-img" /></button>
                 </div>
               </div>
 
@@ -584,7 +844,7 @@ const FreelancerProfile = () => {
               <div className="certifications-section">
                 <div className="section-header">
                   <h3>Education</h3>
-                  <button className="edit-icon">✏️</button>
+                  <button className="edit-icon"><img src={pencilIcon} alt="Edit" className="edit-icon-img" /></button>
                 </div>
               </div>
 
@@ -592,7 +852,7 @@ const FreelancerProfile = () => {
               <div className="languages-section">
                 <div className="section-header">
                   <h3>Languages</h3>
-                  <button className="edit-icon">✏️</button>
+                  <button className="edit-icon"><img src={pencilIcon} alt="Edit" className="edit-icon-img" /></button>
                 </div>
                 <div className="language-content">
                   <span className="language-text">English Native or bilingual</span>
@@ -621,7 +881,7 @@ const FreelancerProfile = () => {
                       </>
                     ) : (
                       <button className="edit-icon" onClick={handleEditAboutMe}>
-                        ✏️
+                        <img src={pencilIcon} alt="Edit" className="edit-icon-img" />
                       </button>
                     )}
                   </div>
