@@ -12,15 +12,37 @@ const ClientProfile = () => {
   const [previewUrl, setPreviewUrl] = useState('');
   const [profilePhoto, setProfilePhoto] = useState('/man.png');
 
+  // Update profile photo when user data changes
+  useEffect(() => {
+    if (user && user.profilePhoto) {
+      setProfilePhoto(user.profilePhoto);
+    }
+  }, [user]);
+
   useEffect(() => {
     // Get user data from localStorage or sessionStorage
-    const getUserData = () => {
+    const getUserData = async () => {
       try {
         const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
         if (userData) {
           const parsedUser = JSON.parse(userData);
           console.log('User data loaded:', parsedUser);
           setUser(parsedUser);
+          
+          // Migrate user data if needed
+          const userId = parsedUser._id || parsedUser.id;
+          if (userId) {
+            try {
+              const migrateResponse = await fetch(`http://localhost:5000/api/jobseekers/migrate-user-data/${userId}`, {
+                method: 'PUT'
+              });
+              if (migrateResponse.ok) {
+                console.log('User data migration completed for client profile');
+              }
+            } catch (migrateError) {
+              console.log('Migration failed or not needed:', migrateError);
+            }
+          }
         } else {
           console.log('No user data found, redirecting to login');
           window.location.href = '/login';
@@ -204,7 +226,7 @@ const ClientProfile = () => {
         <div className="profile-tabs">
           <button 
             className={`tab-button ${activeTab === 'freelancer' ? 'active' : ''}`}
-            onClick={() => setActiveTab('freelancer')}
+            onClick={() => window.location.href = '/freelancer-profile'}
           >
             My Profile As Freelancer
           </button>
@@ -219,12 +241,14 @@ const ClientProfile = () => {
         {/* Main Profile Card */}
         <div className="main-profile-card">
           <div className="profile-photo-section">
-            <div className="profile-photo">
+            <div className="profile-photo" onClick={() => setShowPhotoModal(true)}>
               <img 
                 src={profilePhoto} 
                 alt="Profile" 
               />
-             
+              <div className="photo-edit-overlay">
+                <span className="edit-text">Edit Photo</span>
+              </div>
             </div>
           </div>
 
@@ -244,7 +268,7 @@ const ClientProfile = () => {
 
             <div className="profile-details">
               <div className="location-section">
-                <span className="location-text">United States</span>
+                <span className="location-text">{user.country || 'United States'}</span>
               </div>
 
             </div>

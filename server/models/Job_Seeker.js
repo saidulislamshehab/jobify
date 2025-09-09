@@ -22,11 +22,62 @@ const studentSchema = new mongoose.Schema({
         default : 'Not provided',
     },
     education : {
-        type : String,
-        default : 'Not specified',
+        type : [{
+            institution: {
+                type: String,
+                default: ''
+            },
+            degree: {
+                type: String,
+                default: ''
+            },
+            fieldOfStudy: {
+                type: String,
+                default: ''
+            },
+            startDate: {
+                type: String,
+                default: ''
+            },
+            endDate: {
+                type: String,
+                default: ''
+            },
+            description: {
+                type: String,
+                default: ''
+            }
+        }],
+        default : []
     },
     experience : {
-        type : String,
+        type : [{
+            company: {
+                type: String,
+                default: ''
+            },
+            position: {
+                type: String,
+                default: ''
+            },
+            startDate: {
+                type: String,
+                default: ''
+            },
+            endDate: {
+                type: String,
+                default: ''
+            },
+            description: {
+                type: String,
+                default: ''
+            },
+            current: {
+                type: Boolean,
+                default: false
+            }
+        }],
+        default : []
     },
     skills : {
         type : [String],
@@ -44,9 +95,19 @@ const studentSchema = new mongoose.Schema({
         type : String,
         default : 'Tell us about yourself as a freelancer...',
     },
-    language : {
-        type : String,
-        default : 'English',
+    languages : {
+        type : [{
+            language: {
+                type: String,
+                default: 'English'
+            },
+            proficiency: {
+                type: String,
+                enum: ['Beginner', 'Intermediate', 'Advanced', 'Native'],
+                default: 'Native'
+            }
+        }],
+        default : [{ language: 'English', proficiency: 'Native' }]
     },
     jobTitle : {
         type : String,

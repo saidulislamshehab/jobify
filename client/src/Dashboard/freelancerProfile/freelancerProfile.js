@@ -31,6 +31,32 @@ const FreelancerProfile = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState('');
   const [savingProfile, setSavingProfile] = useState(false);
+  const [experience, setExperience] = useState([]);
+  const [education, setEducation] = useState([]);
+  const [languages, setLanguages] = useState([]);
+  const [isEditingExperience, setIsEditingExperience] = useState(false);
+  const [isEditingEducation, setIsEditingEducation] = useState(false);
+  const [isEditingLanguages, setIsEditingLanguages] = useState(false);
+  const [newExperience, setNewExperience] = useState({
+    company: '',
+    position: '',
+    startDate: '',
+    endDate: '',
+    description: '',
+    current: false
+  });
+  const [newEducation, setNewEducation] = useState({
+    institution: '',
+    degree: '',
+    fieldOfStudy: '',
+    startDate: '',
+    endDate: '',
+    description: ''
+  });
+  const [newLanguage, setNewLanguage] = useState({
+    language: '',
+    proficiency: 'Intermediate'
+  });
 
   useEffect(() => {
     // Get user data from localStorage or sessionStorage
@@ -59,15 +85,37 @@ const FreelancerProfile = () => {
             setAboutMeText(parsedUser.clientAboutMe);
           }
           
+          // Note: Experience, education, and languages are now loaded from MongoDB below
+          
           // Load projects from database
           const userId = parsedUser._id || parsedUser.id;
           if (userId) {
             try {
+              console.log('Fetching user data from MongoDB for user ID:', userId);
+              
+              // First, try to migrate user data if needed
+              try {
+                const migrateResponse = await fetch(`http://localhost:5000/api/jobseekers/migrate-user-data/${userId}`, {
+                  method: 'PUT'
+                });
+                if (migrateResponse.ok) {
+                  console.log('User data migration completed');
+                }
+              } catch (migrateError) {
+                console.log('Migration failed or not needed:', migrateError);
+              }
+              
               const response = await fetch(`http://localhost:5000/api/jobseekers/${userId}`);
+              console.log('Response status:', response.status);
+              
               if (response.ok) {
                 const userDataFromDB = await response.json();
                 console.log('User data from DB:', userDataFromDB);
+                console.log('Experience from DB:', userDataFromDB.experience);
+                console.log('Education from DB:', userDataFromDB.education);
+                console.log('Languages from DB:', userDataFromDB.languages);
                 
+                // Load GitHub projects
                 if (userDataFromDB.githubProjects && Array.isArray(userDataFromDB.githubProjects)) {
                   // Add unique IDs to projects for local state management
                   const projectsWithIds = userDataFromDB.githubProjects.map((project, index) => ({
@@ -77,12 +125,64 @@ const FreelancerProfile = () => {
                   setProjects(projectsWithIds);
                   console.log('Projects loaded from DB:', projectsWithIds);
                 }
+                
+                // Load experience data
+                if (userDataFromDB.experience && Array.isArray(userDataFromDB.experience) && userDataFromDB.experience.length > 0) {
+                  const experienceWithIds = userDataFromDB.experience.map((exp, index) => ({
+                    ...exp,
+                    id: exp._id || `exp_${Date.now()}_${index}`
+                  }));
+                  setExperience(experienceWithIds);
+                  console.log('Experience loaded from DB:', experienceWithIds);
+                } else {
+                  console.log('No experience data found in DB, initializing empty array');
+                  setExperience([]);
+                }
+                
+                // Load education data
+                if (userDataFromDB.education && Array.isArray(userDataFromDB.education) && userDataFromDB.education.length > 0) {
+                  const educationWithIds = userDataFromDB.education.map((edu, index) => ({
+                    ...edu,
+                    id: edu._id || `edu_${Date.now()}_${index}`
+                  }));
+                  setEducation(educationWithIds);
+                  console.log('Education loaded from DB:', educationWithIds);
+                } else {
+                  console.log('No education data found in DB, initializing empty array');
+                  setEducation([]);
+                }
+                
+                // Load languages data
+                if (userDataFromDB.languages && Array.isArray(userDataFromDB.languages) && userDataFromDB.languages.length > 0) {
+                  const languagesWithIds = userDataFromDB.languages.map((lang, index) => ({
+                    ...lang,
+                    id: lang._id || `lang_${Date.now()}_${index}`
+                  }));
+                  setLanguages(languagesWithIds);
+                  console.log('Languages loaded from DB:', languagesWithIds);
+                } else {
+                  console.log('No languages data found in DB, initializing with default English');
+                  setLanguages([{ language: 'English', proficiency: 'Native', id: 'default_english' }]);
+                }
               } else {
                 console.log('Could not fetch user data from database, using local data');
+                const errorText = await response.text();
+                console.log('Error response:', errorText);
               }
             } catch (dbError) {
               console.log('Database fetch failed, using local data:', dbError);
+              console.error('Full error:', dbError);
+              // Initialize with empty arrays if DB fetch fails
+              setExperience([]);
+              setEducation([]);
+              setLanguages([{ language: 'English', proficiency: 'Native', id: 'default_english' }]);
             }
+          } else {
+            // No userId, initialize with empty arrays
+            console.log('No userId found, initializing with empty arrays');
+            setExperience([]);
+            setEducation([]);
+            setLanguages([{ language: 'English', proficiency: 'Native', id: 'default_english' }]);
           }
         } else {
           console.log('No user data found, redirecting to login');
@@ -499,6 +599,221 @@ const FreelancerProfile = () => {
     }
   };
 
+  // Experience handlers
+  const handleAddExperience = () => {
+    if (newExperience.company && newExperience.position && newExperience.startDate) {
+      const experienceToAdd = {
+        ...newExperience,
+        id: Date.now().toString()
+      };
+      setExperience([...experience, experienceToAdd]);
+      setNewExperience({
+        company: '',
+        position: '',
+        startDate: '',
+        endDate: '',
+        description: '',
+        current: false
+      });
+    }
+  };
+
+  const handleRemoveExperience = (id) => {
+    setExperience(experience.filter(exp => exp.id !== id));
+  };
+
+  const handleSaveExperience = async () => {
+    try {
+      const userId = user._id || user.id;
+      console.log('Saving experience for user ID:', userId);
+      console.log('Experience data to save:', experience);
+      
+      // Test server connection first
+      const testResponse = await fetch('http://localhost:5000/api/jobseekers/test');
+      if (!testResponse.ok) {
+        throw new Error('Server is not responding. Please make sure the server is running on port 5000.');
+      }
+      
+      // Test data sending
+      const testUpdateResponse = await fetch('http://localhost:5000/api/jobseekers/test-update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ testData: experience })
+      });
+      
+      if (testUpdateResponse.ok) {
+        const testResult = await testUpdateResponse.json();
+        console.log('Test update successful:', testResult);
+      }
+      
+      const response = await fetch(`http://localhost:5000/api/jobseekers/update-experience/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ experience })
+      });
+
+      console.log('Experience update response status:', response.status);
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Experience update result:', result);
+        const updatedUser = { ...user, experience: result.experience };
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        setUser(updatedUser);
+        setIsEditingExperience(false);
+        alert('Experience updated successfully!');
+      } else {
+        const errorData = await response.json();
+        console.error('Experience update error:', errorData);
+        alert('Failed to update experience: ' + (errorData.message || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Error updating experience:', error);
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        alert('Cannot connect to server. Please make sure the server is running on port 5000.');
+      } else {
+        alert('Network error: ' + error.message);
+      }
+    }
+  };
+
+  // Education handlers
+  const handleAddEducation = () => {
+    if (newEducation.institution && newEducation.degree && newEducation.startDate) {
+      const educationToAdd = {
+        ...newEducation,
+        id: Date.now().toString()
+      };
+      setEducation([...education, educationToAdd]);
+      setNewEducation({
+        institution: '',
+        degree: '',
+        fieldOfStudy: '',
+        startDate: '',
+        endDate: '',
+        description: ''
+      });
+    }
+  };
+
+  const handleRemoveEducation = (id) => {
+    setEducation(education.filter(edu => edu.id !== id));
+  };
+
+  const handleSaveEducation = async () => {
+    try {
+      const userId = user._id || user.id;
+      console.log('Saving education for user ID:', userId);
+      console.log('Education data to save:', education);
+      
+      // Test server connection first
+      const testResponse = await fetch('http://localhost:5000/api/jobseekers/test');
+      if (!testResponse.ok) {
+        throw new Error('Server is not responding. Please make sure the server is running on port 5000.');
+      }
+      
+      const response = await fetch(`http://localhost:5000/api/jobseekers/update-education/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ education })
+      });
+
+      console.log('Education update response status:', response.status);
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Education update result:', result);
+        const updatedUser = { ...user, education: result.education };
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        setUser(updatedUser);
+        setIsEditingEducation(false);
+        alert('Education updated successfully!');
+      } else {
+        const errorData = await response.json();
+        console.error('Education update error:', errorData);
+        alert('Failed to update education: ' + (errorData.message || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Error updating education:', error);
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        alert('Cannot connect to server. Please make sure the server is running on port 5000.');
+      } else {
+        alert('Network error: ' + error.message);
+      }
+    }
+  };
+
+  // Language handlers
+  const handleAddLanguage = () => {
+    if (newLanguage.language) {
+      const languageToAdd = {
+        ...newLanguage,
+        id: Date.now().toString()
+      };
+      setLanguages([...languages, languageToAdd]);
+      setNewLanguage({
+        language: '',
+        proficiency: 'Intermediate'
+      });
+    }
+  };
+
+  const handleRemoveLanguage = (id) => {
+    setLanguages(languages.filter(lang => lang.id !== id));
+  };
+
+  const handleSaveLanguages = async () => {
+    try {
+      const userId = user._id || user.id;
+      console.log('Saving languages for user ID:', userId);
+      console.log('Languages data to save:', languages);
+      
+      // Test server connection first
+      const testResponse = await fetch('http://localhost:5000/api/jobseekers/test');
+      if (!testResponse.ok) {
+        throw new Error('Server is not responding. Please make sure the server is running on port 5000.');
+      }
+      
+      const response = await fetch(`http://localhost:5000/api/jobseekers/update-languages/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ languages })
+      });
+
+      console.log('Languages update response status:', response.status);
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Languages update result:', result);
+        const updatedUser = { ...user, languages: result.languages };
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        setUser(updatedUser);
+        setIsEditingLanguages(false);
+        alert('Languages updated successfully!');
+      } else {
+        const errorData = await response.json();
+        console.error('Languages update error:', errorData);
+        alert('Failed to update languages: ' + (errorData.message || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Error updating languages:', error);
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        alert('Cannot connect to server. Please make sure the server is running on port 5000.');
+      } else {
+        alert('Network error: ' + error.message);
+      }
+    }
+  };
+
+
   if (loading) {
     return (
       <div className="profile-page">
@@ -541,21 +856,21 @@ const FreelancerProfile = () => {
       <div className="profile-content">
         {/* Main Content */}
         <main className="profile-main">
-          {/* Profile Tabs */}
-          <div className="profile-tabs">
-            <button 
-              className={`tab-button ${activeTab === 'freelancer' ? 'active' : ''}`}
-              onClick={() => setActiveTab('freelancer')}
-            >
-              My Profile As Freelancer
-            </button>
-            <button 
-              className={`tab-button ${activeTab === 'client' ? 'active' : ''}`}
-              onClick={() => setActiveTab('client')}
-            >
-              My Profile As Client
-            </button>
-          </div>
+        {/* Profile Tabs */}
+        <div className="profile-tabs">
+          <button 
+            className={`tab-button ${activeTab === 'freelancer' ? 'active' : ''}`}
+            onClick={() => setActiveTab('freelancer')}
+          >
+            My Profile As Freelancer
+          </button>
+          <button 
+            className={`tab-button ${activeTab === 'client' ? 'active' : ''}`}
+            onClick={() => setActiveTab('client')}
+          >
+            My Profile As Client
+          </button>
+        </div>
 
           {/* Main Profile Card */}
           {activeTab === 'freelancer' ? (
@@ -734,7 +1049,7 @@ const FreelancerProfile = () => {
               <div className="profile-photo-section">
                 <div className="profile-photo">
                   <img 
-                    src="/man.png" 
+                    src={user.profilePhoto || "/man.png"} 
                     alt="Profile" 
                   />
                   
@@ -751,8 +1066,7 @@ const FreelancerProfile = () => {
 
 
                 <div className="location-section">
-                  <span className="flag">🇺🇸</span>
-                  <span className="location-text">United States</span>
+                  <span className="location-text">{user.country }</span>
                 </div>
 
                 <div className="client-stats">
@@ -1060,27 +1374,365 @@ const FreelancerProfile = () => {
               <div className="work-history-section">
                 <div className="section-header">
                   <h3>Experience</h3>
-                  <button className="edit-icon"><img src={pencilIcon} alt="Edit" className="edit-icon-img" /></button>
+                  <div className="section-actions">
+                    {isEditingExperience ? (
+                      <>
+                        <button className="cancel-button" onClick={() => setIsEditingExperience(false)}>
+                          Cancel
+                        </button>
+                        <button className="save-button" onClick={handleSaveExperience}>
+                          Save
+                        </button>
+                      </>
+                    ) : (
+                      <button className="edit-icon" onClick={() => setIsEditingExperience(true)}>
+                        <img src={pencilIcon} alt="Edit" className="edit-icon-img" />
+                      </button>
+                    )}
+                  </div>
                 </div>
+
+                {isEditingExperience ? (
+                  <div className="experience-edit-container">
+                    {/* Add New Experience Form */}
+                    <div className="add-experience-form">
+                      <h4>Add New Experience</h4>
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label>Company</label>
+                          <input
+                            type="text"
+                            value={newExperience.company}
+                            onChange={(e) => setNewExperience({...newExperience, company: e.target.value})}
+                            placeholder="Company name"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Position</label>
+                          <input
+                            type="text"
+                            value={newExperience.position}
+                            onChange={(e) => setNewExperience({...newExperience, position: e.target.value})}
+                            placeholder="Job title"
+                          />
+                        </div>
+                      </div>
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label>Start Date</label>
+                          <input
+                            type="month"
+                            value={newExperience.startDate}
+                            onChange={(e) => setNewExperience({...newExperience, startDate: e.target.value})}
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>End Date</label>
+                          <input
+                            type="month"
+                            value={newExperience.endDate}
+                            onChange={(e) => setNewExperience({...newExperience, endDate: e.target.value})}
+                            disabled={newExperience.current}
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>
+                            <input
+                              type="checkbox"
+                              checked={newExperience.current}
+                              onChange={(e) => setNewExperience({...newExperience, current: e.target.checked})}
+                            />
+                            Currently working here
+                          </label>
+                        </div>
+                      </div>
+                      <div className="form-group">
+                        <label>Description</label>
+                        <textarea
+                          value={newExperience.description}
+                          onChange={(e) => setNewExperience({...newExperience, description: e.target.value})}
+                          placeholder="Describe your role and achievements"
+                          rows="3"
+                        />
+                      </div>
+                      <button className="add-button" onClick={handleAddExperience}>
+                        Add Experience
+                      </button>
+                    </div>
+
+                    {/* Experience List */}
+                    <div className="experience-list">
+                      {experience.map((exp) => (
+                        <div key={exp.id} className="experience-item">
+                          <div className="experience-header">
+                            <h4>{exp.position} at {exp.company}</h4>
+                            <button 
+                              className="remove-btn"
+                              onClick={() => handleRemoveExperience(exp.id)}
+                            >
+                              ×
+                            </button>
+                          </div>
+                          <p className="experience-dates">
+                            {exp.startDate} - {exp.current ? 'Present' : exp.endDate}
+                          </p>
+                          {exp.description && (
+                            <p className="experience-description">{exp.description}</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="experience-display">
+                    {experience.length > 0 ? (
+                      <div className="experience-list">
+                        {experience.map((exp) => (
+                          <div key={exp.id} className="experience-item">
+                            <h4>{exp.position} at {exp.company}</h4>
+                            <p className="experience-dates">
+                              {exp.startDate} - {exp.current ? 'Present' : exp.endDate}
+                            </p>
+                            {exp.description && (
+                              <p className="experience-description">{exp.description}</p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="no-experience">No experience added yet. Click Edit to add your work experience.</p>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Education Section */}
               <div className="certifications-section">
                 <div className="section-header">
                   <h3>Education</h3>
-                  <button className="edit-icon"><img src={pencilIcon} alt="Edit" className="edit-icon-img" /></button>
+                  <div className="section-actions">
+                    {isEditingEducation ? (
+                      <>
+                        <button className="cancel-button" onClick={() => setIsEditingEducation(false)}>
+                          Cancel
+                        </button>
+                        <button className="save-button" onClick={handleSaveEducation}>
+                          Save
+                        </button>
+                      </>
+                    ) : (
+                      <button className="edit-icon" onClick={() => setIsEditingEducation(true)}>
+                        <img src={pencilIcon} alt="Edit" className="edit-icon-img" />
+                      </button>
+                    )}
+                  </div>
                 </div>
+
+                {isEditingEducation ? (
+                  <div className="education-edit-container">
+                    {/* Add New Education Form */}
+                    <div className="add-education-form">
+                      <h4>Add New Education</h4>
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label>Institution</label>
+                          <input
+                            type="text"
+                            value={newEducation.institution}
+                            onChange={(e) => setNewEducation({...newEducation, institution: e.target.value})}
+                            placeholder="University/School name"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Degree</label>
+                          <input
+                            type="text"
+                            value={newEducation.degree}
+                            onChange={(e) => setNewEducation({...newEducation, degree: e.target.value})}
+                            placeholder="e.g., Bachelor's, Master's"
+                          />
+                        </div>
+                      </div>
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label>Field of Study</label>
+                          <input
+                            type="text"
+                            value={newEducation.fieldOfStudy}
+                            onChange={(e) => setNewEducation({...newEducation, fieldOfStudy: e.target.value})}
+                            placeholder="e.g., Computer Science"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Start Date</label>
+                          <input
+                            type="month"
+                            value={newEducation.startDate}
+                            onChange={(e) => setNewEducation({...newEducation, startDate: e.target.value})}
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>End Date</label>
+                          <input
+                            type="month"
+                            value={newEducation.endDate}
+                            onChange={(e) => setNewEducation({...newEducation, endDate: e.target.value})}
+                          />
+                        </div>
+                      </div>
+                      <div className="form-group">
+                        <label>Description</label>
+                        <textarea
+                          value={newEducation.description}
+                          onChange={(e) => setNewEducation({...newEducation, description: e.target.value})}
+                          placeholder="Additional details about your education"
+                          rows="3"
+                        />
+                      </div>
+                      <button className="add-button" onClick={handleAddEducation}>
+                        Add Education
+                      </button>
+                    </div>
+
+                    {/* Education List */}
+                    <div className="education-list">
+                      {education.map((edu) => (
+                        <div key={edu.id} className="education-item">
+                          <div className="education-header">
+                            <h4>{edu.degree} in {edu.fieldOfStudy}</h4>
+                            <button 
+                              className="remove-btn"
+                              onClick={() => handleRemoveEducation(edu.id)}
+                            >
+                              ×
+                            </button>
+                          </div>
+                          <p className="education-institution">{edu.institution}</p>
+                          <p className="education-dates">
+                            {edu.startDate} - {edu.endDate}
+                          </p>
+                          {edu.description && (
+                            <p className="education-description">{edu.description}</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="education-display">
+                    {education.length > 0 ? (
+                      <div className="education-list">
+                        {education.map((edu) => (
+                          <div key={edu.id} className="education-item">
+                            <h4>{edu.degree} in {edu.fieldOfStudy}</h4>
+                            <p className="education-institution">{edu.institution}</p>
+                            <p className="education-dates">
+                              {edu.startDate} - {edu.endDate}
+                            </p>
+                            {edu.description && (
+                              <p className="education-description">{edu.description}</p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="no-education">No education added yet. Click Edit to add your educational background.</p>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Languages Section */}
               <div className="languages-section">
                 <div className="section-header">
                   <h3>Languages</h3>
-                  <button className="edit-icon"><img src={pencilIcon} alt="Edit" className="edit-icon-img" /></button>
+                  <div className="section-actions">
+                    {isEditingLanguages ? (
+                      <>
+                        <button className="cancel-button" onClick={() => setIsEditingLanguages(false)}>
+                          Cancel
+                        </button>
+                        <button className="save-button" onClick={handleSaveLanguages}>
+                          Save
+                        </button>
+                      </>
+                    ) : (
+                      <button className="edit-icon" onClick={() => setIsEditingLanguages(true)}>
+                        <img src={pencilIcon} alt="Edit" className="edit-icon-img" />
+                      </button>
+                    )}
+                  </div>
                 </div>
-                <div className="language-content">
-                  <span className="language-text">English Native or bilingual</span>
-                </div>
+
+                {isEditingLanguages ? (
+                  <div className="languages-edit-container">
+                    {/* Add New Language Form */}
+                    <div className="add-language-form">
+                      <h4>Add New Language</h4>
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label>Language</label>
+                          <input
+                            type="text"
+                            value={newLanguage.language}
+                            onChange={(e) => setNewLanguage({...newLanguage, language: e.target.value})}
+                            placeholder="e.g., Spanish, French"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Proficiency</label>
+                          <select
+                            value={newLanguage.proficiency}
+                            onChange={(e) => setNewLanguage({...newLanguage, proficiency: e.target.value})}
+                          >
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                            <option value="Native">Native</option>
+                          </select>
+                        </div>
+                        <div className="form-group">
+                          <button className="add-button" onClick={handleAddLanguage}>
+                            Add Language
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Languages List */}
+                    <div className="languages-list">
+                      {languages.map((lang) => (
+                        <div key={lang.id} className="language-item">
+                          <div className="language-header">
+                            <span className="language-name">{lang.language}</span>
+                            <span className="language-proficiency">{lang.proficiency}</span>
+                            <button 
+                              className="remove-btn"
+                              onClick={() => handleRemoveLanguage(lang.id)}
+                            >
+                              ×
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="languages-display">
+                    {languages.length > 0 ? (
+                      <div className="languages-list">
+                        {languages.map((lang) => (
+                          <div key={lang.id} className="language-item">
+                            <span className="language-name">{lang.language}</span>
+                            <span className="language-proficiency">{lang.proficiency}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="no-languages">No languages added yet. Click Edit to add your languages.</p>
+                    )}
+                  </div>
+                )}
               </div>
             </>
           ) : (

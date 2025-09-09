@@ -1,5 +1,5 @@
 import express from "express";
-import { createJobSeeker, loginJobSeeker, getJobSeeker, getJobSeekerById, updateJobSeeker, deleteJobSeeker, updateSkills, updateAboutMe } from "../controller/Job_Seeker_Controller.js";
+import { createJobSeeker, loginJobSeeker, getJobSeeker, getJobSeekerById, updateJobSeeker, deleteJobSeeker, updateSkills, updateAboutMe, updateProfile, updateGitHubProjects, updateExperience, updateEducation, updateLanguages, migrateUserData } from "../controller/Job_Seeker_Controller.js";
 import { createClientProject, getClientProjects, getClientProjectById, updateClientProject, deleteClientProject, publishClientProject } from "../controller/ClientProject_Controller.js";
 import { createBid, getBidsForProject, getBidsByFreelancer, updateBidStatus, withdrawBid, getBidById, getBidStats } from "../controller/Bid_Controller.js";
 
@@ -14,6 +14,22 @@ router.get("/test", async (req, res) => {
             database: "Connected"
         });
     } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Test endpoint to verify update functionality
+router.post("/test-update", async (req, res) => {
+    try {
+        const { testData } = req.body;
+        console.log('Test update received:', testData);
+        res.json({ 
+            message: "Test update successful",
+            receivedData: testData,
+            timestamp: new Date().toISOString()
+        });
+    } catch (error) {
+        console.error('Test update error:', error);
         res.status(500).json({ message: error.message });
     }
 });
@@ -42,6 +58,10 @@ router.put("/update-skills/:id", updateSkills);
 router.put("/update-about-me/:id", updateAboutMe);
 router.put("/update-profile/:id", updateProfile);
 router.put("/update-github-projects/:id", updateGitHubProjects);
+router.put("/update-experience/:id", updateExperience);
+router.put("/update-education/:id", updateEducation);
+router.put("/update-languages/:id", updateLanguages);
+router.put("/migrate-user-data/:id", migrateUserData);
 router.delete("/delete/:id", deleteJobSeeker);
 
 // Client Project routes

@@ -1866,3 +1866,224 @@ input:checked + .slider:before {
     gap: 12px;
   }
 }
+
+/* Experience, Education, and Languages Edit Styles */
+.experience-edit-container,
+.education-edit-container,
+.languages-edit-container {
+  margin-top: 20px;
+}
+
+.add-experience-form,
+.add-education-form,
+.add-language-form {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #e5e7eb;
+}
+
+.add-experience-form h4,
+.add-education-form h4,
+.add-language-form h4 {
+  margin: 0 0 16px 0;
+  color: #374151;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.add-button {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.add-button:hover {
+  background: #2563eb;
+}
+
+.experience-list,
+.education-list,
+.languages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.experience-item,
+.education-item,
+.language-item {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  position: relative;
+}
+
+.experience-header,
+.education-header,
+.language-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.experience-header h4,
+.education-header h4 {
+  margin: 0;
+  color: #1f2937;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.experience-dates,
+.education-dates {
+  color: #6b7280;
+  font-size: 14px;
+  margin: 4px 0;
+}
+
+.education-institution {
+  color: #374151;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 4px 0;
+}
+
+.experience-description,
+.education-description {
+  color: #6b7280;
+  font-size: 14px;
+  margin: 8px 0 0 0;
+  line-height: 1.5;
+}
+
+.language-name {
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 16px;
+}
+
+.language-proficiency {
+  color: #6b7280;
+  font-size: 14px;
+  background: #f3f4f6;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.remove-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.remove-btn:hover {
+  background: #dc2626;
+}
+
+.no-experience,
+.no-education,
+.no-languages {
+  color: #6b7280;
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px dashed #d1d5db;
+}
+
+.section-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.cancel-button,
+.save-button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.cancel-button {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.cancel-button:hover {
+  background: #e5e7eb;
+}
+
+.save-button {
+  background: #10b981;
+  color: white;
+}
+
+.save-button:hover {
+  background: #059669;
+}

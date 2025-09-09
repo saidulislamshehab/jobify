@@ -15,11 +15,15 @@ export const createJobSeeker = async (req, res) => {
             return res.status(400).json({ message: "User with this email already exists" });
         }
         
-        // Create job seeker with only provided fields - MongoDB will apply defaults
+        // Create job seeker with default values for new fields
         const jobSeeker = new Job_Seeker({ 
             name, 
             email, 
-            password
+            password,
+            // Initialize new fields with default values
+            experience: [],
+            education: [],
+            languages: [{ language: 'English', proficiency: 'Native' }]
         });
         
         await jobSeeker.save();
@@ -117,7 +121,7 @@ export const getJobSeekerById = async (req, res) => {
 export const updateJobSeeker = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, email, password, phone, country, education, experience, skills, resume, clientAboutMe, freelancerAboutMe, language, jobTitle } = req.body;
+        const { name, email, password, phone, country, education, experience, skills, resume, clientAboutMe, freelancerAboutMe, languages, jobTitle } = req.body;
         const jobSeeker = await Job_Seeker.findByIdAndUpdate(id, { 
             name, 
             email, 
@@ -130,7 +134,7 @@ export const updateJobSeeker = async (req, res) => {
             resume, 
             clientAboutMe, 
             freelancerAboutMe, 
-            language, 
+            languages, 
             jobTitle 
         }, { new: true });
         res.status(200).json(jobSeeker);
@@ -306,6 +310,170 @@ export const updateGitHubProjects = async (req, res) => {
         });
     } catch (error) {
         console.error('Error updating GitHub projects:', error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const updateExperience = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { experience } = req.body;
+        
+        console.log('Update experience request:', { id, experience });
+        
+        if (!id) {
+            return res.status(400).json({ message: 'User ID is required' });
+        }
+        
+        if (!Array.isArray(experience)) {
+            return res.status(400).json({ message: 'Experience must be an array' });
+        }
+        
+        const jobSeeker = await Job_Seeker.findByIdAndUpdate(
+            id,
+            { experience },
+            { new: true, runValidators: false }
+        );
+        
+        console.log('Updated job seeker experience:', jobSeeker);
+        
+        if (!jobSeeker) {
+            return res.status(404).json({ message: 'Job seeker not found' });
+        }
+        
+        res.json({ 
+            message: 'Experience updated successfully',
+            experience: jobSeeker.experience
+        });
+    } catch (error) {
+        console.error('Error updating experience:', error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const updateEducation = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { education } = req.body;
+        
+        console.log('Update education request:', { id, education });
+        
+        if (!id) {
+            return res.status(400).json({ message: 'User ID is required' });
+        }
+        
+        if (!Array.isArray(education)) {
+            return res.status(400).json({ message: 'Education must be an array' });
+        }
+        
+        const jobSeeker = await Job_Seeker.findByIdAndUpdate(
+            id,
+            { education },
+            { new: true, runValidators: false }
+        );
+        
+        console.log('Updated job seeker education:', jobSeeker);
+        
+        if (!jobSeeker) {
+            return res.status(404).json({ message: 'Job seeker not found' });
+        }
+        
+        res.json({ 
+            message: 'Education updated successfully',
+            education: jobSeeker.education
+        });
+    } catch (error) {
+        console.error('Error updating education:', error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const updateLanguages = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { languages } = req.body;
+        
+        console.log('Update languages request:', { id, languages });
+        
+        if (!id) {
+            return res.status(400).json({ message: 'User ID is required' });
+        }
+        
+        if (!Array.isArray(languages)) {
+            return res.status(400).json({ message: 'Languages must be an array' });
+        }
+        
+        const jobSeeker = await Job_Seeker.findByIdAndUpdate(
+            id,
+            { languages },
+            { new: true, runValidators: false }
+        );
+        
+        console.log('Updated job seeker languages:', jobSeeker);
+        
+        if (!jobSeeker) {
+            return res.status(404).json({ message: 'Job seeker not found' });
+        }
+        
+        res.json({ 
+            message: 'Languages updated successfully',
+            languages: jobSeeker.languages
+        });
+    } catch (error) {
+        console.error('Error updating languages:', error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const migrateUserData = async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        if (!id) {
+            return res.status(400).json({ message: 'User ID is required' });
+        }
+        
+        // Find user and check if they need migration
+        const jobSeeker = await Job_Seeker.findById(id);
+        
+        if (!jobSeeker) {
+            return res.status(404).json({ message: 'Job seeker not found' });
+        }
+        
+        // Check if user needs migration (missing new fields)
+        const needsMigration = !jobSeeker.experience || !jobSeeker.education || !jobSeeker.languages;
+        
+        if (needsMigration) {
+            const updateData = {};
+            
+            if (!jobSeeker.experience) {
+                updateData.experience = [];
+            }
+            if (!jobSeeker.education) {
+                updateData.education = [];
+            }
+            if (!jobSeeker.languages) {
+                updateData.languages = [{ language: 'English', proficiency: 'Native' }];
+            }
+            
+            const updatedJobSeeker = await Job_Seeker.findByIdAndUpdate(
+                id,
+                updateData,
+                { new: true, runValidators: true }
+            );
+            
+            res.json({ 
+                message: 'User data migrated successfully',
+                user: updatedJobSeeker
+            });
+        } else {
+            res.json({ 
+                message: 'User data is already up to date',
+                user: jobSeeker
+            });
+        }
+    } catch (error) {
+        console.error('Error migrating user data:', error);
         res.status(500).json({ message: error.message });
     }
 };
