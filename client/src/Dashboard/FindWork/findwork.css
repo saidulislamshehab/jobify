@@ -15,8 +15,21 @@
 .project-card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; background: #fff; }
 .project-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px; }
 .project-title { margin: 0; font-size: 18px; font-weight: 600; color: #111827; }
-.bid-btn { background: #2563eb; color: #fff; border: none; padding: 8px 12px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
-.bid-btn:hover { background: #1d4ed8; }
+.bid-btn { background: #2563eb; color: #fff; border: none; padding: 8px 12px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+.bid-btn:hover:not(:disabled) { background: #1d4ed8; transform: translateY(-1px); }
+.bid-btn:disabled { background: #9ca3af; cursor: not-allowed; }
+
+.bid-status { 
+  padding: 6px 12px; 
+  border-radius: 6px; 
+  font-size: 12px; 
+  font-weight: 600; 
+  text-transform: uppercase; 
+  letter-spacing: 0.5px;
+}
+.bid-status.pending { background: #fef3c7; color: #92400e; }
+.bid-status.accepted { background: #d1fae5; color: #065f46; }
+.bid-status.rejected { background: #fee2e2; color: #dc2626; }
 .project-meta { display: flex; align-items: center; gap: 8px; color: #6b7280; font-size: 13px; margin-bottom: 8px; }
 .dot { opacity: 0.6; }
 .project-desc { color: #374151; font-size: 14px; margin: 0 0 8px 0; line-height: 1.5; }

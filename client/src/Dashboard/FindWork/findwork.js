@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './findwork.css';
 import DashboardNav from '../DashboardNav';
 import Footer from '../../LandingPage/footer';
+import BidModal from './BidModal';
 
 const FindWork = () => {
   const [user, setUser] = useState(null);
@@ -9,6 +10,9 @@ const FindWork = () => {
   const [projects, setProjects] = useState([]);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [isBidModalOpen, setIsBidModalOpen] = useState(false);
+  const [userBids, setUserBids] = useState([]);
 
   useEffect(() => {
     const data = localStorage.getItem('user') || sessionStorage.getItem('user');
@@ -35,6 +39,23 @@ const FindWork = () => {
     fetchProjects();
   }, [user]);
 
+  useEffect(() => {
+    const fetchUserBids = async () => {
+      if (user?.id || user?._id) {
+        try {
+          const res = await fetch(`http://localhost:5000/api/bids/freelancer/${user.id || user._id}`);
+          const data = await res.json();
+          if (data.bids) {
+            setUserBids(data.bids);
+          }
+        } catch (error) {
+          console.error('Error fetching user bids:', error);
+        }
+      }
+    };
+    fetchUserBids();
+  }, [user]);
+
   const visibleProjects = projects.filter((p) => {
     const term = search.toLowerCase();
     const matchesText =
@@ -44,6 +65,39 @@ const FindWork = () => {
     const matchesStatus = statusFilter === 'All' ? true : p.status === statusFilter.toLowerCase();
     return matchesText && matchesStatus;
   });
+
+  const handleBidClick = (project) => {
+    setSelectedProject(project);
+    setIsBidModalOpen(true);
+  };
+
+  const handleCloseBidModal = () => {
+    setIsBidModalOpen(false);
+    setSelectedProject(null);
+  };
+
+  const handleBidSubmitted = (newBid) => {
+    // Add the new bid to userBids
+    setUserBids(prev => [newBid, ...prev]);
+    
+    // Optionally refresh projects or show a success message
+    console.log('Bid submitted successfully:', newBid);
+  };
+
+  const hasUserBidOnProject = (projectId) => {
+    return userBids.some(bid => 
+      String(bid.projectId._id || bid.projectId) === String(projectId) && 
+      bid.status !== 'withdrawn'
+    );
+  };
+
+  const getUserBidStatus = (projectId) => {
+    const bid = userBids.find(bid => 
+      String(bid.projectId._id || bid.projectId) === String(projectId) && 
+      bid.status !== 'withdrawn'
+    );
+    return bid ? bid.status : null;
+  };
 
   return (
     <div className="findwork-page">
@@ -90,7 +144,21 @@ const FindWork = () => {
                   <div key={p._id} className="project-card">
                     <div className="project-header">
                       <h3 className="project-title">{p.title}</h3>
-                      <button className="bid-btn">Place a bid</button>
+                      {hasUserBidOnProject(p._id) ? (
+                        <span className={`bid-status ${getUserBidStatus(p._id)}`}>
+                          {getUserBidStatus(p._id) === 'pending' && 'Bid Placed'}
+                          {getUserBidStatus(p._id) === 'accepted' && 'Bid Accepted'}
+                          {getUserBidStatus(p._id) === 'rejected' && 'Bid Rejected'}
+                        </span>
+                      ) : (
+                        <button 
+                          className="bid-btn"
+                          onClick={() => handleBidClick(p)}
+                          disabled={!user}
+                        >
+                          Place a bid
+                        </button>
+                      )}
                     </div>
                     <div className="project-meta">
                       <span className="price">{p.paymentOption === 'hourly' ? `Over USD ${p.budget} / hour` : `USD ${p.budget}`}</span>
@@ -114,6 +182,15 @@ const FindWork = () => {
       </div>
 
       <Footer />
+      
+      {/* Bid Modal */}
+      <BidModal 
+        isOpen={isBidModalOpen}
+        onClose={handleCloseBidModal}
+        project={selectedProject}
+        user={user}
+        onBidSubmitted={handleBidSubmitted}
+      />
     </div>
   );
 };
