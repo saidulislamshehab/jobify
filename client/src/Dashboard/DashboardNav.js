@@ -55,6 +55,14 @@ const DashboardNav = ({ user }) => {
                 </div>
               </div>
               <div className="dropdown-section">
+                <div className="dropdown-section-title">Find Work</div>
+                <div className="dropdown-links">
+                  <a href="/find-work" className="dropdown-link">Find projects</a>
+                  <a href="#" className="dropdown-link">Projects with my skills</a>
+                  <a href="#" className="dropdown-link">My favorite clients</a>
+                </div>
+              </div>
+              <div className="dropdown-section">
                 <div className="dropdown-section-title">Hire</div>
                 <div className="dropdown-links">
                   <a href="/find-freelancers" className="dropdown-link">Find freelancers</a>

@@ -1,43 +1,612 @@
-.findwork-page { background: #fff; min-height: 100vh; }
-.findwork-content { max-width: 1200px; margin: 0 auto; padding: 24px; }
-.findwork-header { margin-bottom: 16px; }
-.findwork-title { font-size: 28px; font-weight: 700; color: #111827; margin: 0 0 8px 0; }
-.findwork-subtitle { color: #6b7280; margin: 0; }
-.findwork-body { display: grid; grid-template-columns: 280px 1fr; gap: 24px; }
-.filters { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; }
-.filters-title { margin: 0 0 12px 0; font-size: 16px; font-weight: 600; color: #111827; }
-.filter-input { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; margin-bottom: 12px; }
-.filters-row { display: flex; gap: 8px; }
-.status-select { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; }
-.results { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px; min-height: 300px; }
-.empty { color: #6b7280; }
-.projects-list { display: flex; flex-direction: column; gap: 16px; }
-.project-card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; background: #fff; }
-.project-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px; }
-.project-title { margin: 0; font-size: 18px; font-weight: 600; color: #111827; }
-.bid-btn { background: #2563eb; color: #fff; border: none; padding: 8px 12px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
-.bid-btn:hover:not(:disabled) { background: #1d4ed8; transform: translateY(-1px); }
-.bid-btn:disabled { background: #9ca3af; cursor: not-allowed; }
-
-.bid-status { 
-  padding: 6px 12px; 
-  border-radius: 6px; 
-  font-size: 12px; 
-  font-weight: 600; 
-  text-transform: uppercase; 
-  letter-spacing: 0.5px;
+.fw-page {
+  background: #fafafa;
+  min-height: 100vh;
 }
-.bid-status.pending { background: #fef3c7; color: #92400e; }
-.bid-status.accepted { background: #d1fae5; color: #065f46; }
-.bid-status.rejected { background: #fee2e2; color: #dc2626; }
-.project-meta { display: flex; align-items: center; gap: 8px; color: #6b7280; font-size: 13px; margin-bottom: 8px; }
-.dot { opacity: 0.6; }
-.project-desc { color: #374151; font-size: 14px; margin: 0 0 8px 0; line-height: 1.5; }
-.project-skills { display: flex; align-items: flex-start; gap: 8px; margin-top: 12px; }
-.skills-label { font-size: 14px; font-weight: 600; color: #374151; margin-top: 4px; flex-shrink: 0; }
-.tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.tag { background: #ede9fe; color: #7c3aed; padding: 4px 8px; font-size: 12px; border-radius: 12px; font-weight: 500; }
-.tags-more { color: #6b7280; font-size: 12px; font-style: italic; margin-top: 4px; }
-@media (max-width: 768px) { .findwork-body { grid-template-columns: 1fr; } }
 
+/* Sub Navigation */
+.fw-sub-nav {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
 
+.fw-sub-nav-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.fw-sub-nav-links {
+  display: flex;
+  gap: 32px;
+  padding: 0;
+  margin: 0;
+}
+
+.fw-sub-nav-link {
+  padding: 16px 0;
+  text-decoration: none;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.fw-sub-nav-link:hover {
+  color: #4f46e5;
+}
+
+.fw-sub-nav-link.active {
+  color: #4f46e5;
+  border-bottom-color: #4f46e5;
+}
+
+.fw-container {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 0;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: calc(100vh - 80px);
+}
+
+/* Left Sidebar - Filters */
+.fw-sidebar {
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  padding: 20px;
+  overflow-y: auto;
+  height: calc(100vh - 80px);
+}
+
+.fw-filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.fw-filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fw-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 4px;
+}
+
+.fw-input, .fw-select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #ffffff;
+}
+
+.fw-input:focus, .fw-select:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 1px #4f46e5;
+}
+
+.fw-checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fw-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #374151;
+}
+
+.fw-checkbox input[type="checkbox"] {
+  margin: 0;
+  accent-color: #4f46e5;
+}
+
+.fw-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fw-radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #374151;
+}
+
+.fw-radio input[type="radio"] {
+  margin: 0;
+  accent-color: #4f46e5;
+}
+
+.fw-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.fw-save-search {
+  background: #4f46e5;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.fw-save-search:hover {
+  background: #4338ca;
+}
+
+/* Main Content Area */
+.fw-main {
+  background: #ffffff;
+  padding: 20px;
+  overflow-y: auto;
+  height: calc(100vh - 80px);
+}
+
+.fw-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.fw-search-input {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.fw-search-input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 1px #4f46e5;
+}
+
+.fw-search-tags {
+  display: flex;
+  gap: 8px;
+}
+
+.fw-tag {
+  background: #e0e7ff;
+  color: #4f46e5;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.fw-tag-close {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.fw-jobs {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.fw-job-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 20px;
+  background: #ffffff;
+  transition: box-shadow 0.2s;
+}
+
+.fw-job-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.fw-job-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.fw-job-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  flex: 1;
+  margin-right: 16px;
+}
+
+.fw-bid-btn {
+  background: #4f46e5;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.fw-bid-btn:hover {
+  background: #4338ca;
+}
+
+.fw-bid-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.fw-job-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.fw-budget {
+  font-weight: 600;
+  color: #111827;
+}
+
+.fw-separator {
+  color: #d1d5db;
+}
+
+.fw-job-description {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.fw-job-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.fw-skill-tag {
+  background: #f3f4f6;
+  color: #374151;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.fw-skill-more {
+  background: #f3f4f6;
+  color: #6b7280;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.fw-job-client {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.fw-client-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fw-client-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #4f46e5;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.fw-client-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fw-client-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.fw-rating {
+  color: #fbbf24;
+}
+
+.fw-payment-method {
+  display: flex;
+  align-items: center;
+}
+
+.fw-verified {
+  color: #10b981;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.fw-unverified {
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.fw-flag-link {
+  color: #6b7280;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.fw-flag-link:hover {
+  text-decoration: underline;
+}
+
+.fw-loading {
+  text-align: center;
+  padding: 40px;
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.fw-no-results {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6b7280;
+}
+
+.fw-no-results h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  color: #374151;
+}
+
+.fw-no-results p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.fw-help-btn {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #4f46e5;
+  color: #ffffff;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.fw-help-btn:hover {
+  background: #4338ca;
+}
+
+/* Sub Content */
+.fw-sub-content {
+  padding: 20px 0;
+}
+
+.fw-sub-content h2 {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  color: #111827;
+}
+
+.fw-sub-content p {
+  margin: 0 0 24px 0;
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.fw-placeholder {
+  text-align: center;
+  padding: 60px 20px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.fw-placeholder-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.fw-placeholder h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  color: #374151;
+}
+
+.fw-placeholder p {
+  margin: 0 0 20px 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.fw-primary-btn {
+  background: #4f46e5;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.fw-primary-btn:hover {
+  background: #4338ca;
+}
+
+/* Membership Cards */
+.fw-membership-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.fw-membership-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 24px;
+  text-align: center;
+  transition: box-shadow 0.2s;
+}
+
+.fw-membership-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.fw-membership-card.featured {
+  border-color: #4f46e5;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1);
+}
+
+.fw-membership-card h3 {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  color: #111827;
+}
+
+.fw-price {
+  font-size: 32px;
+  font-weight: 700;
+  color: #4f46e5;
+  margin-bottom: 20px;
+}
+
+.fw-membership-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px 0;
+  text-align: left;
+}
+
+.fw-membership-card li {
+  padding: 8px 0;
+  color: #374151;
+  font-size: 14px;
+  position: relative;
+  padding-left: 20px;
+}
+
+.fw-membership-card li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #10b981;
+  font-weight: bold;
+}
+
+.fw-membership-btn {
+  width: 100%;
+  background: #4f46e5;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.fw-membership-btn:hover {
+  background: #4338ca;
+}
+
+.fw-membership-btn.current {
+  background: #6b7280;
+  cursor: not-allowed;
+}
+
+.fw-membership-btn.current:hover {
+  background: #6b7280;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .fw-container {
+    grid-template-columns: 280px 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .fw-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+  
+  .fw-sidebar {
+    height: auto;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  
+  .fw-main {
+    height: auto;
+  }
+  
+  .fw-job-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .fw-bid-btn {
+    align-self: flex-start;
+  }
+  
+  .fw-job-client {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
