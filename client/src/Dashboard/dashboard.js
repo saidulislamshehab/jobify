@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './dashboard.css';
 import Footer from '../LandingPage/footer';
 import DashboardNav from './DashboardNav';
+import PricingPlans from './PricingPlans';
 import profileIcon from './NavbarIcons/profile-user.png';
 import ironIcon from './rankicons/iron.png';
 import bronzeIcon from './rankicons/bronze.png';
@@ -13,6 +14,7 @@ const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [projectsCount, setProjectsCount] = useState(0);
+  const [showPricing, setShowPricing] = useState(false);
 
   useEffect(() => {
     // Get user data from localStorage or sessionStorage
@@ -151,7 +153,6 @@ const Dashboard = () => {
                 <img src={platinumIcon} alt="Platinum" className="rank-icon" />
               </div>
             </div>
-            <span className="dropdown-icon">▼</span>
           </div>
         </aside>
 
@@ -183,7 +184,7 @@ const Dashboard = () => {
               If it's not approved, you get your money back. 
               <a href="#" className="help-link">Find out more about this benefit</a>
             </p>
-            <button className="moderation-btn">I want Priority Moderation!</button>
+            <button className="moderation-btn" onClick={() => setShowPricing(true)}>I want Priority Moderation!</button>
           </div>
 
           {/* Current Projects Empty State */}
@@ -208,6 +209,9 @@ const Dashboard = () => {
 
       {/* Footer */}
       <Footer />
+
+      {/* Pricing Plans Modal */}
+      <PricingPlans isOpen={showPricing} onClose={() => setShowPricing(false)} />
     </div>
   );
 };
