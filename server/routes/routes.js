@@ -36,7 +36,6 @@ router.get("/projects/test", async (req, res) => {
 router.post("/create", createJobSeeker);
 router.post("/login", loginJobSeeker);
 router.get("/get", getJobSeeker);
-router.get("/:id", getJobSeekerById);
 router.put("/update/:id", updateJobSeeker);
 router.put("/update-skills/:id", updateSkills);
 router.put("/update-about-me/:id", updateAboutMe);
@@ -49,5 +48,8 @@ router.get("/projects/:id", getClientProjectById);
 router.put("/projects/update/:id", updateClientProject);
 router.delete("/projects/delete/:id", deleteClientProject);
 router.put("/projects/publish/:id", publishClientProject);
+
+// Keep the dynamic ID route last to avoid conflicts with '/projects'
+router.get("/:id", getJobSeekerById);
 
 export default router;

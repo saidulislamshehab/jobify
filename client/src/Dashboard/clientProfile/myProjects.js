@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './myProjects.css';
 import Footer from '../../LandingPage/footer';
+import DashboardNav from '../DashboardNav';
 
 const MyProjects = () => {
   const [user, setUser] = useState(null);
@@ -11,7 +12,6 @@ const MyProjects = () => {
   const [selectedMessageFilter, setSelectedMessageFilter] = useState('All');
   const [hasDeliverables, setHasDeliverables] = useState(false);
   const [projectsLoading, setProjectsLoading] = useState(false);
-  const [projectsError, setProjectsError] = useState(null);
 
   useEffect(() => {
     // Get user data from localStorage or sessionStorage
@@ -38,11 +38,10 @@ const MyProjects = () => {
   }, []);
 
   useEffect(() => {
-    // Fetch user's projects
+    // Fetch user's projects from ClientProject collection
     const fetchProjects = async () => {
       if (user) {
         setProjectsLoading(true);
-        setProjectsError(null);
         
         try {
           const clientId = user.id || user._id;
@@ -59,14 +58,12 @@ const MyProjects = () => {
             
             setProjects(userProjects);
             setFilteredProjects(userProjects);
-          } else {
-            const errorData = await response.json();
-            console.error('Failed to fetch projects:', errorData);
-            setProjectsError(errorData.message || 'Failed to fetch projects');
           }
         } catch (error) {
           console.error('Error fetching projects:', error);
-          setProjectsError('Network error: ' + error.message);
+          // fall back to empty state without error banner
+          setProjects([]);
+          setFilteredProjects([]);
         } finally {
           setProjectsLoading(false);
         }
@@ -131,7 +128,6 @@ const MyProjects = () => {
   const handleRefreshProjects = async () => {
     if (user) {
       setProjectsLoading(true);
-      setProjectsError(null);
       
       try {
         const clientId = user.id || user._id;
@@ -147,14 +143,9 @@ const MyProjects = () => {
           
           setProjects(userProjects);
           setFilteredProjects(userProjects);
-        } else {
-          const errorData = await response.json();
-          console.error('Failed to refresh projects:', errorData);
-          setProjectsError(errorData.message || 'Failed to refresh projects');
         }
       } catch (error) {
         console.error('Error refreshing projects:', error);
-        setProjectsError('Network error: ' + error.message);
       } finally {
         setProjectsLoading(false);
       }
@@ -277,39 +268,8 @@ const MyProjects = () => {
 
   return (
     <div className="my-projects-page">
-      {/* Header */}
-      <header className="projects-header">
-        <div className="header-content">
-          <div className="header-left">
-            <h1 className="page-title">My projects</h1>
-          </div>
-          <div className="header-right">
-            <div className="user-role-tabs">
-              <button className="role-tab active">As Client</button>
-              <button className="role-tab">As Freelancer</button>
-            </div>
-            <div className="header-actions-right">
-              <button 
-                onClick={testAPI} 
-                className="test-btn"
-                title="Test API"
-              >
-                🧪
-              </button>
-              <button 
-                onClick={handleRefreshProjects} 
-                className="refresh-btn"
-                title="Refresh projects"
-              >
-                🔄
-              </button>
-              <a href="/add-project" className="post-project-btn">
-                Post a project
-              </a>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Shared Dashboard Navigation */}
+      <DashboardNav user={user} />
 
       {/* Main Content */}
       <div className="projects-content">
@@ -381,17 +341,6 @@ const MyProjects = () => {
               <div className="projects-loading">
                 <h3>Loading your projects...</h3>
                 <p>Please wait while we fetch your projects.</p>
-              </div>
-            ) : projectsError ? (
-              <div className="projects-error">
-                <h3>Error loading projects</h3>
-                <p>{projectsError}</p>
-                <button 
-                  onClick={handleRefreshProjects} 
-                  className="retry-btn"
-                >
-                  Try Again
-                </button>
               </div>
             ) : filteredProjects.length === 0 ? (
               <div className="no-projects">
