@@ -224,3 +224,89 @@ export const deleteJobSeeker = async (req, res) => {
     }
 };
 
+export const updateProfile = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, jobTitle, country, hourlyRate, profilePhoto } = req.body;
+        
+        console.log('Update profile request:', { id, name, jobTitle, country, hourlyRate, profilePhoto });
+        
+        if (!id) {
+            return res.status(400).json({ message: 'User ID is required' });
+        }
+        
+        const updateData = {};
+        if (name !== undefined) updateData.name = name;
+        if (jobTitle !== undefined) updateData.jobTitle = jobTitle;
+        if (country !== undefined) updateData.country = country;
+        if (hourlyRate !== undefined) updateData.hourlyRate = hourlyRate;
+        if (profilePhoto !== undefined) updateData.profilePhoto = profilePhoto;
+        
+        console.log('Update data:', updateData);
+        
+        const jobSeeker = await Job_Seeker.findByIdAndUpdate(
+            id,
+            updateData,
+            { new: true, runValidators: true }
+        );
+        
+        console.log('Updated job seeker:', jobSeeker);
+        
+        if (!jobSeeker) {
+            return res.status(404).json({ message: 'Job seeker not found' });
+        }
+        
+        res.json({ 
+            message: 'Profile updated successfully',
+            jobSeeker: {
+                id: jobSeeker._id,
+                name: jobSeeker.name,
+                jobTitle: jobSeeker.jobTitle,
+                country: jobSeeker.country,
+                hourlyRate: jobSeeker.hourlyRate,
+                profilePhoto: jobSeeker.profilePhoto
+            }
+        });
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const updateGitHubProjects = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { githubProjects } = req.body;
+        
+        console.log('Update GitHub projects request:', { id, githubProjects });
+        
+        if (!id) {
+            return res.status(400).json({ message: 'User ID is required' });
+        }
+        
+        if (!Array.isArray(githubProjects)) {
+            return res.status(400).json({ message: 'GitHub projects must be an array' });
+        }
+        
+        const jobSeeker = await Job_Seeker.findByIdAndUpdate(
+            id,
+            { githubProjects },
+            { new: true, runValidators: true }
+        );
+        
+        console.log('Updated job seeker projects:', jobSeeker);
+        
+        if (!jobSeeker) {
+            return res.status(404).json({ message: 'Job seeker not found' });
+        }
+        
+        res.json({ 
+            message: 'GitHub projects updated successfully',
+            githubProjects: jobSeeker.githubProjects
+        });
+    } catch (error) {
+        console.error('Error updating GitHub projects:', error);
+        res.status(500).json({ message: error.message });
+    }
+};
+

@@ -40,6 +40,8 @@ router.get("/get", getJobSeeker);
 router.put("/update/:id", updateJobSeeker);
 router.put("/update-skills/:id", updateSkills);
 router.put("/update-about-me/:id", updateAboutMe);
+router.put("/update-profile/:id", updateProfile);
+router.put("/update-github-projects/:id", updateGitHubProjects);
 router.delete("/delete/:id", deleteJobSeeker);
 
 // Client Project routes

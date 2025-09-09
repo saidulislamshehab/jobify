@@ -7,6 +7,10 @@ const ClientProfile = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('client');
+  const [showPhotoModal, setShowPhotoModal] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState('');
+  const [profilePhoto, setProfilePhoto] = useState('/man.png');
 
   useEffect(() => {
     // Get user data from localStorage or sessionStorage
@@ -31,6 +35,130 @@ const ClientProfile = () => {
 
     getUserData();
   }, []);
+
+  const compressImage = (file, maxWidth = 800, quality = 0.8) => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      
+      img.onload = () => {
+        // Calculate new dimensions
+        let { width, height } = img;
+        if (width > maxWidth) {
+          height = (height * maxWidth) / width;
+          width = maxWidth;
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        // Draw and compress
+        ctx.drawImage(img, 0, 0, width, height);
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(compressedDataUrl);
+      };
+      
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
+  const handleFileSelect = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+      }
+      
+      // Validate file size (max 10MB before compression)
+      if (file.size > 10 * 1024 * 1024) {
+        alert('File size must be less than 10MB');
+        return;
+      }
+      
+      setSelectedFile(file);
+      
+      try {
+        // Compress the image
+        const compressedDataUrl = await compressImage(file);
+        setPreviewUrl(compressedDataUrl);
+      } catch (error) {
+        console.error('Error compressing image:', error);
+        alert('Error processing image. Please try again.');
+      }
+    }
+  };
+
+  const handleSavePhoto = async () => {
+    if (previewUrl) {
+      try {
+        // Save photo to server
+        const userId = user._id || user.id;
+        if (!userId) {
+          alert('User ID not found. Please log in again.');
+          return;
+        }
+
+        // Test server connection first
+        const testResponse = await fetch('http://localhost:5000/api/jobseekers/test');
+        if (!testResponse.ok) {
+          throw new Error('Server is not responding. Please make sure the server is running on port 5000.');
+        }
+
+        const response = await fetch(`http://localhost:5000/api/jobseekers/update-profile/${userId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ profilePhoto: previewUrl })
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          console.log('Photo update result:', result);
+          
+          // Update local user data
+          const updatedUser = { 
+            ...user, 
+            profilePhoto: previewUrl
+          };
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+          setUser(updatedUser);
+          
+          setProfilePhoto(previewUrl);
+          setShowPhotoModal(false);
+          setSelectedFile(null);
+          setPreviewUrl('');
+          alert('Profile photo updated successfully!');
+        } else {
+          const errorData = await response.json();
+          alert(`Error updating photo: ${errorData.message || 'Unknown error'}`);
+        }
+      } catch (error) {
+        console.error('Error updating photo:', error);
+        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+          alert('Cannot connect to server. Please make sure the server is running on port 5000.');
+        } else {
+          alert(`Error updating photo: ${error.message}`);
+        }
+      }
+    }
+  };
+
+  const handleCancelPhoto = () => {
+    setShowPhotoModal(false);
+    setSelectedFile(null);
+    setPreviewUrl('');
+  };
+
+  const handleRemovePhoto = () => {
+    setProfilePhoto('/man.png');
+    setShowPhotoModal(false);
+    setSelectedFile(null);
+    setPreviewUrl('');
+  };
 
   if (loading) {
     return (
@@ -93,56 +221,49 @@ const ClientProfile = () => {
           <div className="profile-photo-section">
             <div className="profile-photo">
               <img 
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face" 
+                src={profilePhoto} 
                 alt="Profile" 
               />
-              <button className="photo-edit-icon">✏️</button>
+             
             </div>
           </div>
 
           <div className="profile-info-section">
-            <div className="profile-name-section">
-              <h1 className="profile-name">{user.name || 'SAIDUL ISLAM SHEHAB'}</h1>
-              <button className="edit-icon">✏️</button>
-            </div>
-
-            <div className="profile-role">
-              <span className="role-text">Client</span>
-            </div>
-
-            <div className="rating-section">
-              <div className="stars">
-                <span className="star">⭐</span>
-                <span className="star">⭐</span>
-                <span className="star">⭐</span>
-                <span className="star">⭐</span>
-                <span className="star">⭐</span>
+            <div className="profile-header-info">
+              <div className="profile-name-section">
+                <h1 className="profile-name">{user.name || 'SAIDUL ISLAM SHEHAB'}</h1>
+                <button className="edit-icon">
+                <img src="/pencil.png" alt="Edit" className="edit-icon-img" />
+              </button>
               </div>
-              <span className="rating-text">0/5</span>
+
+              <div className="profile-role">
+                <span className="role-badge">Client</span>
+              </div>
             </div>
 
-            <div className="location-section">
-              <span className="flag">🇺🇸</span>
-              <span className="location-text">United States</span>
+            <div className="profile-details">
+              <div className="location-section">
+                <span className="location-text">United States</span>
+              </div>
+
             </div>
 
-            <div className="tagline-section">
-              <p className="tagline">Client expert in hiring and project management</p>
-            </div>
+            <div className="profile-actions">
+              <div className="hourly-rate-section">
+                <span className="rate-label">Hourly rate</span>
+                <span className="rate-value">$0.00</span>
+                <span className="rate-dash">-</span>
+              </div>
 
-            <div className="hourly-rate-section">
-              <span className="rate-label">Hourly rate</span>
-              <span className="rate-value">$0.00</span>
-              <span className="rate-dash">-</span>
-            </div>
-
-            <div className="profile-visibility">
-              <div className="visibility-option">
-                <label className="toggle-switch">
-                  <input type="checkbox" defaultChecked />
-                  <span className="slider"></span>
-                </label>
-                <span className="visibility-label">Profile visibility: Public</span>
+              <div className="profile-visibility">
+                <div className="visibility-option">
+                  <label className="toggle-switch">
+                    <input type="checkbox" defaultChecked />
+                    <span className="slider"></span>
+                  </label>
+                  <span className="visibility-label">Profile visibility: Public</span>
+                </div>
               </div>
             </div>
           </div>
@@ -211,6 +332,73 @@ const ClientProfile = () => {
           </div>
         </div>
       </div>
+
+      {/* Photo Upload Modal */}
+      {showPhotoModal && (
+        <div className="photo-modal-overlay">
+          <div className="photo-modal">
+            <div className="photo-modal-header">
+              <h3>Update Profile Photo</h3>
+              <button 
+                className="close-modal-btn"
+                onClick={handleCancelPhoto}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="photo-modal-content">
+              <div className="photo-preview-large">
+                {previewUrl ? (
+                  <img src={previewUrl} alt="Preview" className="preview-image-large" />
+                ) : (
+                  <img src="/man.png" alt="Default Profile" className="preview-image-large" />
+                )}
+              </div>
+              
+              <div className="photo-upload-controls">
+                <input
+                  type="file"
+                  id="photo-upload-modal"
+                  accept="image/*"
+                  onChange={handleFileSelect}
+                  style={{ display: 'none' }}
+                />
+                <label htmlFor="photo-upload-modal" className="upload-btn">
+                  Choose Photo
+                </label>
+                {previewUrl && (
+                  <button
+                    type="button"
+                    onClick={handleRemovePhoto}
+                    className="remove-btn"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+              
+              <p className="upload-hint">Max file size: 10MB. Supported formats: JPG, PNG, GIF</p>
+              
+              <div className="modal-actions">
+                <button 
+                  className="cancel-btn"
+                  onClick={handleCancelPhoto}
+                >
+                  Cancel
+                </button>
+                <button 
+                  className="save-btn"
+                  onClick={handleSavePhoto}
+                  disabled={!previewUrl}
+                >
+                  Save Photo
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <Footer />
