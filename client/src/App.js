@@ -1,5 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 import WantToHire from './LandingPage/WantToHire';
 import WantToWork from './LandingPage/WantToWork';
 import LoginUi from './LoginPage/LoginUi';
@@ -21,27 +23,132 @@ import './LandingPage/WantToHire.css';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<WantToHire />} />
-        <Route path="/work" element={<WantToWork />} />
-        <Route path="/login" element={<LoginUi />} />
-        <Route path="/signup" element={<SignupUi />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/my-finances" element={<MyFinances />} />
-        <Route path="/add-jobseeker" element={<AddJobSeeker />} />
-        <Route path="/clientsignup" element={<ClientSignup />} />
-        <Route path="/profile" element={<FreelancerProfile />} />
-        <Route path="/client-profile" element={<ClientProfile />} />
-        <Route path="/add-project" element={<AddProject />} />
-        <Route path="/project-description" element={<ProjectDescription />} />
-        <Route path="/project-review" element={<ProjectReview />} />
-        <Route path="/my-projects" element={<MyProjects />} />
-        <Route path="/find-freelancers" element={<FindFreelancers />} />
-        <Route path="/find-work" element={<FindWork />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<WantToHire />} />
+          <Route path="/work" element={<WantToWork />} />
+          <Route path="/contact" element={<ContactPage />} />
+          
+          {/* Auth routes (redirect to dashboard if already logged in) */}
+          <Route 
+            path="/login" 
+            element={
+              <ProtectedRoute requireAuth={false}>
+                <LoginUi />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/signup" 
+            element={
+              <ProtectedRoute requireAuth={false}>
+                <SignupUi />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/add-jobseeker" 
+            element={
+              <ProtectedRoute requireAuth={false}>
+                <AddJobSeeker />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/clientsignup" 
+            element={
+              <ProtectedRoute requireAuth={false}>
+                <ClientSignup />
+              </ProtectedRoute>
+            } 
+          />
+          
+          {/* Protected routes (require authentication) */}
+          <Route 
+            path="/dashboard" 
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/my-finances" 
+            element={
+              <ProtectedRoute>
+                <MyFinances />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/profile" 
+            element={
+              <ProtectedRoute>
+                <FreelancerProfile />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/client-profile" 
+            element={
+              <ProtectedRoute>
+                <ClientProfile />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/add-project" 
+            element={
+              <ProtectedRoute>
+                <AddProject />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/project-description" 
+            element={
+              <ProtectedRoute>
+                <ProjectDescription />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/project-review" 
+            element={
+              <ProtectedRoute>
+                <ProjectReview />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/my-projects" 
+            element={
+              <ProtectedRoute>
+                <MyProjects />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/find-freelancers" 
+            element={
+              <ProtectedRoute>
+                <FindFreelancers />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/find-work" 
+            element={
+              <ProtectedRoute>
+                <FindWork />
+              </ProtectedRoute>
+            } 
+          />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

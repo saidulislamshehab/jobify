@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import './LoginUi.css';
 import facebookIcon from './facebook.png';
 import googleIcon from './Google.png';
@@ -12,9 +12,13 @@ const LoginUi = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [localError, setLocalError] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login, loading, error } = useAuth();
+
+  // Get the return URL from location state
+  const from = location.state?.from?.pathname || '/dashboard';
 
   const handleSignupClick = () => {
     navigate('/signup');
@@ -22,31 +26,26 @@ const LoginUi = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
+    setLocalError('');
 
-    try {
-      const response = await axios.post('http://localhost:5000/api/jobseekers/login', {
-        email,
-        password
-      });
+    // Basic validation
+    if (!email.trim()) {
+      setLocalError('Please enter your email address');
+      return;
+    }
 
-      console.log('Login successful:', response.data);
-      
-      // Store user data in localStorage (you might want to use a more secure method)
-      if (rememberMe) {
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-      } else {
-        sessionStorage.setItem('user', JSON.stringify(response.data.user));
-      }
+    if (!password) {
+      setLocalError('Please enter your password');
+      return;
+    }
 
-      // Navigate to dashboard after successful login
-      navigate('/dashboard');
-    } catch (error) {
-      console.error('Login error:', error);
-      setError(error.response?.data?.message || 'Login failed. Please try again.');
-    } finally {
-      setLoading(false);
+    const result = await login(email, password, rememberMe);
+    
+    if (result.success) {
+      // Navigate to the intended page or dashboard
+      navigate(from, { replace: true });
+    } else {
+      setLocalError(result.error);
     }
   };
 
@@ -60,7 +59,7 @@ const LoginUi = () => {
               <h1 className="login-title">Sign in to Jobify!</h1>
             </div>
             
-            {error && (
+            {(error || localError) && (
               <div className="error-message" style={{
                 backgroundColor: '#e74c3c',
                 color: 'white',
@@ -69,7 +68,7 @@ const LoginUi = () => {
                 marginBottom: '20px',
                 fontSize: '14px'
               }}>
-                {error}
+                {error || localError}
               </div>
             )}
             

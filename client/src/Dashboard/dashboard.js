@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import './dashboard.css';
 import Footer from '../LandingPage/footer';
 import DashboardNav from './DashboardNav';
@@ -11,35 +12,9 @@ import goldIcon from './rankicons/gold.png';
 import platinumIcon from './rankicons/platinum.png';
 
 const Dashboard = () => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { user, loading } = useAuth();
   const [projectsCount, setProjectsCount] = useState(0);
   const [showPricing, setShowPricing] = useState(false);
-
-  useEffect(() => {
-    // Get user data from localStorage or sessionStorage
-    const getUserData = () => {
-      try {
-        const userData = localStorage.getItem('user') || sessionStorage.getItem('user');
-        if (userData) {
-          const parsedUser = JSON.parse(userData);
-          console.log('User data loaded:', parsedUser);
-          setUser(parsedUser);
-        } else {
-          // If no user data, redirect to login
-          console.log('No user data found, redirecting to login');
-          window.location.href = '/login';
-        }
-      } catch (error) {
-        console.error('Error parsing user data:', error);
-        window.location.href = '/login';
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getUserData();
-  }, []);
 
   useEffect(() => {
     const fetchProjectsCount = async () => {

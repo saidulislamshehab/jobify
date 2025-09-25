@@ -1,7 +1,8 @@
 import express from "express";
-import { createJobSeeker, loginJobSeeker, getJobSeeker, getJobSeekerById, updateJobSeeker, deleteJobSeeker, updateSkills, updateAboutMe, updateProfile, updateGitHubProjects, updateExperience, updateEducation, updateLanguages, migrateUserData } from "../controller/Job_Seeker_Controller.js";
+import { createJobSeeker, loginJobSeeker, getJobSeeker, getJobSeekerById, updateJobSeeker, deleteJobSeeker, updateSkills, updateAboutMe, updateProfile, updateGitHubProjects, updateExperience, updateEducation, updateLanguages, migrateUserData, getCurrentUser, refreshAccessToken, logout } from "../controller/Job_Seeker_Controller.js";
 import { createClientProject, getClientProjects, getClientProjectById, updateClientProject, deleteClientProject, publishClientProject } from "../controller/ClientProject_Controller.js";
 import { createBid, getBidsForProject, getBidsByFreelancer, updateBidStatus, withdrawBid, getBidById, getBidStats } from "../controller/Bid_Controller.js";
+import { authenticate } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -49,20 +50,76 @@ router.get("/projects/test", async (req, res) => {
     }
 });
 
-// Job Seeker routes
-router.post("/create", createJobSeeker);
+// Auth routes
+router.post("/register", createJobSeeker);
 router.post("/login", loginJobSeeker);
+router.get("/me", authenticate, getCurrentUser);
+router.post("/refresh-token", refreshAccessToken);
+router.post("/logout", logout);
+
+// Job Seeker routes
+router.post("/create", createJobSeeker); // legacy
 router.get("/get", getJobSeeker);
-router.put("/update/:id", updateJobSeeker);
-router.put("/update-skills/:id", updateSkills);
-router.put("/update-about-me/:id", updateAboutMe);
-router.put("/update-profile/:id", updateProfile);
-router.put("/update-github-projects/:id", updateGitHubProjects);
-router.put("/update-experience/:id", updateExperience);
-router.put("/update-education/:id", updateEducation);
-router.put("/update-languages/:id", updateLanguages);
-router.put("/migrate-user-data/:id", migrateUserData);
-router.delete("/delete/:id", deleteJobSeeker);
+router.put("/update/:id", authenticate, (req, res, next) => {
+    if (req.user?.id !== req.params.id) {
+        return res.status(403).json({ message: 'Forbidden' });
+    }
+    return updateJobSeeker(req, res, next);
+});
+router.put("/update-skills/:id", authenticate, (req, res, next) => {
+    if (req.user?.id !== req.params.id) {
+        return res.status(403).json({ message: 'Forbidden' });
+    }
+    return updateSkills(req, res, next);
+});
+router.put("/update-about-me/:id", authenticate, (req, res, next) => {
+    if (req.user?.id !== req.params.id) {
+        return res.status(403).json({ message: 'Forbidden' });
+    }
+    return updateAboutMe(req, res, next);
+});
+router.put("/update-profile/:id", authenticate, (req, res, next) => {
+    if (req.user?.id !== req.params.id) {
+        return res.status(403).json({ message: 'Forbidden' });
+    }
+    return updateProfile(req, res, next);
+});
+router.put("/update-github-projects/:id", authenticate, (req, res, next) => {
+    if (req.user?.id !== req.params.id) {
+        return res.status(403).json({ message: 'Forbidden' });
+    }
+    return updateGitHubProjects(req, res, next);
+});
+router.put("/update-experience/:id", authenticate, (req, res, next) => {
+    if (req.user?.id !== req.params.id) {
+        return res.status(403).json({ message: 'Forbidden' });
+    }
+    return updateExperience(req, res, next);
+});
+router.put("/update-education/:id", authenticate, (req, res, next) => {
+    if (req.user?.id !== req.params.id) {
+        return res.status(403).json({ message: 'Forbidden' });
+    }
+    return updateEducation(req, res, next);
+});
+router.put("/update-languages/:id", authenticate, (req, res, next) => {
+    if (req.user?.id !== req.params.id) {
+        return res.status(403).json({ message: 'Forbidden' });
+    }
+    return updateLanguages(req, res, next);
+});
+router.put("/migrate-user-data/:id", authenticate, (req, res, next) => {
+    if (req.user?.id !== req.params.id) {
+        return res.status(403).json({ message: 'Forbidden' });
+    }
+    return migrateUserData(req, res, next);
+});
+router.delete("/delete/:id", authenticate, (req, res, next) => {
+    if (req.user?.id !== req.params.id) {
+        return res.status(403).json({ message: 'Forbidden' });
+    }
+    return deleteJobSeeker(req, res, next);
+});
 
 // Client Project routes
 router.post("/projects/create", createClientProject);

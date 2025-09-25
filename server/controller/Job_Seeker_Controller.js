@@ -1,4 +1,31 @@
 import Job_Seeker from "../models/Job_Seeker.js";
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+
+const ACCESS_TOKEN_TTL_SECONDS = 60 * 15; // 15 minutes
+const REFRESH_TOKEN_TTL_SECONDS = 60 * 60 * 24 * 7; // 7 days
+
+async function hashToken(token) {
+    const saltRounds = 10;
+    return await bcrypt.hash(token, saltRounds);
+}
+
+async function tokensMatch(plainToken, hashedToken) {
+    if (!plainToken || !hashedToken) return false;
+    try {
+        return await bcrypt.compare(plainToken, hashedToken);
+    } catch (e) {
+        return false;
+    }
+}
+
+function signAccessToken(userId) {
+    return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: ACCESS_TOKEN_TTL_SECONDS });
+}
+
+function signRefreshToken(userId) {
+    return jwt.sign({ id: userId, type: 'refresh' }, process.env.JWT_SECRET, { expiresIn: REFRESH_TOKEN_TTL_SECONDS });
+}
 
 export const createJobSeeker = async (req, res) => {
     try {
@@ -16,21 +43,27 @@ export const createJobSeeker = async (req, res) => {
         }
         
         // Create job seeker with default values for new fields
+        const hashedPassword = await bcrypt.hash(password, 10);
         const jobSeeker = new Job_Seeker({ 
             name, 
             email, 
-            password,
+            password: hashedPassword,
             // Initialize new fields with default values
             experience: [],
             education: [],
             languages: [{ text: 'English' }]
         });
         
+        // Issue tokens
+        const accessToken = signAccessToken(jobSeeker._id);
+        const refreshToken = signRefreshToken(jobSeeker._id);
+        const hashedRefresh = await hashToken(refreshToken);
+        jobSeeker.refreshToken = hashedRefresh;
         await jobSeeker.save();
         
         // Return job seeker data without password
-        const { password: _, ...jobSeekerData } = jobSeeker.toObject();
-        res.status(201).json(jobSeekerData);
+        const { password: _, refreshToken: __, ...jobSeekerData } = jobSeeker.toObject();
+        res.status(201).json({ user: jobSeekerData, accessToken, refreshToken });
     } catch (error) {
         console.error('Error creating job seeker:', error);
         res.status(500).json({ message: error.message });
@@ -41,47 +74,42 @@ export const loginJobSeeker = async (req, res) => {
     try {
         const { email, password } = req.body;
         
-        console.log('Login attempt:', { email, password });
         
         if (!email || !password) {
-            console.log('Missing email or password');
             return res.status(400).json({ message: "Email and password are required" });
         }
 
         // Clean the email input (trim whitespace and convert to lowercase)
         const cleanEmail = email.trim().toLowerCase();
-        console.log('Clean email:', cleanEmail);
+        
 
         // Find job seeker by email (case-insensitive search)
         const jobSeeker = await Job_Seeker.findOne({ 
             email: { $regex: new RegExp(`^${cleanEmail}$`, 'i') }
         });
-        console.log('Found job seeker:', jobSeeker ? 'Yes' : 'No');
+        
         
         if (!jobSeeker) {
-            console.log('No job seeker found with email:', cleanEmail);
             return res.status(401).json({ message: "Invalid email or password" });
         }
 
-        console.log('Stored email:', jobSeeker.email);
-        console.log('Stored password:', jobSeeker.password);
-        console.log('Input password:', password);
-        console.log('Password match:', jobSeeker.password === password);
-
-        // Check password (in production, you should hash passwords)
-        if (jobSeeker.password !== password) {
-            console.log('Password mismatch');
+        // Compare hashed password
+        const isMatch = await bcrypt.compare(password, jobSeeker.password);
+        if (!isMatch) {
             return res.status(401).json({ message: "Invalid email or password" });
         }
+        
 
-        console.log('Login successful for:', cleanEmail);
+        // Issue tokens
+        const accessToken = signAccessToken(jobSeeker._id);
+        const refreshToken = signRefreshToken(jobSeeker._id);
+        const hashedRefresh = await hashToken(refreshToken);
+        jobSeeker.refreshToken = hashedRefresh;
+        await jobSeeker.save();
 
-        // Return job seeker data (excluding password)
-        const { password: _, ...jobSeekerData } = jobSeeker.toObject();
-        res.status(200).json({
-            message: "Login successful",
-            user: jobSeekerData
-        });
+        // Return job seeker data (excluding password and refreshToken)
+        const { password: _, refreshToken: __, ...jobSeekerData } = jobSeeker.toObject();
+        res.status(200).json({ user: jobSeekerData, accessToken, refreshToken });
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ message: error.message });
@@ -118,25 +146,103 @@ export const getJobSeekerById = async (req, res) => {
     }
 };
 
+export const getCurrentUser = async (req, res) => {
+    try {
+        const userId = req.user?.id;
+        if (!userId) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+        const jobSeeker = await Job_Seeker.findById(userId).select('-password -refreshToken');
+        if (!jobSeeker) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.status(200).json({ user: jobSeeker });
+    } catch (error) {
+        console.error('Error fetching current user:', error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const refreshAccessToken = async (req, res) => {
+    try {
+        const { refreshToken } = req.body;
+        if (!refreshToken) {
+            return res.status(400).json({ message: 'Refresh token is required' });
+        }
+
+        // Verify token
+        const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+        if (decoded.type !== 'refresh') {
+            return res.status(401).json({ message: 'Invalid token type' });
+        }
+
+        const user = await Job_Seeker.findById(decoded.id);
+        const valid = user ? await tokensMatch(refreshToken, user.refreshToken) : false;
+        if (!valid) {
+            return res.status(401).json({ message: 'Invalid refresh token' });
+        }
+
+        // Rotate refresh token
+        const newAccessToken = signAccessToken(user._id);
+        const newRefreshToken = signRefreshToken(user._id);
+        const newHashedRefresh = await hashToken(newRefreshToken);
+        user.refreshToken = newHashedRefresh;
+        await user.save();
+
+        return res.status(200).json({ accessToken: newAccessToken, refreshToken: newRefreshToken });
+    } catch (error) {
+        console.error('Refresh token error:', error);
+        return res.status(401).json({ message: 'Invalid or expired refresh token' });
+    }
+};
+
+export const logout = async (req, res) => {
+    try {
+        const { refreshToken } = req.body;
+        if (refreshToken) {
+            try {
+                const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+                const user = await Job_Seeker.findById(decoded.id);
+                const isUsersToken = user ? await tokensMatch(refreshToken, user.refreshToken) : false;
+                if (user && isUsersToken) {
+                    user.refreshToken = '';
+                    await user.save();
+                }
+            } catch (e) {
+                // Ignore invalid token on logout
+            }
+        }
+        return res.status(200).json({ message: 'Logged out' });
+    } catch (error) {
+        console.error('Logout error:', error);
+        return res.status(500).json({ message: error.message });
+    }
+};
+
 export const updateJobSeeker = async (req, res) => {
     try {
         const { id } = req.params;
         const { name, email, password, phone, country, education, experience, skills, resume, clientAboutMe, freelancerAboutMe, languages, jobTitle } = req.body;
-        const jobSeeker = await Job_Seeker.findByIdAndUpdate(id, { 
-            name, 
-            email, 
-            password, 
-            phone, 
-            country, 
-            education, 
-            experience, 
-            skills, 
-            resume, 
-            clientAboutMe, 
-            freelancerAboutMe, 
-            languages, 
-            jobTitle 
-        }, { new: true });
+
+        const updateData = {};
+        if (name !== undefined) updateData.name = name;
+        if (email !== undefined) updateData.email = email;
+        if (phone !== undefined) updateData.phone = phone;
+        if (country !== undefined) updateData.country = country;
+        if (education !== undefined) updateData.education = education;
+        if (experience !== undefined) updateData.experience = experience;
+        if (skills !== undefined) updateData.skills = skills;
+        if (resume !== undefined) updateData.resume = resume;
+        if (clientAboutMe !== undefined) updateData.clientAboutMe = clientAboutMe;
+        if (freelancerAboutMe !== undefined) updateData.freelancerAboutMe = freelancerAboutMe;
+        if (languages !== undefined) updateData.languages = languages;
+        if (jobTitle !== undefined) updateData.jobTitle = jobTitle;
+
+        if (password !== undefined) {
+            updateData.password = await bcrypt.hash(password, 10);
+        }
+
+        const jobSeeker = await Job_Seeker.findByIdAndUpdate(id, updateData, { new: true });
         res.status(200).json(jobSeeker);
     } catch (error) {
         res.status(500).json({ message: error.message });

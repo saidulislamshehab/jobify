@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import './DashboardNav.css';
 import magnifierIcon from './NavbarIcons/magnifier.png';
 import notificationIcon from './NavbarIcons/notification.png';
@@ -6,6 +7,13 @@ import chatIcon from './NavbarIcons/chat.png';
 import profileIcon from './NavbarIcons/profile-user.png';
 
 const DashboardNav = ({ user }) => {
+  const { logout } = useAuth();
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+
+  const handleLogout = async () => {
+    await logout();
+    setShowProfileDropdown(false);
+  };
   return (
     <header className="dashboard-header">
       <div className="header-content">
@@ -27,7 +35,10 @@ const DashboardNav = ({ user }) => {
             <img src={chatIcon} alt="Messages" className="action-icon" />
           </button>
           <div className="profile-dropdown-container">
-            <button className="action-btn profile-btn">
+            <button 
+              className="action-btn profile-btn"
+              onClick={() => setShowProfileDropdown(!showProfileDropdown)}
+            >
               <img src={profileIcon} alt="Profile" className="action-icon" />
             </button>
             <div className="profile-dropdown">
@@ -87,11 +98,7 @@ const DashboardNav = ({ user }) => {
                     <span className="language-option">pt</span>
                   </div>
                 </div>
-                <a href="#" className="logout-link" onClick={() => {
-                  localStorage.removeItem('user');
-                  sessionStorage.removeItem('user');
-                  window.location.href = '/login';
-                }}>Log out</a>
+                <button className="logout-link" onClick={handleLogout}>Log out</button>
               </div>
             </div>
           </div>

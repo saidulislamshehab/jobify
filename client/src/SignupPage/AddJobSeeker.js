@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import './AddJobSeeker.css';
 
 const AddJobSeeker = () => {
   const navigate = useNavigate();
+  const { register, loading, error } = useAuth();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -12,8 +13,7 @@ const AddJobSeeker = () => {
     password: ''
   });
   const [acceptTerms, setAcceptTerms] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [localError, setLocalError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,72 +25,43 @@ const AddJobSeeker = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setIsLoading(true);
+    setLocalError('');
     
     // Basic validation
     if (!formData.firstName.trim() || !formData.lastName.trim()) {
-      setError('Please enter both first and last name');
-      setIsLoading(false);
+      setLocalError('Please enter both first and last name');
       return;
     }
     
     if (!formData.email.trim()) {
-      setError('Please enter your email address');
-      setIsLoading(false);
+      setLocalError('Please enter your email address');
       return;
     }
     
     if (!formData.password || formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
-      setIsLoading(false);
+      setLocalError('Password must be at least 6 characters long');
       return;
     }
     
     if (!acceptTerms) {
-      setError('Please accept the Terms & Conditions');
-      setIsLoading(false);
+      setLocalError('Please accept the Terms & Conditions');
       return;
     }
 
-    try {
-      // Create a job seeker with the form data
-      const jobSeekerData = {
-        name: `${formData.firstName.trim()} ${formData.lastName.trim()}`,
-        email: formData.email.trim().toLowerCase(),
-        password: formData.password
-      };
+    // Create user data for registration
+    const userData = {
+      name: `${formData.firstName.trim()} ${formData.lastName.trim()}`,
+      email: formData.email.trim().toLowerCase(),
+      password: formData.password
+    };
 
-      console.log('Sending data to MongoDB:', jobSeekerData);
-
-      // Connect to MongoDB and create job seeker
-      const response = await axios.post('http://localhost:5000/api/jobseekers/create', jobSeekerData);
-      
-      if (response.status === 201) {
-        console.log('Job seeker created successfully in MongoDB:', response.data);
-        alert('Account created successfully! You can now login and complete your profile.');
-        navigate('/login');
-      } else {
-        setError('Failed to create account. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error details:', error);
-      
-      if (error.response) {
-        // Server responded with error status
-        console.error('Server error:', error.response.data);
-        setError(error.response.data.message || 'Server error occurred');
-      } else if (error.request) {
-        // Request was made but no response received
-        console.error('Network error:', error.request);
-        setError('Cannot connect to server. Please check if server is running.');
-      } else {
-        // Something else happened
-        console.error('Other error:', error.message);
-        setError(`Error: ${error.message}`);
-      }
-    } finally {
-      setIsLoading(false);
+    const result = await register(userData);
+    
+    if (result.success) {
+      // Navigate to dashboard after successful registration
+      navigate('/dashboard');
+    } else {
+      setLocalError(result.error);
     }
   };
 
@@ -119,9 +90,9 @@ const AddJobSeeker = () => {
             <h1>Sign Up</h1>
             
             <form onSubmit={handleSubmit} className="signup-form">
-              {error && (
+              {(error || localError) && (
                 <div className="error-message">
-                  {error}
+                  {error || localError}
                 </div>
               )}
               
@@ -134,7 +105,7 @@ const AddJobSeeker = () => {
                   placeholder="First name"
                   required
                   className="form-input"
-                  disabled={isLoading}
+                  disabled={loading}
                 />
               </div>
 
@@ -147,7 +118,7 @@ const AddJobSeeker = () => {
                   placeholder="Last name"
                   required
                   className="form-input"
-                  disabled={isLoading}
+                  disabled={loading}
                 />
               </div>
 
@@ -160,7 +131,7 @@ const AddJobSeeker = () => {
                   placeholder="Email address"
                   required
                   className="form-input"
-                  disabled={isLoading}
+                  disabled={loading}
                 />
               </div>
 
@@ -174,7 +145,7 @@ const AddJobSeeker = () => {
                   required
                   className="form-input"
                   minLength="6"
-                  disabled={isLoading}
+                  disabled={loading}
                 />
               </div>
 
@@ -185,7 +156,7 @@ const AddJobSeeker = () => {
                     checked={acceptTerms}
                     onChange={(e) => setAcceptTerms(e.target.checked)}
                     required
-                    disabled={isLoading}
+                    disabled={loading}
                   />
                   <span className="checkmark"></span>
                   Accept Terms & Conditions
@@ -195,9 +166,9 @@ const AddJobSeeker = () => {
               <button 
                 type="submit" 
                 className="join-button"
-                disabled={isLoading}
+                disabled={loading}
               >
-                {isLoading ? 'Creating Account...' : 'Join us →'}
+                {loading ? 'Creating Account...' : 'Join us →'}
               </button>
             </form>
 

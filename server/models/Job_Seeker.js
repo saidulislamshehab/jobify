@@ -13,6 +13,10 @@ const studentSchema = new mongoose.Schema({
         type : String,
         required : true,
     },
+    refreshToken: {
+        type: String,
+        default: ''
+    },
     hourlyRate : {
         type : String,
         default : 'Not specified',
