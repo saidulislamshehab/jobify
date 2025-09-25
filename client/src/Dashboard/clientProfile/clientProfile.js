@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './clientProfile.css';
 import Footer from '../../LandingPage/footer';
 import DashboardNav from '../DashboardNav';
@@ -32,12 +33,8 @@ const ClientProfile = () => {
           const userId = parsedUser._id || parsedUser.id;
           if (userId) {
             try {
-              const migrateResponse = await fetch(`http://localhost:5000/api/jobseekers/migrate-user-data/${userId}`, {
-                method: 'PUT'
-              });
-              if (migrateResponse.ok) {
-                console.log('User data migration completed for client profile');
-              }
+              await axios.put(`/jobseekers/migrate-user-data/${userId}`);
+              console.log('User data migration completed for client profile');
             } catch (migrateError) {
               console.log('Migration failed or not needed:', migrateError);
             }

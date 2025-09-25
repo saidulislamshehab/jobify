@@ -7,7 +7,6 @@ import router from './routes/routes.js';
 import clientRouter from './routes/clientRoutes.js';
 
 dotenv.config();
-
 // Require JWT secret in non-development environments
 if (!process.env.JWT_SECRET) {
   console.warn('Warning: JWT_SECRET not set in environment variables.');
@@ -17,11 +16,9 @@ if (!process.env.JWT_SECRET) {
   // In development, still allow run but discourage
   process.env.JWT_SECRET = 'dev-only-insecure-secret-change-me';
 }
-
 connectDb();
 
 const app = express();
-
 // Tighten CORS: allow localhost client by default; customize via CORS_ORIGIN env
 const allowedOrigin = process.env.CORS_ORIGIN || 'http://localhost:3000';
 app.use(cors({
